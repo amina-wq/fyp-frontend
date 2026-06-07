@@ -4,23 +4,38 @@ import '../../repositories/auth/auth_repository_interface.dart';
 import '../router.dart';
 
 class AuthRouteGuard extends AutoRouteGuard {
-  final AuthRepositoryInterface _authRepository;
+  final AuthRepositoryInterface authRepository;
 
   AuthRouteGuard({
-    required AuthRepositoryInterface authRepository,
-  }) : _authRepository = authRepository;
+    required this.authRepository,
+  });
 
   @override
-  void onNavigation(
+  Future<void> onNavigation(
       NavigationResolver resolver,
       StackRouter router,
       ) async {
-    final isLoggedIn = await _authRepository.isLoggedIn();
+    final hasTokens = await authRepository.isLoggedIn();
 
-    if (isLoggedIn) {
+    if (!hasTokens) {
+      resolver.redirect(const AuthRoute());
+      return;
+    }
+
+    try {
+      await authRepository.getCurrentUser();
+
       resolver.next(true);
-    } else {
-      router.replace(const AuthRoute());
+    } catch (_) {
+      try {
+        await authRepository.refreshTokens();
+
+        resolver.next(true);
+      } catch (_) {
+        await authRepository.logout();
+
+        resolver.redirect(const AuthRoute());
+      }
     }
   }
 }

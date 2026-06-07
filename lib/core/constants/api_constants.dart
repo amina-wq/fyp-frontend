@@ -1,8 +1,16 @@
 class ApiConstants {
-  static const String baseUrl = 'http://192.168.1.3';
+  static const String baseUrl = 'http://192.168.1.3/api/v1';
 
-  static const String registerEndpoint = '/api/v1/auth/register';
-  static const String loginEndpoint = '/api/v1/auth/login';
-  static const String refreshEndpoint = '/api/v1/auth/refresh';
-  static const String meEndpoint = '/api/v1/auth/me';
+  static const String registerEndpoint = '/auth/register';
+  static const String loginEndpoint = '/auth/login';
+  static const String refreshEndpoint = '/auth/refresh';
+  static const String meEndpoint = '/auth/me';
+  static String productByBarcodeEndpoint(String barcode) {return '/products/barcode/$barcode';}
+  static String productByIdEndpoint(String productId) {return '/products/$productId';}
+  static const String manualProductEndpoint = '/products/manual';
+  static const String inventoryEndpoint = '/inventory';
+  static const String inventoryStatsEndpoint = '/inventory/stats';
+  static String inventoryItemByIdEndpoint(String itemId) {return '/inventory/$itemId';}
+  static String consumeInventoryItemEndpoint(String itemId) {return '/inventory/$itemId/consume';}
+  static String wasteInventoryItemEndpoint(String itemId) {return '/inventory/$itemId/waste';}
 }

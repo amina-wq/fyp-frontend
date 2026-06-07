@@ -74,6 +74,22 @@ class ApiClient {
     );
   }
 
+
+  Future<Response<dynamic>> patch(
+      String path, {
+        Object? data,
+        Map<String, dynamic>? queryParameters,
+        String? accessToken,
+      }) async {
+    return _dio.patch(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: _buildOptions(accessToken),
+    );
+  }
+
+
   Options? _buildOptions(String? accessToken) {
     if (accessToken == null) {
       return null;
