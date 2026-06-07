@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
-final _primaryColor = const Color(0xff001a6e);
+final _primaryColor = const Color(0xff2870a2);
 
 final _textTheme = TextTheme(
   displayLarge: TextStyle(color: _primaryColor),
@@ -57,6 +58,7 @@ final _appBarTheme = AppBarTheme(
 final themeData = ThemeData(
   useMaterial3: true,
   primaryColor: _primaryColor,
+  scaffoldBackgroundColor: AppColors.background,
   colorScheme: ColorScheme.fromSeed(
     seedColor: _primaryColor,
   ),

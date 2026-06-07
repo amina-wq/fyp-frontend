@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/inventory/inventory.dart';
 import '../../repositories/inventory/inventory_repository_interface.dart';
 import 'inventory_event.dart';
 import 'inventory_state.dart';

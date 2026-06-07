@@ -8,11 +8,59 @@ import '../../ui/theme/app_colors.dart';
 class ShellScreen extends StatelessWidget {
   const ShellScreen({super.key});
 
-  void _openScanner(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Scanner will be added later'),
-      ),
+  void _openAddOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _AddOptionButton(
+                    icon: Icons.edit_note,
+                    title: 'Add manually',
+                    onTap: () {
+                      Navigator.of(context).pop();
+
+                      context.router.push(
+                        AddManualProductRoute(),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _AddOptionButton(
+                    icon: Icons.qr_code_scanner,
+                    title: 'Scan barcode',
+                    onTap: () {
+                      Navigator.of(context).pop();
+
+                      // Later:
+                      // context.router.push(const ScannerRoute());
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -29,33 +77,28 @@ class ShellScreen extends StatelessWidget {
         final tabsRouter = AutoTabsRouter.of(context);
 
         return Scaffold(
+          extendBody: true,
           body: child,
           floatingActionButton: FloatingActionButton(
-            onPressed: () => _openScanner(context),
+            heroTag: 'add_fab',
+            onPressed: () => _openAddOptions(context),
             backgroundColor: AppColors.bottomNavigationBar,
+            shape: const CircleBorder(),
             child: const Icon(
-              Icons.qr_code_scanner,
+              Icons.add,
               color: Colors.white,
+              size: 30,
             ),
           ),
           floatingActionButtonLocation:
           FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: SafeArea(
-            child: Container(
+          bottomNavigationBar: BottomAppBar(
+            color: Colors.white,
+            elevation: 12,
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            child: SizedBox(
               height: 72,
-              margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.bottomNavigationBar,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -122,15 +165,20 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = index == activeIndex;
-    final color = isSelected ? Colors.white : Colors.white70;
+    final color = isSelected
+        ? AppColors.bottomNavigationBar
+        : Colors.black.withValues(alpha: 0.45);
 
     return InkWell(
       onTap: () => onTap(index),
-      borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        width: 64,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 6,
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isSelected ? selectedIcon : icon,
@@ -145,7 +193,58 @@ class _NavItem extends StatelessWidget {
               style: TextStyle(
                 color: color,
                 fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AddOptionButton extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _AddOptionButton({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(22),
+      child: Container(
+        height: 92,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.categoryActiveFill,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: AppColors.categoryActiveBorder,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: AppColors.bottomNavigationBar,
+              size: 28,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textDark,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ],

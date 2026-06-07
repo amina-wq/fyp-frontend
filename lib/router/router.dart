@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 
 import '../features/features.dart';
 import '../repositories/auth/auth_repository_interface.dart';
@@ -48,6 +49,11 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: AuthRoute.page,
       path: '/auth',
+    ),
+    AutoRoute(
+      page: AddManualProductRoute.page,
+      path: '/add-manual-product',
+      guards: [_authRouteGuard],
     ),
   ];
 }

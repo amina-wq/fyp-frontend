@@ -18,7 +18,7 @@ class AuthRouteGuard extends AutoRouteGuard {
     final hasTokens = await authRepository.isLoggedIn();
 
     if (!hasTokens) {
-      resolver.redirect(const AuthRoute());
+      resolver.redirectUntil(const AuthRoute());
       return;
     }
 
@@ -34,7 +34,7 @@ class AuthRouteGuard extends AutoRouteGuard {
       } catch (_) {
         await authRepository.logout();
 
-        resolver.redirect(const AuthRoute());
+        resolver.redirectUntil(const AuthRoute());
       }
     }
   }

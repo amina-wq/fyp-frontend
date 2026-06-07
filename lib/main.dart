@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 
 import 'bloc/bloc.dart';
 import 'core/network/api_client.dart';
@@ -12,6 +13,18 @@ import 'router/router.dart';
 import 'ui/ui.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: AppColors.background,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: AppColors.background,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   final apiClient = ApiClient();
   final tokenStorage = TokenStorage();
 
@@ -93,6 +106,12 @@ class FoodTrackApp extends StatelessWidget {
           ),
           BlocProvider<InventoryBloc>(
             create: (context) => InventoryBloc(
+              inventoryRepository: context.read<InventoryRepositoryInterface>(),
+            ),
+          ),
+          BlocProvider<AddManualProductBloc>(
+            create: (context) => AddManualProductBloc(
+              productRepository: context.read<ProductRepositoryInterface>(),
               inventoryRepository: context.read<InventoryRepositoryInterface>(),
             ),
           ),
