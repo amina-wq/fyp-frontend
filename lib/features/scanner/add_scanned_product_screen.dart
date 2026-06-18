@@ -1,41 +1,34 @@
 import 'dart:io';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../bloc/add_manual_product/add_manual_product.dart';
 import '../../bloc/inventory/inventory.dart';
 import '../../models/inventory/inventory.dart';
 import '../../models/product/product.dart';
 import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
-class AddManualProductScreen extends StatefulWidget {
-  const AddManualProductScreen({
+class AddScannedProductScreen extends StatefulWidget {
+  final ProductModel product;
+
+  const AddScannedProductScreen({
     super.key,
-    this.prefilledBarcode,
+    required this.product,
   });
 
-  final String? prefilledBarcode;
-
   @override
-  State<AddManualProductScreen> createState() => _AddManualProductScreenState();
+  State<AddScannedProductScreen> createState() =>
+      _AddScannedProductScreenState();
 }
 
-class _AddManualProductScreenState extends State<AddManualProductScreen> {
+class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _imagePicker = ImagePicker();
 
-  late final TextEditingController _barcodeController;
-  final _nameController = TextEditingController();
-  final _brandController = TextEditingController();
-  final _quantityController = TextEditingController();
-  final _tagsController = TextEditingController();
-
-  final _amountController = TextEditingController(text: '1');
+  final _amountController = TextEditingController();
   final _notesController = TextEditingController();
+  final _imagePicker = ImagePicker();
 
   XFile? _pickedImage;
 
@@ -44,95 +37,51 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
   String _selectedUnit = 'pcs';
   DateTime? _expirationDate;
 
-  @override
-  void initState() {
-    super.initState();
+  bool _isSaving = false;
 
-    _barcodeController = TextEditingController(
-      text: widget.prefilledBarcode ?? '',
-    );
-  }
+  static const _categories = [
+    _OptionItem('dairy', 'Dairy'),
+    _OptionItem('meat', 'Meat'),
+    _OptionItem('seafood', 'Seafood'),
+    _OptionItem('fruits', 'Fruits'),
+    _OptionItem('vegetables', 'Vegetables'),
+    _OptionItem('bakery', 'Bakery'),
+    _OptionItem('grains', 'Grains'),
+    _OptionItem('beverages', 'Beverages'),
+    _OptionItem('snacks', 'Snacks'),
+    _OptionItem('frozen', 'Frozen'),
+    _OptionItem('canned', 'Canned'),
+    _OptionItem('cooked_food', 'Cooked food'),
+    _OptionItem('leftovers', 'Leftovers'),
+    _OptionItem('condiments', 'Condiments'),
+    _OptionItem('other', 'Other'),
+  ];
+
+  static const _locations = [
+    _OptionItem('fridge', 'Fridge'),
+    _OptionItem('freezer', 'Freezer'),
+    _OptionItem('pantry', 'Pantry'),
+    _OptionItem('counter', 'Counter'),
+    _OptionItem('other', 'Other'),
+  ];
+
+  static const _units = [
+    _OptionItem('pcs', 'pcs'),
+    _OptionItem('g', 'g'),
+    _OptionItem('kg', 'kg'),
+    _OptionItem('ml', 'ml'),
+    _OptionItem('l', 'l'),
+    _OptionItem('pack', 'pack'),
+    _OptionItem('bottle', 'bottle'),
+    _OptionItem('can', 'can'),
+    _OptionItem('other', 'other'),
+  ];
 
   @override
   void dispose() {
-    _barcodeController.dispose();
-    _nameController.dispose();
-    _brandController.dispose();
-    _quantityController.dispose();
-    _tagsController.dispose();
     _amountController.dispose();
     _notesController.dispose();
     super.dispose();
-  }
-
-  Future<void> _takePhoto() async {
-    final pickedImage = await _imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 75,
-      maxWidth: 1200,
-    );
-
-    if (pickedImage == null) return;
-    if (!mounted) return;
-
-    setState(() {
-      _pickedImage = pickedImage;
-    });
-  }
-
-  void _removePhoto() {
-    setState(() {
-      _pickedImage = null;
-    });
-  }
-
-  void _submit() {
-    final isValid = _formKey.currentState?.validate() ?? false;
-
-    if (!isValid) return;
-
-    if (_expirationDate == null) {
-      _showMessage('Please select expiration date');
-      return;
-    }
-
-    final amount = double.tryParse(_amountController.text.trim());
-
-    if (amount == null || amount <= 0) {
-      _showMessage('Please enter valid amount');
-      return;
-    }
-
-    final tags = _tagsController.text
-        .split(',')
-        .map((tag) => tag.trim())
-        .where((tag) => tag.isNotEmpty)
-        .toList();
-
-    context.read<AddManualProductBloc>().add(
-      AddManualProductSaveRequested(
-        productData: ManualProductCreateModel(
-          barcode: _cleanOptionalText(_barcodeController.text),
-          name: _nameController.text.trim(),
-          brand: _cleanOptionalText(_brandController.text),
-          tags: tags,
-          imageUrl: null,
-          quantity: _cleanOptionalText(_quantityController.text),
-        ),
-        inventoryData: InventoryItemCreateModel(
-          productId: null,
-          barcode: _cleanOptionalText(_barcodeController.text),
-          customName: null,
-          category: _selectedCategory,
-          notes: _cleanOptionalText(_notesController.text),
-          location: _selectedLocation,
-          amount: amount,
-          unit: _selectedUnit,
-          expirationDate: _expirationDate!,
-        ),
-        imagePath: _pickedImage?.path,
-      ),
-    );
   }
 
   Future<void> _pickExpirationDate() async {
@@ -151,6 +100,69 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
     setState(() {
       _expirationDate = pickedDate;
     });
+  }
+
+  Future<void> _takePhoto() async {
+    if (_isSaving) return;
+
+    final pickedImage = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 75,
+      maxWidth: 1200,
+    );
+
+    if (pickedImage == null) return;
+    if (!mounted) return;
+
+    setState(() {
+      _pickedImage = pickedImage;
+    });
+  }
+
+  void _removePhoto() {
+    if (_isSaving) return;
+
+    setState(() {
+      _pickedImage = null;
+    });
+  }
+
+
+  void _saveProductToInventory() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+
+    if (!isValid) return;
+
+    if (_expirationDate == null) {
+      _showMessage('Please select expiration date');
+      return;
+    }
+
+    final amount = double.tryParse(_amountController.text.trim());
+
+    if (amount == null || amount <= 0) {
+      _showMessage('Please enter valid amount');
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    context.read<InventoryBloc>().add(
+      InventoryItemCreateRequested(
+        data: InventoryItemCreateModel(
+          productId: widget.product.id,
+          barcode: widget.product.barcode,
+          customName: null,
+          category: _selectedCategory,
+          notes: _cleanOptionalText(_notesController.text),
+          location: _selectedLocation,
+          amount: amount,
+          unit: _selectedUnit,
+          expirationDate: _expirationDate!,
+        ),
+        imagePath: _pickedImage?.path,
+      ),
+    );
   }
 
   String? _cleanOptionalText(String value) {
@@ -173,155 +185,69 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AddManualProductBloc, AddManualProductState>(
+    return BlocListener<InventoryBloc, InventoryState>(
       listener: (context, state) {
-        if (state is AddManualProductSuccess) {
-          context.read<InventoryBloc>().add(
-            const InventoryLoadRequested(),
-          );
+        if (!_isSaving) return;
 
-          context.router.maybePop(state.item);
+        if (state is InventoryLoadSuccess) {
+          setState(() => _isSaving = false);
+
+          context.router.popUntilRoot();
         }
 
-        if (state is AddManualProductFailure) {
+        if (state is InventoryFailure) {
+          setState(() => _isSaving = false);
+
           _showMessage(state.message);
         }
       },
-      child: BlocBuilder<AddManualProductBloc, AddManualProductState>(
-        builder: (context, state) {
-          final isSaving = state is AddManualProductSaving;
-
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: SafeArea(
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              children: [
+                _Header(
+                  onBack: () {
+                    if (_isSaving) return;
+                    context.router.maybePop();
+                  },
+                  onSave: _isSaving ? null : _saveProductToInventory,
+                  isSaving: _isSaving,
+                ),
+                const SizedBox(height: 24),
+                _ProductPreviewCard(
+                  product: widget.product,
+                ),
+                const SizedBox(height: 18),
+                _ProductPhotoPicker(
+                  localImagePath: _pickedImage?.path,
+                  onTakePhoto: _isSaving ? null : _takePhoto,
+                  onRemovePhoto: _isSaving || _pickedImage == null ? null : _removePhoto,
+                ),
+                const SizedBox(height: 18),
+                _FormCard(
                   children: [
-                    _Header(
-                      onBack: () {
-                        if (isSaving) return;
-
-                        context.router.maybePop();
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _TextInput(
-                      controller: _nameController,
-                      label: 'Product name *',
-                      icon: Icons.shopping_bag_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.isEmpty) {
-                          return 'Product name is required';
-                        }
-
-                        if (text.length > 150) {
-                          return 'Maximum 150 characters';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _barcodeController,
-                      label: 'Barcode',
-                      icon: Icons.qr_code_2_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 50) {
-                          return 'Maximum 50 characters';
-                        }
-
-                        if (text.contains(' ')) {
-                          return 'Barcode cannot contain spaces';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _brandController,
-                      label: 'Brand',
-                      icon: Icons.store_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 100) {
-                          return 'Maximum 100 characters';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _quantityController,
-                      label: 'Product quantity, e.g. 1L or 500g',
-                      icon: Icons.scale_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 50) {
-                          return 'Maximum 50 characters';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _tagsController,
-                      label: 'Tags, separated by comma',
-                      icon: Icons.sell_outlined,
-                    ),
-                    const SizedBox(height: 12),
-                    _ProductPhotoPicker(
-                      localImagePath: _pickedImage?.path,
-                      onTakePhoto: isSaving ? null : _takePhoto,
-                      onRemovePhoto:
-                      isSaving || _pickedImage == null ? null : _removePhoto,
-                    ),
-                    const SizedBox(height: 24),
-                    _DropdownInput(
-                      label: 'Category',
-                      icon: Icons.category_outlined,
-                      value: _selectedCategory,
-                      items: const [
-                        _OptionItem('dairy', 'Dairy'),
-                        _OptionItem('meat', 'Meat'),
-                        _OptionItem('seafood', 'Seafood'),
-                        _OptionItem('fruits', 'Fruits'),
-                        _OptionItem('vegetables', 'Vegetables'),
-                        _OptionItem('bakery', 'Bakery'),
-                        _OptionItem('grains', 'Grains'),
-                        _OptionItem('beverages', 'Beverages'),
-                        _OptionItem('snacks', 'Snacks'),
-                        _OptionItem('frozen', 'Frozen'),
-                        _OptionItem('canned', 'Canned'),
-                        _OptionItem('cooked_food', 'Cooked food'),
-                        _OptionItem('leftovers', 'Leftovers'),
-                        _OptionItem('condiments', 'Condiments'),
-                        _OptionItem('other', 'Other'),
-                      ],
-                      onChanged: (value) {
-                        setState(() => _selectedCategory = value);
-                      },
-                    ),
-                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: _TextInput(
                             controller: _amountController,
-                            label: 'Amount *',
+                            label: 'Amount',
                             icon: Icons.numbers_outlined,
                             keyboardType: TextInputType.number,
+                            validator: (value) {
+                              final text = value?.trim() ?? '';
+                              final amount = double.tryParse(text);
+
+                              if (amount == null || amount <= 0) {
+                                return 'Invalid amount';
+                              }
+
+                              return null;
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -330,17 +256,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                             label: 'Unit',
                             icon: Icons.straighten_outlined,
                             value: _selectedUnit,
-                            items: const [
-                              _OptionItem('pcs', 'pcs'),
-                              _OptionItem('g', 'g'),
-                              _OptionItem('kg', 'kg'),
-                              _OptionItem('ml', 'ml'),
-                              _OptionItem('l', 'l'),
-                              _OptionItem('pack', 'pack'),
-                              _OptionItem('bottle', 'bottle'),
-                              _OptionItem('can', 'can'),
-                              _OptionItem('other', 'other'),
-                            ],
+                            items: _units,
                             onChanged: (value) {
                               setState(() => _selectedUnit = value);
                             },
@@ -349,25 +265,29 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
+                    _DateInput(
+                      selectedDate: _expirationDate,
+                      onTap: _pickExpirationDate,
+                    ),
+                    const SizedBox(height: 12),
+                    _DropdownInput(
+                      label: 'Category',
+                      icon: Icons.category_outlined,
+                      value: _selectedCategory,
+                      items: _categories,
+                      onChanged: (value) {
+                        setState(() => _selectedCategory = value);
+                      },
+                    ),
+                    const SizedBox(height: 12),
                     _DropdownInput(
                       label: 'Location',
                       icon: Icons.location_on_outlined,
                       value: _selectedLocation,
-                      items: const [
-                        _OptionItem('fridge', 'Fridge'),
-                        _OptionItem('freezer', 'Freezer'),
-                        _OptionItem('pantry', 'Pantry'),
-                        _OptionItem('counter', 'Counter'),
-                        _OptionItem('other', 'Other'),
-                      ],
+                      items: _locations,
                       onChanged: (value) {
                         setState(() => _selectedLocation = value);
                       },
-                    ),
-                    const SizedBox(height: 12),
-                    _DateInput(
-                      selectedDate: _expirationDate,
-                      onTap: _pickExpirationDate,
                     ),
                     const SizedBox(height: 12),
                     _TextInput(
@@ -385,43 +305,12 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 28),
-                    SizedBox(
-                      height: 54,
-                      child: ElevatedButton(
-                        onPressed: isSaving ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.bottomNavigationBar,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                        ),
-                        child: isSaving
-                            ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            color: Colors.white,
-                          ),
-                        )
-                            : const Text(
-                          'Save product',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
-              ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -429,35 +318,26 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
 class _Header extends StatelessWidget {
   final VoidCallback onBack;
+  final VoidCallback? onSave;
+  final bool isSaving;
 
   const _Header({
     required this.onBack,
+    required this.onSave,
+    required this.isSaving,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        InkWell(
+        _HeaderButton(
+          icon: Icons.chevron_left,
           onTap: onBack,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.categoryActiveFill,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.chevron_left,
-              color: AppColors.bottomNavigationBar,
-              size: 28,
-            ),
-          ),
         ),
         const Expanded(
           child: Text(
-            'Add Product',
+            'Add Scanned Product',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF1F2147),
@@ -466,11 +346,150 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 42),
+        _HeaderButton(
+          icon: Icons.check_circle_outline,
+          onTap: onSave,
+          isLoading: isSaving,
+        ),
       ],
     );
   }
 }
+
+class _HeaderButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+  final bool isLoading;
+
+  const _HeaderButton({
+    required this.icon,
+    required this.onTap,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: isLoading ? null : onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: AppColors.categoryActiveFill,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: isLoading
+            ? const Padding(
+          padding: EdgeInsets.all(11),
+          child: CircularProgressIndicator(
+            strokeWidth: 2.2,
+            color: AppColors.bottomNavigationBar,
+          ),
+        )
+            : Icon(
+          icon,
+          color: AppColors.bottomNavigationBar,
+          size: 24,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductPreviewCard extends StatelessWidget {
+  final ProductModel product;
+
+  const _ProductPreviewCard({
+    required this.product,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 68,
+            height: 68,
+            decoration: BoxDecoration(
+              color: AppColors.categoryActiveFill,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: product.imageUrl == null || product.imageUrl!.isEmpty
+                ? const Icon(
+              Icons.inventory_2_outlined,
+              color: AppColors.bottomNavigationBar,
+              size: 34,
+            )
+                : ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.network(
+                product.imageUrl!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textDark,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                if (product.brand != null && product.brand!.isNotEmpty) ...[
+                  const SizedBox(height: 5),
+                  Text(
+                    product.brand!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+                if (product.barcode != null && product.barcode!.isNotEmpty) ...[
+                  const SizedBox(height: 5),
+                  Text(
+                    product.barcode!,
+                    style: const TextStyle(
+                      color: Colors.black38,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class _ProductPhotoPicker extends StatelessWidget {
   final String? localImagePath;
@@ -566,6 +585,36 @@ class _ProductPhotoPicker extends StatelessWidget {
   }
 }
 
+
+class _FormCard extends StatelessWidget {
+  final List<Widget> children;
+
+  const _FormCard({
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+}
+
 class _TextInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
@@ -648,18 +697,20 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasDate = selectedDate != null;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
         decoration: _inputDecoration(
-          label: 'Expiration date *',
+          label: 'Expiration date',
           icon: Icons.calendar_month_outlined,
         ),
         child: Text(
-          selectedDate == null ? 'Select date' : _formatDate(selectedDate!),
+          hasDate ? _formatDate(selectedDate!) : 'Select date',
           style: TextStyle(
-            color: selectedDate == null ? Colors.black45 : AppColors.textDark,
+            color: hasDate ? AppColors.textDark : Colors.black45,
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),

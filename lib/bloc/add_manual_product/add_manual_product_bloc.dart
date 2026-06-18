@@ -43,9 +43,24 @@ class AddManualProductBloc
         expirationDate: event.inventoryData.expirationDate,
       );
 
-      await _inventoryRepository.createInventoryItem(inventoryData);
+      var createdItem = await _inventoryRepository.createInventoryItem(
+        inventoryData,
+      );
 
-      emit(const AddManualProductSuccess());
+      final imagePath = event.imagePath;
+
+      if (imagePath != null && imagePath.isNotEmpty) {
+        createdItem = await _inventoryRepository.uploadInventoryItemImage(
+          itemId: createdItem.id,
+          imagePath: imagePath,
+        );
+      }
+
+      emit(
+        AddManualProductSuccess(
+          item: createdItem,
+        ),
+      );
     } catch (error) {
       emit(
         AddManualProductFailure(

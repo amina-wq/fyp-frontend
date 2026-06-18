@@ -19,6 +19,13 @@ abstract class InventoryRepositoryInterface {
     required InventoryItemUpdateModel data,
   });
 
+  Future<InventoryItemModel> uploadInventoryItemImage({
+    required String itemId,
+    required String imagePath,
+  });
+
+  Future<InventoryItemModel> deleteInventoryItemImage(String itemId);
+
   Future<InventoryItemModel> consumeInventoryItem(String itemId);
 
   Future<InventoryItemModel> wasteInventoryItem(String itemId);

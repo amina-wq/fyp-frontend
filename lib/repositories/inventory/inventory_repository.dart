@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
-
+import 'package:path/path.dart' as path;
 import '../../core/constants/api_constants.dart';
 import '../../core/network/api_client.dart';
 import '../../core/storage/token_storage.dart';
 import '../../models/inventory/inventory.dart';
 import 'inventory_repository_interface.dart';
+
 
 class InventoryRepository implements InventoryRepositoryInterface {
   final ApiClient _apiClient;
@@ -125,6 +126,57 @@ class InventoryRepository implements InventoryRepositoryInterface {
       throw Exception(_extractErrorMessage(error));
     }
   }
+
+  @override
+  Future<InventoryItemModel> uploadInventoryItemImage({
+    required String itemId,
+    required String imagePath,
+  }) async {
+    try {
+      final accessToken = await _getAccessToken();
+
+      final fileName = path.basename(imagePath);
+
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(
+          imagePath,
+          filename: fileName,
+        ),
+      });
+
+      final response = await _apiClient.postMultipart(
+        ApiConstants.inventoryItemImageEndpoint(itemId),
+        data: formData,
+        accessToken: accessToken,
+      );
+
+      return InventoryItemModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractErrorMessage(error));
+    }
+  }
+
+
+  @override
+  Future<InventoryItemModel> deleteInventoryItemImage(String itemId) async {
+    try {
+      final accessToken = await _getAccessToken();
+
+      final response = await _apiClient.delete(
+        ApiConstants.inventoryItemImageEndpoint(itemId),
+        accessToken: accessToken,
+      );
+
+      return InventoryItemModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractErrorMessage(error));
+    }
+  }
+
 
   @override
   Future<InventoryItemModel> consumeInventoryItem(String itemId) async {

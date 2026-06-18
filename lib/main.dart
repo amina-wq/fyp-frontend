@@ -115,6 +115,11 @@ class FoodTrackApp extends StatelessWidget {
               inventoryRepository: context.read<InventoryRepositoryInterface>(),
             ),
           ),
+          BlocProvider<ScannerBloc>(
+            create: (context) => ScannerBloc(
+              productRepository: context.read<ProductRepositoryInterface>(),
+            ),
+          ),
         ],
         child: MaterialApp.router(
           title: 'FoodTrack',

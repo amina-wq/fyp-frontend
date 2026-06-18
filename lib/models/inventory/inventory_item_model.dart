@@ -5,6 +5,9 @@ class InventoryItemModel {
   final String? barcode;
   final String? customName;
   final String displayName;
+  final String? itemImageUrl;
+  final String? productImageUrl;
+  final String? productBrand;
   final String category;
   final String? notes;
   final String location;
@@ -23,6 +26,9 @@ class InventoryItemModel {
     required this.barcode,
     required this.customName,
     required this.displayName,
+    required this.itemImageUrl,
+    required this.productImageUrl,
+    required this.productBrand,
     required this.category,
     required this.notes,
     required this.location,
@@ -43,6 +49,9 @@ class InventoryItemModel {
       barcode: json['barcode'] as String?,
       customName: json['custom_name'] as String?,
       displayName: json['display_name'] as String,
+      itemImageUrl: json['item_image_url'] as String?,
+      productImageUrl: json['product_image_url'] as String?,
+      productBrand: json['product_brand'] as String?,
       category: json['category'] as String,
       notes: json['notes'] as String?,
       location: json['location'] as String,

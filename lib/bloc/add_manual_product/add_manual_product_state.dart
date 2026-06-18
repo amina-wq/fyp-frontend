@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../models/inventory/inventory.dart';
 
 abstract class AddManualProductState extends Equatable {
   const AddManualProductState();
@@ -16,7 +17,14 @@ class AddManualProductSaving extends AddManualProductState {
 }
 
 class AddManualProductSuccess extends AddManualProductState {
-  const AddManualProductSuccess();
+  final InventoryItemModel item;
+
+  const AddManualProductSuccess({
+    required this.item,
+  });
+
+  @override
+  List<Object?> get props => [item];
 }
 
 class AddManualProductFailure extends AddManualProductState {

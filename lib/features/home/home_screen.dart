@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/inventory/inventory.dart';
 import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
+import '../../router/router.dart';
+import '../../core/constants/api_constants.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
@@ -717,89 +719,111 @@ class _InventoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _colorsForExpiryState(item.expiryState);
+    final imageUrl = _bestImageUrlForItem(item);
 
-    return Container(
-      height: 94,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+    return InkWell(
+        onTap: () {
+          context.router.push(
+            InventoryItemDetailsRoute(item: item),
+          );
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+        height: 94,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
         color: const Color(0xFFF8F5F6),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: colors.border,
-          width: 2,
+        color: colors.border,
+        width: 2,
         ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: colors.fill,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              _iconForCategory(item.category),
-              color: const Color(0xFF6BC96A),
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: DefaultTextStyle(
-              style: const TextStyle(
-                color: Color(0xFF52515B),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: colors.fill,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    item.displayName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF55545D),
-                    ),
-                  ),
-                  const SizedBox(height: 7),
-                  Text(
-                    _formatAmount(item.amount, item.unit),
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _formatLocation(item.location),
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Added ${_formatDate(item.addedAt)}',
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF8A8991),
-                    ),
-                  ),
-                ],
+              child: imageUrl == null
+                  ? Icon(
+                _iconForCategory(item.category),
+                color: const Color(0xFF6BC96A),
+                size: 28,
+              )
+                  : Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    _iconForCategory(item.category),
+                    color: const Color(0xFF6BC96A),
+                    size: 28,
+                  );
+                },
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          _ExpiryStatus(
-            expiryState: item.expiryState,
-          ),
-        ],
-      ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: DefaultTextStyle(
+                style: const TextStyle(
+                  color: Color(0xFF52515B),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        height: 1,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF55545D),
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Text(
+                      _formatAmount(item.amount, item.unit),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _formatLocation(item.location),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Added ${_formatDate(item.addedAt)}',
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF8A8991),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            _ExpiryStatus(
+              expiryState: item.expiryState,
+            ),
+          ],
+        ),
+      )
     );
   }
 }
@@ -1059,4 +1083,17 @@ String _formatDate(DateTime date) {
   ];
 
   return '${date.day} ${months[date.month - 1]} ${date.year}';
+}
+
+
+String? _bestImageUrlForItem(InventoryItemModel item) {
+  if (item.itemImageUrl != null && item.itemImageUrl!.isNotEmpty) {
+    return ApiConstants.resolveImageUrl(item.itemImageUrl);
+  }
+
+  if (item.productImageUrl != null && item.productImageUrl!.isNotEmpty) {
+    return ApiConstants.resolveImageUrl(item.productImageUrl);
+  }
+
+  return null;
 }

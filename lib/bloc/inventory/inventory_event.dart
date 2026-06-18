@@ -31,13 +31,18 @@ class InventoryFilterChanged extends InventoryEvent {
 
 class InventoryItemCreateRequested extends InventoryEvent {
   final InventoryItemCreateModel data;
+  final String? imagePath;
 
   const InventoryItemCreateRequested({
     required this.data,
+    this.imagePath,
   });
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [
+    data,
+    imagePath,
+  ];
 }
 
 class InventoryItemUpdateRequested extends InventoryEvent {
@@ -55,6 +60,35 @@ class InventoryItemUpdateRequested extends InventoryEvent {
     data,
   ];
 }
+
+
+class InventoryItemImageUploadRequested extends InventoryEvent {
+  final String itemId;
+  final String imagePath;
+
+  const InventoryItemImageUploadRequested({
+    required this.itemId,
+    required this.imagePath,
+  });
+
+  @override
+  List<Object?> get props => [
+    itemId,
+    imagePath,
+  ];
+}
+
+class InventoryItemImageDeleteRequested extends InventoryEvent {
+  final String itemId;
+
+  const InventoryItemImageDeleteRequested({
+    required this.itemId,
+  });
+
+  @override
+  List<Object?> get props => [itemId];
+}
+
 
 class InventoryItemConsumeRequested extends InventoryEvent {
   final String itemId;

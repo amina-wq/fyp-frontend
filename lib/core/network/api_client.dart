@@ -46,6 +46,26 @@ class ApiClient {
     );
   }
 
+
+  Future<Response<dynamic>> postMultipart(
+      String path, {
+        required FormData data,
+        String? accessToken,
+      }) async {
+    return _dio.post(
+      path,
+      data: data,
+      options: Options(
+        contentType: 'multipart/form-data',
+        headers: {
+          if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+  }
+
+
   Future<Response<dynamic>> put(
       String path, {
         Object? data,

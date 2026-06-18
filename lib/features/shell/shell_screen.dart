@@ -51,8 +51,9 @@ class ShellScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
 
-                      // Later:
-                      // context.router.push(const ScannerRoute());
+                      context.router.push(
+                        ScannerRoute(),
+                      );
                     },
                   ),
                 ),

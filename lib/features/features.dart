@@ -5,3 +5,4 @@ export 'inventory/inventory.dart';
 export 'shopping/shopping.dart';
 export 'recipes/recipes.dart';
 export 'settings/settings.dart';
+export 'scanner/scanner.dart';

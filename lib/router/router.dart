@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../features/features.dart';
 import '../repositories/auth/auth_repository_interface.dart';
 import 'guards/auth_route_guard.dart';
+import '../models/inventory/inventory.dart';
+import '../models/product/product.dart';
 
 part 'router.gr.dart';
 
@@ -53,6 +55,26 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: AddManualProductRoute.page,
       path: '/add-manual-product',
+      guards: [_authRouteGuard],
+    ),
+    AutoRoute(
+      page: ScannerRoute.page,
+      path: '/scanner',
+      guards: [_authRouteGuard],
+    ),
+    AutoRoute(
+      page: AddScannedProductRoute.page,
+      path: '/add-scanned-product',
+      guards: [_authRouteGuard],
+    ),
+    AutoRoute(
+      page: InventoryItemDetailsRoute.page,
+      path: '/inventory-item-details',
+      guards: [_authRouteGuard],
+    ),
+    AutoRoute(
+      page: EditInventoryItemRoute.page,
+      path: '/edit-inventory-item',
       guards: [_authRouteGuard],
     ),
   ];

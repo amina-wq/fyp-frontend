@@ -13,15 +13,18 @@ abstract class AddManualProductEvent extends Equatable {
 class AddManualProductSaveRequested extends AddManualProductEvent {
   final ManualProductCreateModel productData;
   final InventoryItemCreateModel inventoryData;
+  final String? imagePath;
 
   const AddManualProductSaveRequested({
     required this.productData,
     required this.inventoryData,
+    this.imagePath,
   });
 
   @override
   List<Object?> get props => [
     productData,
     inventoryData,
+    imagePath,
   ];
 }
