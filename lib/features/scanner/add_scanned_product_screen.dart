@@ -8,6 +8,7 @@ import '../../bloc/inventory/inventory.dart';
 import '../../models/inventory/inventory.dart';
 import '../../models/product/product.dart';
 import '../../ui/theme/app_colors.dart';
+import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
 class AddScannedProductScreen extends StatefulWidget {
@@ -436,10 +437,15 @@ class _ProductPreviewCard extends StatelessWidget {
             )
                 : ClipRRect(
               borderRadius: BorderRadius.circular(18),
-              child: Image.network(
-                product.imageUrl!,
+              child:AppCachedNetworkImage(
+                imageUrl: product.imageUrl!,
                 fit: BoxFit.cover,
-              ),
+                fallback: const Icon(
+                  Icons.inventory_2_outlined,
+                  color: AppColors.bottomNavigationBar,
+                  size: 34,
+                ),
+              )
             ),
           ),
           const SizedBox(width: 14),

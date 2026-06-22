@@ -9,6 +9,7 @@ import '../../bloc/inventory/inventory.dart';
 import '../../core/constants/api_constants.dart';
 import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
+import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
 class EditInventoryItemScreen extends StatefulWidget {
@@ -550,12 +551,10 @@ class _ProductImagePicker extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
                 else if (hasNetworkImage)
-                  Image.network(
-                    imageUrl!,
+                  AppCachedNetworkImage(
+                    imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _CategoryIcon(category: category);
-                    },
+                    fallback: _CategoryIcon(category: category),
                   )
                 else
                   _CategoryIcon(category: category),

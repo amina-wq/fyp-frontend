@@ -7,6 +7,7 @@ import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../router/router.dart';
 import '../../core/constants/api_constants.dart';
+import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
@@ -755,16 +756,14 @@ class _InventoryCard extends StatelessWidget {
                 color: const Color(0xFF6BC96A),
                 size: 28,
               )
-                  : Image.network(
-                imageUrl,
+                  : AppCachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    _iconForCategory(item.category),
-                    color: const Color(0xFF6BC96A),
-                    size: 28,
-                  );
-                },
+                fallback: Icon(
+                  _iconForCategory(item.category),
+                  color: const Color(0xFF6BC96A),
+                  size: 28,
+                ),
               ),
             ),
             const SizedBox(width: 12),

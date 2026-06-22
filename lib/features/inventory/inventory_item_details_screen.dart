@@ -5,6 +5,7 @@ import '../../core/constants/api_constants.dart';
 import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../router/router.dart';
+import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
 class InventoryItemDetailsScreen extends StatefulWidget {
@@ -210,16 +211,14 @@ class _ProductImagePlaceholder extends StatelessWidget {
           ],
         ),
         child: hasImage
-            ? Image.network(
-          imageUrl!,
+            ? AppCachedNetworkImage(
+          imageUrl: imageUrl!,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Icon(
-              _iconForCategory(category),
-              size: 78,
-              color: AppColors.bottomNavigationBar,
-            );
-          },
+          fallback: Icon(
+            _iconForCategory(category),
+            size: 78,
+            color: AppColors.bottomNavigationBar,
+          ),
         )
             : Icon(
           _iconForCategory(category),
