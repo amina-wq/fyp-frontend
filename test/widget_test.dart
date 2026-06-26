@@ -7,6 +7,7 @@ import 'package:fyp_frontend/main.dart';
 import 'package:fyp_frontend/repositories/auth/auth_repository.dart';
 import 'package:fyp_frontend/repositories/products/product_repository.dart';
 import 'package:fyp_frontend/repositories/inventory/inventory_repository.dart';
+import 'package:fyp_frontend/repositories/shopping_list/shopping_list_repository.dart';
 import 'package:fyp_frontend/router/router.dart';
 
 void main() {
@@ -33,6 +34,11 @@ void main() {
       tokenStorage: tokenStorage,
     );
 
+    final shopppingListRepository = ShoppingListRepository(
+      apiClient: apiClient,
+      tokenStorage: tokenStorage,
+    );
+
     final appRouter = AppRouter(
       authRepository: authRepository,
     );
@@ -44,6 +50,7 @@ void main() {
         authRepository: authRepository,
         productRepository: productRepository,
         inventoryRepository: inventoryRepository,
+        shoppingListRepository:shopppingListRepository,
         appRouter: appRouter,
       ),
     );

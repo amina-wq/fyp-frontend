@@ -27,21 +27,40 @@ class AddManualProductBloc
     emit(const AddManualProductSaving());
 
     try {
-      final createdProduct = await _productRepository.createManualProduct(
-        event.productData,
-      );
+      final barcode = event.productData.barcode?.trim();
+      final hasBarcode = barcode != null && barcode.isNotEmpty;
 
-      final inventoryData = InventoryItemCreateModel(
-        productId: createdProduct.id,
-        barcode: createdProduct.barcode,
-        customName: event.inventoryData.customName,
-        category: event.inventoryData.category,
-        notes: event.inventoryData.notes,
-        location: event.inventoryData.location,
-        amount: event.inventoryData.amount,
-        unit: event.inventoryData.unit,
-        expirationDate: event.inventoryData.expirationDate,
-      );
+      InventoryItemCreateModel inventoryData;
+
+      if (hasBarcode) {
+        final createdProduct = await _productRepository.createManualProduct(
+          event.productData,
+        );
+
+        inventoryData = InventoryItemCreateModel(
+          productId: createdProduct.id,
+          barcode: createdProduct.barcode,
+          customName: event.inventoryData.customName,
+          category: event.inventoryData.category,
+          notes: event.inventoryData.notes,
+          location: event.inventoryData.location,
+          amount: event.inventoryData.amount,
+          unit: event.inventoryData.unit,
+          expirationDate: event.inventoryData.expirationDate,
+        );
+      } else {
+        inventoryData = InventoryItemCreateModel(
+          productId: null,
+          barcode: null,
+          customName: event.productData.name,
+          category: event.inventoryData.category,
+          notes: event.inventoryData.notes,
+          location: event.inventoryData.location,
+          amount: event.inventoryData.amount,
+          unit: event.inventoryData.unit,
+          expirationDate: event.inventoryData.expirationDate,
+        );
+      }
 
       var createdItem = await _inventoryRepository.createInventoryItem(
         inventoryData,

@@ -9,6 +9,7 @@ import 'repositories/repositories.dart';
 import 'repositories/auth/auth_repository_interface.dart';
 import 'repositories/inventory/inventory_repository_interface.dart';
 import 'repositories/products/product_repository_interface.dart';
+import 'repositories/shopping_list/shopping_list_repository_interface.dart';
 import 'router/router.dart';
 import 'ui/ui.dart';
 
@@ -43,6 +44,11 @@ void main() {
     tokenStorage: tokenStorage,
   );
 
+  final shoppingListRepository = ShoppingListRepository(
+    apiClient: apiClient,
+    tokenStorage: tokenStorage,
+  );
+
   final appRouter = AppRouter(
     authRepository: authRepository,
   );
@@ -54,6 +60,7 @@ void main() {
       authRepository: authRepository,
       productRepository: productRepository,
       inventoryRepository: inventoryRepository,
+      shoppingListRepository: shoppingListRepository,
       appRouter: appRouter,
     ),
   );
@@ -65,6 +72,7 @@ class FoodTrackApp extends StatelessWidget {
   final AuthRepositoryInterface authRepository;
   final ProductRepositoryInterface productRepository;
   final InventoryRepositoryInterface inventoryRepository;
+  final ShoppingListRepositoryInterface shoppingListRepository;
   final AppRouter appRouter;
 
   const FoodTrackApp({
@@ -74,6 +82,7 @@ class FoodTrackApp extends StatelessWidget {
     required this.authRepository,
     required this.productRepository,
     required this.inventoryRepository,
+    required this.shoppingListRepository,
     required this.appRouter,
   });
 
@@ -118,6 +127,11 @@ class FoodTrackApp extends StatelessWidget {
           BlocProvider<ScannerBloc>(
             create: (context) => ScannerBloc(
               productRepository: context.read<ProductRepositoryInterface>(),
+            ),
+          ),
+          BlocProvider<ShoppingListBloc>(
+            create: (context) => ShoppingListBloc(
+              shoppingListRepository: context.read<ShoppingListRepositoryInterface>(),
             ),
           ),
         ],

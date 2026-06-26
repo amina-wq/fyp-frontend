@@ -36,6 +36,18 @@ class ApiConstants {
     return '/inventory/$itemId/waste';
   }
 
+  static const String shoppingListEndpoint = '/shopping-list';
+
+  static String shoppingListItemByIdEndpoint(String itemId) {
+    return '/shopping-list/$itemId';
+  }
+
+  static String shoppingListItemCheckEndpoint(String itemId) {
+    return '/shopping-list/$itemId/check';
+  }
+
+  static const String shoppingListCheckedEndpoint = '/shopping-list/checked';
+
   static String resolveImageUrl(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty) {
       return '';
