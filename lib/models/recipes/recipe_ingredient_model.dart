@@ -37,10 +37,6 @@ class RecipeIngredientModel {
     return availabilityStatus == 'unknown_amount';
   }
 
-  bool get canBeAddedToShoppingList {
-    return isMissing || isInsufficient || isUnknownAmount;
-  }
-
   factory RecipeIngredientModel.fromJson(Map<String, dynamic> json) {
     return RecipeIngredientModel(
       id: json['id'] as int?,
