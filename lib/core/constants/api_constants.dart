@@ -48,6 +48,12 @@ class ApiConstants {
 
   static const String shoppingListCheckedEndpoint = '/shopping-list/checked';
 
+  static const String recipesByIngredientsEndpoint = '/recipes/by-ingredients';
+
+  static String recipeDetailsEndpoint(int spoonacularId) {
+    return '/recipes/$spoonacularId';
+  }
+
   static String resolveImageUrl(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty) {
       return '';

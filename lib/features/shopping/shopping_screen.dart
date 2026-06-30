@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/shopping_list/shopping_list.dart';
 import '../../models/shopping_list/shopping_list.dart';
+import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
 class ShoppingScreen extends StatefulWidget {
@@ -23,129 +24,17 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     );
   }
 
-  void _showAddItemDialog(BuildContext context) {
-    final nameController = TextEditingController();
-    final amountController = TextEditingController();
-
-    String selectedCategory = 'other';
-    String selectedUnit = 'pcs';
-
-    showDialog<void>(
+  Future<void> _openManualAddDialog() async {
+    await showAddToShoppingListDialog(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Add shopping item'),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Item name',
-                        hintText: 'Milk',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Amount',
-                        hintText: '2',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedUnit,
-                      decoration: const InputDecoration(
-                        labelText: 'Unit',
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'pcs', child: Text('pcs')),
-                        DropdownMenuItem(value: 'g', child: Text('g')),
-                        DropdownMenuItem(value: 'kg', child: Text('kg')),
-                        DropdownMenuItem(value: 'ml', child: Text('ml')),
-                        DropdownMenuItem(value: 'l', child: Text('l')),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) return;
-
-                        setState(() {
-                          selectedUnit = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      decoration: const InputDecoration(
-                        labelText: 'Category',
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'other', child: Text('Other')),
-                        DropdownMenuItem(value: 'dairy', child: Text('Dairy')),
-                        DropdownMenuItem(value: 'meat', child: Text('Meat')),
-                        DropdownMenuItem(
-                          value: 'vegetables',
-                          child: Text('Vegetables'),
-                        ),
-                        DropdownMenuItem(value: 'fruits', child: Text('Fruits')),
-                        DropdownMenuItem(value: 'grains', child: Text('Grains')),
-                        DropdownMenuItem(value: 'drinks', child: Text('Drinks')),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) return;
-
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-
-                if (name.isEmpty) {
-                  return;
-                }
-
-                final amount = double.tryParse(
-                  amountController.text.trim(),
-                );
-
-                context.read<ShoppingListBloc>().add(
-                  ShoppingListItemCreateRequested(
-                    item: ShoppingListItemCreateModel(
-                      name: name,
-                      category: selectedCategory,
-                      amount: amount,
-                      unit: selectedUnit,
-                    ),
-                  ),
-                );
-
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
+      initialName: '',
+      initialCategory: 'other',
+      source: 'manual',
+      sourceId: null,
+      initialAmount: null,
+      initialUnit: null,
+      allowNameEditing: true,
+      allowCategoryEditing: true,
     );
   }
 
@@ -167,8 +56,36 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
 
     if (state is ShoppingListLoaded) {
       if (state.items.isEmpty) {
-        return const Center(
-          child: Text('Shopping list is empty'),
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 56,
+                  color: Colors.black38,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Shopping list is empty',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                ElevatedButton.icon(
+                  onPressed: _openManualAddDialog,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add item'),
+                ),
+              ],
+            ),
+          ),
         );
       }
 
@@ -296,8 +213,14 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
+            centerTitle: false,
+            titleSpacing: 20,
             title: const Text('Shopping List'),
             actions: [
+              IconButton(
+                onPressed: _openManualAddDialog,
+                icon: const Icon(Icons.add),
+              ),
               IconButton(
                 onPressed: () {
                   context.read<ShoppingListBloc>().add(
@@ -315,10 +238,6 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                 icon: const Icon(Icons.cleaning_services_outlined),
               ),
             ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _showAddItemDialog(context),
-            child: const Icon(Icons.add),
           ),
           body: _buildBody(context, state),
         );

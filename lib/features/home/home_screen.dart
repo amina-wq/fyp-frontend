@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../bloc/auth/auth.dart';
 import '../../bloc/inventory/inventory.dart';
 import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
@@ -181,7 +182,19 @@ class _HomeContent extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
         children: [
-          const _WelcomeHeader(),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              String userName = 'User';
+
+              if (authState is AuthAuthenticated) {
+                userName = authState.user.name;
+              }
+
+              return _WelcomeHeader(
+                userName: userName,
+              );
+            },
+          ),
           const SizedBox(height: 26),
           _SectionTitle(
             title: 'Analytics',
@@ -224,14 +237,20 @@ class _HomeContent extends StatelessWidget {
 }
 
 class _WelcomeHeader extends StatelessWidget {
-  const _WelcomeHeader();
+  final String userName;
+
+  const _WelcomeHeader({
+    required this.userName,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final displayName = userName.trim().isEmpty ? 'User' : userName.trim();
+
+    return Center(
       child: Text(
-        'Welcome back, Amina!',
-        style: TextStyle(
+        'Welcome back, $displayName!',
+        style: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w800,
           color: Color(0xFF1F2147),

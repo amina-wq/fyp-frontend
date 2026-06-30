@@ -240,6 +240,56 @@ class InventoryItemDetailsRouteArgs {
 }
 
 /// generated route for
+/// [RecipeDetailScreen]
+class RecipeDetailRoute extends PageRouteInfo<RecipeDetailRouteArgs> {
+  RecipeDetailRoute({
+    Key? key,
+    required int spoonacularId,
+    List<PageRouteInfo>? children,
+  }) : super(
+         RecipeDetailRoute.name,
+         args: RecipeDetailRouteArgs(key: key, spoonacularId: spoonacularId),
+         initialChildren: children,
+       );
+
+  static const String name = 'RecipeDetailRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<RecipeDetailRouteArgs>();
+      return RecipeDetailScreen(
+        key: args.key,
+        spoonacularId: args.spoonacularId,
+      );
+    },
+  );
+}
+
+class RecipeDetailRouteArgs {
+  const RecipeDetailRouteArgs({this.key, required this.spoonacularId});
+
+  final Key? key;
+
+  final int spoonacularId;
+
+  @override
+  String toString() {
+    return 'RecipeDetailRouteArgs{key: $key, spoonacularId: $spoonacularId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RecipeDetailRouteArgs) return false;
+    return key == other.key && spoonacularId == other.spoonacularId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ spoonacularId.hashCode;
+}
+
+/// generated route for
 /// [RecipesScreen]
 class RecipesRoute extends PageRouteInfo<void> {
   const RecipesRoute({List<PageRouteInfo>? children})

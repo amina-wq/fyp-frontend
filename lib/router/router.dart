@@ -77,5 +77,10 @@ class AppRouter extends RootStackRouter {
       path: '/edit-inventory-item',
       guards: [_authRouteGuard],
     ),
+    AutoRoute(
+      page: RecipeDetailRoute.page,
+      path: '/recipe-detail',
+      guards: [_authRouteGuard],
+    ),
   ];
 }

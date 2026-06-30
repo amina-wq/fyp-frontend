@@ -43,6 +43,20 @@ class _InventoryItemDetailsScreenState
     });
   }
 
+  Future<void> _addToShoppingList() async {
+    await showAddToShoppingListDialog(
+      context: context,
+      initialName: _item.displayName,
+      initialCategory: _item.category,
+      source: 'inventory',
+      sourceId: _item.id,
+      initialAmount: _item.amount,
+      initialUnit: _item.unit,
+      allowNameEditing: false,
+      allowCategoryEditing: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +74,11 @@ class _InventoryItemDetailsScreenState
               category: _item.category,
               imageUrl: _bestImageUrlForItem(_item),
             ),
-            const SizedBox(height: 26),
+            const SizedBox(height: 22),
+            _AddToShoppingListButton(
+              onTap: _addToShoppingList,
+            ),
+            const SizedBox(height: 18),
             _DetailsCard(
               children: [
                 _DetailsField(
@@ -224,6 +242,43 @@ class _ProductImagePlaceholder extends StatelessWidget {
           _iconForCategory(category),
           size: 78,
           color: AppColors.bottomNavigationBar,
+        ),
+      ),
+    );
+  }
+}
+
+class _AddToShoppingListButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _AddToShoppingListButton({
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 54,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: const Icon(
+          Icons.playlist_add_outlined,
+          size: 22,
+        ),
+        label: const Text(
+          'Add to Shopping List',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.bottomNavigationBar,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
         ),
       ),
     );
