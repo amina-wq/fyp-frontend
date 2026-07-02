@@ -1,3 +1,5 @@
+import '../categories/categories.dart';
+
 class InventoryItemModel {
   final String id;
   final String userId;
@@ -8,7 +10,7 @@ class InventoryItemModel {
   final String? itemImageUrl;
   final String? productImageUrl;
   final String? productBrand;
-  final String category;
+  final CategoryModel category;
   final String? notes;
   final String location;
   final double amount;
@@ -41,6 +43,14 @@ class InventoryItemModel {
     required this.updatedAt,
   });
 
+  String get categoryId => category.id;
+
+  String get categoryKey => category.key;
+
+  String get categoryName => category.name;
+
+  String? get categoryIconUrl => category.iconUrl;
+
   factory InventoryItemModel.fromJson(Map<String, dynamic> json) {
     return InventoryItemModel(
       id: json['id'] as String,
@@ -52,7 +62,9 @@ class InventoryItemModel {
       itemImageUrl: json['item_image_url'] as String?,
       productImageUrl: json['product_image_url'] as String?,
       productBrand: json['product_brand'] as String?,
-      category: json['category'] as String,
+      category: CategoryModel.fromJson(
+        json['category'] as Map<String, dynamic>,
+      ),
       notes: json['notes'] as String?,
       location: json['location'] as String,
       amount: (json['amount'] as num).toDouble(),

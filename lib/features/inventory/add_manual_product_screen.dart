@@ -6,7 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../bloc/add_manual_product/add_manual_product.dart';
+import '../../bloc/categories/categories.dart';
 import '../../bloc/inventory/inventory.dart';
+import '../../models/categories/categories.dart';
 import '../../models/inventory/inventory.dart';
 import '../../models/product/product.dart';
 import '../../ui/theme/app_colors.dart';
@@ -39,7 +41,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
   XFile? _pickedImage;
 
-  String _selectedCategory = 'other';
+  String? _selectedCategoryId;
   String _selectedLocation = 'fridge';
   String _selectedUnit = 'pcs';
   DateTime? _expirationDate;
@@ -50,6 +52,10 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
     _barcodeController = TextEditingController(
       text: widget.prefilledBarcode ?? '',
+    );
+
+    context.read<CategoriesBloc>().add(
+      const CategoriesLoadRequested(),
     );
   }
 
@@ -91,6 +97,11 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
     if (!isValid) return;
 
+    if (_selectedCategoryId == null) {
+      _showMessage('Please select category');
+      return;
+    }
+
     if (_expirationDate == null) {
       _showMessage('Please select expiration date');
       return;
@@ -123,7 +134,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
           productId: null,
           barcode: _cleanOptionalText(_barcodeController.text),
           customName: null,
-          category: _selectedCategory,
+          categoryId: _selectedCategoryId!,
           notes: _cleanOptionalText(_notesController.text),
           location: _selectedLocation,
           amount: amount,
@@ -151,6 +162,20 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
     setState(() {
       _expirationDate = pickedDate;
     });
+  }
+
+  String? _defaultCategoryId(List<CategoryModel> categories) {
+    for (final category in categories) {
+      if (category.key == 'other') {
+        return category.id;
+      }
+    }
+
+    if (categories.isEmpty) {
+      return null;
+    }
+
+    return categories.first.id;
   }
 
   String? _cleanOptionalText(String value) {
@@ -288,29 +313,45 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                       isSaving || _pickedImage == null ? null : _removePhoto,
                     ),
                     const SizedBox(height: 24),
-                    _DropdownInput(
-                      label: 'Category',
-                      icon: Icons.category_outlined,
-                      value: _selectedCategory,
-                      items: const [
-                        _OptionItem('dairy', 'Dairy'),
-                        _OptionItem('meat', 'Meat'),
-                        _OptionItem('seafood', 'Seafood'),
-                        _OptionItem('fruits', 'Fruits'),
-                        _OptionItem('vegetables', 'Vegetables'),
-                        _OptionItem('bakery', 'Bakery'),
-                        _OptionItem('grains', 'Grains'),
-                        _OptionItem('beverages', 'Beverages'),
-                        _OptionItem('snacks', 'Snacks'),
-                        _OptionItem('frozen', 'Frozen'),
-                        _OptionItem('canned', 'Canned'),
-                        _OptionItem('cooked_food', 'Cooked food'),
-                        _OptionItem('leftovers', 'Leftovers'),
-                        _OptionItem('condiments', 'Condiments'),
-                        _OptionItem('other', 'Other'),
-                      ],
-                      onChanged: (value) {
-                        setState(() => _selectedCategory = value);
+                    BlocBuilder<CategoriesBloc, CategoriesState>(
+                      builder: (context, categoriesState) {
+                        if (categoriesState is CategoriesLoading ||
+                            categoriesState is CategoriesInitial) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (categoriesState is CategoriesFailure) {
+                          return Text(
+                            categoriesState.message,
+                            style: const TextStyle(
+                              color: AppColors.expiredBorder,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }
+
+                        if (categoriesState is! CategoriesLoaded) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final categories = categoriesState.categories;
+
+                        if (_selectedCategoryId == null &&
+                            categories.isNotEmpty) {
+                          _selectedCategoryId = _defaultCategoryId(categories);
+                        }
+
+                        return _CategoryDropdownInput(
+                          label: 'Category',
+                          icon: Icons.category_outlined,
+                          value: _selectedCategoryId,
+                          categories: categories,
+                          onChanged: (value) {
+                            setState(() => _selectedCategoryId = value);
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 12),
@@ -594,6 +635,41 @@ class _TextInput extends StatelessWidget {
         label: label,
         icon: icon,
       ),
+    );
+  }
+}
+
+class _CategoryDropdownInput extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String? value;
+  final List<CategoryModel> categories;
+  final ValueChanged<String?> onChanged;
+
+  const _CategoryDropdownInput({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.categories,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      isExpanded: true,
+      decoration: _inputDecoration(
+        label: label,
+        icon: icon,
+      ),
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category.id,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 }

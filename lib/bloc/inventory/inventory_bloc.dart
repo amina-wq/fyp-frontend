@@ -30,7 +30,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     await _loadInventory(
       emit: emit,
-      category: null,
+      categoryId: null,
       expiryState: null,
     );
   }
@@ -46,7 +46,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         InventoryActionInProgress(
           items: currentState.items,
           stats: currentState.stats,
-          selectedCategory: event.category,
+          selectedCategoryId: event.categoryId,
           selectedExpiryState: event.expiryState,
         ),
       );
@@ -56,7 +56,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     await _loadInventory(
       emit: emit,
-      category: event.category,
+      categoryId: event.categoryId,
       expiryState: event.expiryState,
     );
   }
@@ -99,7 +99,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     );
   }
 
-
   Future<void> _onItemImageUploadRequested(
       InventoryItemImageUploadRequested event,
       Emitter<InventoryState> emit,
@@ -122,7 +121,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       action: () => _inventoryRepository.deleteInventoryItemImage(event.itemId),
     );
   }
-
 
   Future<void> _onItemConsumeRequested(
       InventoryItemConsumeRequested event,
@@ -156,12 +154,12 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
   Future<void> _loadInventory({
     required Emitter<InventoryState> emit,
-    required String? category,
+    required String? categoryId,
     required String? expiryState,
   }) async {
     try {
       final items = await _inventoryRepository.getInventoryItems(
-        category: category,
+        categoryId: categoryId,
         expiryState: expiryState,
       );
 
@@ -171,7 +169,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         InventoryLoadSuccess(
           items: items,
           stats: stats,
-          selectedCategory: category,
+          selectedCategoryId: categoryId,
           selectedExpiryState: expiryState,
         ),
       );
@@ -190,23 +188,23 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }) async {
     final currentState = state;
 
-    String? category;
+    String? categoryId;
     String? expiryState;
 
     if (currentState is InventoryLoadSuccess) {
-      category = currentState.selectedCategory;
+      categoryId = currentState.selectedCategoryId;
       expiryState = currentState.selectedExpiryState;
 
       emit(
         InventoryActionInProgress(
           items: currentState.items,
           stats: currentState.stats,
-          selectedCategory: category,
+          selectedCategoryId: categoryId,
           selectedExpiryState: expiryState,
         ),
       );
     } else if (currentState is InventoryActionInProgress) {
-      category = currentState.selectedCategory;
+      categoryId = currentState.selectedCategoryId;
       expiryState = currentState.selectedExpiryState;
     }
 
@@ -215,7 +213,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
       await _loadInventory(
         emit: emit,
-        category: category,
+        categoryId: categoryId,
         expiryState: expiryState,
       );
     } catch (error) {

@@ -1,6 +1,6 @@
 class ShoppingListItemCreateModel {
   final String name;
-  final String category;
+  final String categoryId;
   final double? amount;
   final String? unit;
   final String source;
@@ -8,7 +8,7 @@ class ShoppingListItemCreateModel {
 
   const ShoppingListItemCreateModel({
     required this.name,
-    required this.category,
+    required this.categoryId,
     this.amount,
     this.unit,
     this.source = 'manual',
@@ -18,7 +18,7 @@ class ShoppingListItemCreateModel {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'category': category,
+      'category_id': categoryId,
       'amount': amount,
       'unit': unit,
       'source': source,

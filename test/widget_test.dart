@@ -1,14 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fyp_frontend/core/network/api_client.dart';
 import 'package:fyp_frontend/core/storage/token_storage.dart';
 import 'package:fyp_frontend/main.dart';
-import 'package:fyp_frontend/repositories/auth/auth_repository.dart';
-import 'package:fyp_frontend/repositories/products/product_repository.dart';
-import 'package:fyp_frontend/repositories/inventory/inventory_repository.dart';
-import 'package:fyp_frontend/repositories/shopping_list/shopping_list_repository.dart';
-import 'package:fyp_frontend/repositories/recipes/recipes_repository.dart';
+import 'package:fyp_frontend/repositories/repositories.dart';
 import 'package:fyp_frontend/router/router.dart';
 
 void main() {
@@ -45,6 +41,11 @@ void main() {
       tokenStorage: tokenStorage,
     );
 
+    final categoriesRepository = CategoriesRepository(
+      apiClient: apiClient,
+      tokenStorage: tokenStorage,
+    );
+
     final appRouter = AppRouter(
       authRepository: authRepository,
     );
@@ -56,8 +57,9 @@ void main() {
         authRepository: authRepository,
         productRepository: productRepository,
         inventoryRepository: inventoryRepository,
-        shoppingListRepository:shoppingListRepository,
+        shoppingListRepository: shoppingListRepository,
         recipesRepository: recipesRepository,
+        categoriesRepository: categoriesRepository,
         appRouter: appRouter,
       ),
     );

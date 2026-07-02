@@ -14,17 +14,17 @@ class InventoryLoadRequested extends InventoryEvent {
 }
 
 class InventoryFilterChanged extends InventoryEvent {
-  final String? category;
+  final String? categoryId;
   final String? expiryState;
 
   const InventoryFilterChanged({
-    this.category,
+    this.categoryId,
     this.expiryState,
   });
 
   @override
   List<Object?> get props => [
-    category,
+    categoryId,
     expiryState,
   ];
 }

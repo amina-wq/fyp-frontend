@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../bloc/categories/categories.dart';
 import '../../bloc/shopping_list/shopping_list_bloc.dart';
 import '../../bloc/shopping_list/shopping_list_event.dart';
+import '../../models/categories/categories.dart';
 import '../../models/shopping_list/shopping_list.dart';
 import '../theme/app_colors.dart';
 
 Future<void> showAddToShoppingListDialog({
   required BuildContext context,
   String initialName = '',
-  String initialCategory = 'other',
+  String? initialCategoryId,
   String source = 'manual',
   String? sourceId,
   double? initialAmount,
@@ -23,7 +25,7 @@ Future<void> showAddToShoppingListDialog({
       return AddToShoppingListDialog(
         parentContext: context,
         initialName: initialName,
-        initialCategory: initialCategory,
+        initialCategoryId: initialCategoryId,
         source: source,
         sourceId: sourceId,
         initialAmount: initialAmount,
@@ -38,7 +40,7 @@ Future<void> showAddToShoppingListDialog({
 class AddToShoppingListDialog extends StatefulWidget {
   final BuildContext parentContext;
   final String initialName;
-  final String initialCategory;
+  final String? initialCategoryId;
   final String source;
   final String? sourceId;
   final double? initialAmount;
@@ -50,7 +52,7 @@ class AddToShoppingListDialog extends StatefulWidget {
     super.key,
     required this.parentContext,
     required this.initialName,
-    required this.initialCategory,
+    required this.initialCategoryId,
     required this.source,
     required this.sourceId,
     required this.allowNameEditing,
@@ -67,26 +69,9 @@ class AddToShoppingListDialog extends StatefulWidget {
 class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _amountController;
-  late String _selectedCategory;
-  late String? _selectedUnit;
 
-  final List<String> _categories = const [
-    'other',
-    'dairy',
-    'meat',
-    'seafood',
-    'fruits',
-    'vegetables',
-    'bakery',
-    'grains',
-    'beverages',
-    'snacks',
-    'frozen',
-    'canned',
-    'cooked_food',
-    'leftovers',
-    'condiments',
-  ];
+  String? _selectedCategoryId;
+  late String? _selectedUnit;
 
   final List<String> _units = const [
     'pcs',
@@ -114,13 +99,15 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
           : _formatAmount(widget.initialAmount!),
     );
 
-    _selectedCategory = _categories.contains(widget.initialCategory)
-        ? widget.initialCategory
-        : 'other';
+    _selectedCategoryId = widget.initialCategoryId;
 
     _selectedUnit = _units.contains(widget.initialUnit)
         ? widget.initialUnit
         : null;
+
+    widget.parentContext.read<CategoriesBloc>().add(
+      const CategoriesLoadRequested(),
+    );
   }
 
   @override
@@ -128,6 +115,20 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
     _nameController.dispose();
     _amountController.dispose();
     super.dispose();
+  }
+
+  String? _defaultCategoryId(List<CategoryModel> categories) {
+    for (final category in categories) {
+      if (category.key == 'other') {
+        return category.id;
+      }
+    }
+
+    if (categories.isEmpty) {
+      return null;
+    }
+
+    return categories.first.id;
   }
 
   void _addItem() {
@@ -153,11 +154,20 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
       return;
     }
 
+    if (_selectedCategoryId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select category'),
+        ),
+      );
+      return;
+    }
+
     widget.parentContext.read<ShoppingListBloc>().add(
       ShoppingListItemCreateRequested(
         item: ShoppingListItemCreateModel(
           name: name,
-          category: _selectedCategory,
+          categoryId: _selectedCategoryId!,
           amount: amount,
           unit: _selectedUnit,
           source: widget.source,
@@ -239,29 +249,63 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
               ),
             ),
             const SizedBox(height: 14),
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              items: _categories
-                  .map(
-                    (category) => DropdownMenuItem<String>(
-                  value: category,
-                  child: Text(_formatText(category)),
-                ),
-              )
-                  .toList(),
-              onChanged: widget.allowCategoryEditing
-                  ? (value) {
-                if (value == null) return;
+            BlocBuilder<CategoriesBloc, CategoriesState>(
+              bloc: widget.parentContext.read<CategoriesBloc>(),
+              builder: (context, categoriesState) {
+                if (categoriesState is CategoriesLoading ||
+                    categoriesState is CategoriesInitial) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                setState(() {
-                  _selectedCategory = value;
-                });
-              }
-                  : null,
-              decoration: _inputDecoration(
-                label: 'Category',
-                hint: 'Category',
-              ),
+                if (categoriesState is CategoriesFailure) {
+                  return Text(
+                    categoriesState.message,
+                    style: const TextStyle(
+                      color: AppColors.expiredBorder,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  );
+                }
+
+                if (categoriesState is! CategoriesLoaded) {
+                  return const SizedBox.shrink();
+                }
+
+                final categories = categoriesState.categories;
+
+                if (_selectedCategoryId == null && categories.isNotEmpty) {
+                  _selectedCategoryId = _defaultCategoryId(categories);
+                }
+
+                final hasSelectedCategory = categories.any(
+                      (category) => category.id == _selectedCategoryId,
+                );
+
+                return DropdownButtonFormField<String>(
+                  value: hasSelectedCategory ? _selectedCategoryId : null,
+                  items: categories.map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category.id,
+                      child: Text(category.name),
+                    );
+                  }).toList(),
+                  onChanged: widget.allowCategoryEditing
+                      ? (value) {
+                    if (value == null) return;
+
+                    setState(() {
+                      _selectedCategoryId = value;
+                    });
+                  }
+                      : null,
+                  decoration: _inputDecoration(
+                    label: 'Category',
+                    hint: 'Category',
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -340,15 +384,4 @@ String _formatAmount(double amount) {
   }
 
   return amount.toStringAsFixed(1);
-}
-
-String _formatText(String value) {
-  return value
-      .replaceAll('_', ' ')
-      .split(' ')
-      .map((word) {
-    if (word.isEmpty) return word;
-    return word[0].toUpperCase() + word.substring(1);
-  })
-      .join(' ');
 }

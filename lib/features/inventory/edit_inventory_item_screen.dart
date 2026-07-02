@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../bloc/categories/categories.dart';
 import '../../bloc/inventory/inventory.dart';
 import '../../core/constants/api_constants.dart';
+import '../../models/categories/categories.dart';
 import '../../models/inventory/inventory.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../ui/widgets/widgets.dart';
@@ -35,7 +37,10 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
   late final TextEditingController _amountController;
   late final TextEditingController _notesController;
 
-  late String _selectedCategory;
+  late String _selectedCategoryId;
+  late String _selectedCategoryKey;
+  String? _selectedCategoryIconUrl;
+
   late String _selectedLocation;
   late String _selectedUnit;
   late DateTime _expirationDate;
@@ -45,24 +50,6 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
   bool _isSaving = false;
   bool _isImageUploading = false;
   bool _isImageDeleting = false;
-
-  static const _categories = [
-    _OptionItem('dairy', 'Dairy'),
-    _OptionItem('meat', 'Meat'),
-    _OptionItem('seafood', 'Seafood'),
-    _OptionItem('fruits', 'Fruits'),
-    _OptionItem('vegetables', 'Vegetables'),
-    _OptionItem('bakery', 'Bakery'),
-    _OptionItem('grains', 'Grains'),
-    _OptionItem('beverages', 'Beverages'),
-    _OptionItem('snacks', 'Snacks'),
-    _OptionItem('frozen', 'Frozen'),
-    _OptionItem('canned', 'Canned'),
-    _OptionItem('cooked_food', 'Cooked food'),
-    _OptionItem('leftovers', 'Leftovers'),
-    _OptionItem('condiments', 'Condiments'),
-    _OptionItem('other', 'Other'),
-  ];
 
   static const _locations = [
     _OptionItem('fridge', 'Fridge'),
@@ -102,10 +89,17 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
       text: _currentItem.notes ?? '',
     );
 
-    _selectedCategory = _currentItem.category;
+    _selectedCategoryId = _currentItem.categoryId;
+    _selectedCategoryKey = _currentItem.categoryKey;
+    _selectedCategoryIconUrl = _currentItem.categoryIconUrl;
+
     _selectedLocation = _currentItem.location;
     _selectedUnit = _currentItem.unit;
     _expirationDate = _currentItem.expirationDate;
+
+    context.read<CategoriesBloc>().add(
+      const CategoriesLoadRequested(),
+    );
   }
 
   @override
@@ -202,7 +196,7 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
         itemId: _currentItem.id,
         data: InventoryItemUpdateModel(
           customName: _cleanOptionalText(_customNameController.text),
-          category: _selectedCategory,
+          categoryId: _selectedCategoryId,
           notes: _cleanOptionalText(_notesController.text),
           location: _selectedLocation,
           amount: amount,
@@ -211,6 +205,14 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
         ),
       ),
     );
+  }
+
+  void _selectCategory(CategoryModel category) {
+    setState(() {
+      _selectedCategoryId = category.id;
+      _selectedCategoryKey = category.key;
+      _selectedCategoryIconUrl = category.iconUrl;
+    });
   }
 
   String? _cleanOptionalText(String value) {
@@ -252,6 +254,9 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
 
               if (updatedItem != null) {
                 _currentItem = updatedItem;
+                _selectedCategoryId = updatedItem.categoryId;
+                _selectedCategoryKey = updatedItem.categoryKey;
+                _selectedCategoryIconUrl = updatedItem.categoryIconUrl;
               }
             });
 
@@ -264,6 +269,9 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
 
               if (updatedItem != null) {
                 _currentItem = updatedItem;
+                _selectedCategoryId = updatedItem.categoryId;
+                _selectedCategoryKey = updatedItem.categoryKey;
+                _selectedCategoryIconUrl = updatedItem.categoryIconUrl;
               }
             });
 
@@ -304,7 +312,8 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
                 ),
                 const SizedBox(height: 24),
                 _ProductImagePicker(
-                  category: _selectedCategory,
+                  categoryKey: _selectedCategoryKey,
+                  categoryIconUrl: _selectedCategoryIconUrl,
                   imageUrl: _pickedImage == null
                       ? _bestImageUrlForItem(_currentItem)
                       : null,
@@ -374,13 +383,40 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
                       onTap: _pickExpirationDate,
                     ),
                     const SizedBox(height: 12),
-                    _DropdownInput(
-                      label: 'Category',
-                      icon: Icons.category_outlined,
-                      value: _selectedCategory,
-                      items: _categories,
-                      onChanged: (value) {
-                        setState(() => _selectedCategory = value);
+                    BlocBuilder<CategoriesBloc, CategoriesState>(
+                      builder: (context, categoriesState) {
+                        if (categoriesState is CategoriesLoading ||
+                            categoriesState is CategoriesInitial) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (categoriesState is CategoriesFailure) {
+                          return Text(
+                            categoriesState.message,
+                            style: const TextStyle(
+                              color: AppColors.expiredBorder,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }
+
+                        if (categoriesState is! CategoriesLoaded) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return _CategoryDropdownInput(
+                          label: 'Category',
+                          icon: Icons.category_outlined,
+                          value: _selectedCategoryId,
+                          categories: categoriesState.categories,
+                          onChanged: (category) {
+                            if (category == null) return;
+
+                            _selectCategory(category);
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 12),
@@ -502,7 +538,8 @@ class _HeaderButton extends StatelessWidget {
 }
 
 class _ProductImagePicker extends StatelessWidget {
-  final String category;
+  final String categoryKey;
+  final String? categoryIconUrl;
   final String? imageUrl;
   final String? localImagePath;
   final bool isUploading;
@@ -510,7 +547,8 @@ class _ProductImagePicker extends StatelessWidget {
   final VoidCallback? onDeletePhoto;
 
   const _ProductImagePicker({
-    required this.category,
+    required this.categoryKey,
+    required this.categoryIconUrl,
     required this.imageUrl,
     required this.localImagePath,
     required this.isUploading,
@@ -522,7 +560,8 @@ class _ProductImagePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasLocalImage = localImagePath != null && localImagePath!.isNotEmpty;
     final hasNetworkImage = imageUrl != null && imageUrl!.isNotEmpty;
-    final hasImage = hasLocalImage || hasNetworkImage;
+    final hasImage =
+        hasLocalImage || hasNetworkImage || _hasCategoryIcon(categoryIconUrl);
 
     return Column(
       children: [
@@ -554,10 +593,16 @@ class _ProductImagePicker extends StatelessWidget {
                   AppCachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    fallback: _CategoryIcon(category: category),
+                    fallback: _CategoryIcon(
+                      categoryKey: categoryKey,
+                      categoryIconUrl: categoryIconUrl,
+                    ),
                   )
                 else
-                  _CategoryIcon(category: category),
+                  _CategoryIcon(
+                    categoryKey: categoryKey,
+                    categoryIconUrl: categoryIconUrl,
+                  ),
                 if (isUploading)
                   Container(
                     color: Colors.black.withValues(alpha: 0.35),
@@ -620,18 +665,85 @@ class _ProductImagePicker extends StatelessWidget {
 }
 
 class _CategoryIcon extends StatelessWidget {
-  final String category;
+  final String categoryKey;
+  final String? categoryIconUrl;
 
   const _CategoryIcon({
-    required this.category,
+    required this.categoryKey,
+    required this.categoryIconUrl,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (_hasCategoryIcon(categoryIconUrl)) {
+      return AppCachedNetworkImage(
+        imageUrl: categoryIconUrl!,
+        fit: BoxFit.cover,
+        fallback: Icon(
+          _iconForCategory(categoryKey),
+          size: 78,
+          color: AppColors.bottomNavigationBar,
+        ),
+      );
+    }
+
     return Icon(
-      _iconForCategory(category),
+      _iconForCategory(categoryKey),
       size: 78,
       color: AppColors.bottomNavigationBar,
+    );
+  }
+}
+
+class _CategoryDropdownInput extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String value;
+  final List<CategoryModel> categories;
+  final ValueChanged<CategoryModel?> onChanged;
+
+  const _CategoryDropdownInput({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.categories,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSelectedValue = categories.any(
+          (category) => category.id == value,
+    );
+
+    return DropdownButtonFormField<String>(
+      value: hasSelectedValue ? value : null,
+      isExpanded: true,
+      decoration: _inputDecoration(
+        label: label,
+        icon: icon,
+      ),
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category.id,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value == null) {
+          onChanged(null);
+          return;
+        }
+
+        for (final category in categories) {
+          if (category.id == value) {
+            onChanged(category);
+            return;
+          }
+        }
+
+        onChanged(null);
+      },
     );
   }
 }
@@ -834,6 +946,10 @@ InputDecoration _inputDecoration({
   );
 }
 
+bool _hasCategoryIcon(String? iconUrl) {
+  return iconUrl != null && iconUrl.isNotEmpty;
+}
+
 String? _bestImageUrlForItem(InventoryItemModel item) {
   if (item.itemImageUrl != null && item.itemImageUrl!.isNotEmpty) {
     return ApiConstants.resolveImageUrl(item.itemImageUrl);
@@ -862,8 +978,8 @@ String _formatDate(DateTime date) {
   return '$day.$month.$year';
 }
 
-IconData _iconForCategory(String category) {
-  switch (category) {
+IconData _iconForCategory(String categoryKey) {
+  switch (categoryKey) {
     case 'dairy':
       return Icons.local_drink_outlined;
     case 'meat':

@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/auth/auth.dart';
 import '../../bloc/inventory/inventory.dart';
 import '../../models/inventory/inventory.dart';
+import '../../bloc/categories/categories.dart';
+import '../../models/categories/categories.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../router/router.dart';
 import '../../core/constants/api_constants.dart';
@@ -25,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
+    context.read<CategoriesBloc>().add(
+      const CategoriesLoadRequested(),
+    );
+
     context.read<InventoryBloc>().add(
       const InventoryLoadRequested(),
     );
@@ -39,23 +45,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void _changeExpiryFilter(String? expiryState) {
     final currentState = context.read<InventoryBloc>().state;
 
-    String? selectedCategory;
+    String? selectedCategoryId;
 
     if (currentState is InventoryLoadSuccess) {
-      selectedCategory = currentState.selectedCategory;
+      selectedCategoryId = currentState.selectedCategoryId;
     } else if (currentState is InventoryActionInProgress) {
-      selectedCategory = currentState.selectedCategory;
+      selectedCategoryId = currentState.selectedCategoryId;
     }
 
     context.read<InventoryBloc>().add(
       InventoryFilterChanged(
-        category: selectedCategory,
+        categoryId: selectedCategoryId,
         expiryState: expiryState,
       ),
     );
   }
 
-  void _changeCategoryFilter(String? category) {
+  void _changeCategoryFilter(String? categoryId) {
     final currentState = context.read<InventoryBloc>().state;
 
     String? selectedExpiryState;
@@ -68,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     context.read<InventoryBloc>().add(
       InventoryFilterChanged(
-        category: category,
+        categoryId: categoryId,
         expiryState: selectedExpiryState,
       ),
     );
@@ -83,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return items.where((item) {
       return item.displayName.toLowerCase().contains(query) ||
-          item.category.toLowerCase().contains(query) ||
+          item.categoryName.toLowerCase().contains(query) ||
           item.location.toLowerCase().contains(query);
     }).toList();
   }
@@ -112,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return _HomeContent(
                 items: _applySearch(state.items),
                 stats: state.stats,
-                selectedCategory: state.selectedCategory,
+                selectedCategoryId: state.selectedCategoryId,
                 selectedExpiryState: state.selectedExpiryState,
                 isActionInProgress: false,
                 searchQuery: _searchQuery,
@@ -129,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return _HomeContent(
                 items: _applySearch(state.items),
                 stats: state.stats,
-                selectedCategory: state.selectedCategory,
+                selectedCategoryId: state.selectedCategoryId,
                 selectedExpiryState: state.selectedExpiryState,
                 isActionInProgress: true,
                 searchQuery: _searchQuery,
@@ -153,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class _HomeContent extends StatelessWidget {
   final List<InventoryItemModel> items;
   final InventoryStatsModel stats;
-  final String? selectedCategory;
+  final String? selectedCategoryId;
   final String? selectedExpiryState;
   final bool isActionInProgress;
   final String searchQuery;
@@ -165,7 +171,7 @@ class _HomeContent extends StatelessWidget {
   const _HomeContent({
     required this.items,
     required this.stats,
-    required this.selectedCategory,
+    required this.selectedCategoryId,
     required this.selectedExpiryState,
     required this.isActionInProgress,
     required this.searchQuery,
@@ -209,7 +215,7 @@ class _HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           _CategorySelector(
-            selectedCategory: selectedCategory,
+            selectedCategoryId: selectedCategoryId,
             onChanged: onCategoryChanged,
           ),
           const SizedBox(height: 14),
@@ -473,68 +479,86 @@ class _AnalyticsCard extends StatelessWidget {
 }
 
 class _CategorySelector extends StatelessWidget {
-  final String? selectedCategory;
+  final String? selectedCategoryId;
   final ValueChanged<String?> onChanged;
 
   const _CategorySelector({
-    required this.selectedCategory,
+    required this.selectedCategoryId,
     required this.onChanged,
   });
 
-  static const _categories = [
-    _CategoryUiData('dairy', 'Dairy', Icons.local_drink_outlined),
-    _CategoryUiData('meat', 'Meat', Icons.set_meal_outlined),
-    _CategoryUiData('seafood', 'Seafood', Icons.phishing_outlined),
-    _CategoryUiData('fruits', 'Fruits', Icons.apple_outlined),
-    _CategoryUiData('vegetables', 'Vegetables', Icons.eco_outlined),
-    _CategoryUiData('bakery', 'Bakery', Icons.bakery_dining_outlined),
-    _CategoryUiData('grains', 'Grains', Icons.rice_bowl_outlined),
-    _CategoryUiData('beverages', 'Beverages', Icons.local_cafe_outlined),
-    _CategoryUiData('snacks', 'Snacks', Icons.fastfood_outlined),
-    _CategoryUiData('frozen', 'Frozen', Icons.ac_unit_outlined),
-    _CategoryUiData('canned', 'Canned', Icons.inventory_2_outlined),
-    _CategoryUiData('cooked_food', 'Cooked', Icons.restaurant_outlined),
-    _CategoryUiData('leftovers', 'Leftovers', Icons.takeout_dining_outlined),
-    _CategoryUiData('condiments', 'Condiments', Icons.soup_kitchen_outlined),
-    _CategoryUiData('other', 'Other', Icons.category_outlined),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 86,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final category = _categories[index];
-          final isSelected = selectedCategory == category.value;
-
-          return _CategoryCircle(
-            data: category,
-            isSelected: isSelected,
-            onTap: () => onChanged(isSelected ? null : category.value),
+    return BlocBuilder<CategoriesBloc, CategoriesState>(
+      builder: (context, state) {
+        if (state is CategoriesLoading || state is CategoriesInitial) {
+          return const SizedBox(
+            height: 86,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
-        },
-      ),
+        }
+
+        if (state is CategoriesFailure) {
+          return SizedBox(
+            height: 86,
+            child: Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (state is! CategoriesLoaded) {
+          return const SizedBox.shrink();
+        }
+
+        final categories = state.categories;
+
+        return SizedBox(
+          height: 86,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              final isSelected = selectedCategoryId == category.id;
+
+              return _CategoryCircle(
+                category: category,
+                isSelected: isSelected,
+                onTap: () => onChanged(isSelected ? null : category.id),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
 
 class _CategoryCircle extends StatelessWidget {
-  final _CategoryUiData data;
+  final CategoryModel category;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _CategoryCircle({
-    required this.data,
+    required this.category,
     required this.isSelected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final iconUrl = category.iconUrl;
+
     return SizedBox(
       width: 58,
       child: InkWell(
@@ -545,6 +569,7 @@ class _CategoryCircle extends StatelessWidget {
             Container(
               width: 56,
               height: 56,
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.categoryActiveFill
@@ -564,15 +589,25 @@ class _CategoryCircle extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(
-                data.icon,
+              child: iconUrl == null || iconUrl.isEmpty
+                  ? Icon(
+                _iconForCategory(category.key),
                 size: 28,
                 color: const Color(0xFF353535),
+              )
+                  : AppCachedNetworkImage(
+                imageUrl: iconUrl,
+                fit: BoxFit.cover,
+                fallback: Icon(
+                  _iconForCategory(category.key),
+                  size: 28,
+                  color: const Color(0xFF353535),
+                ),
               ),
             ),
             const SizedBox(height: 6),
             Text(
-              data.label,
+              category.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -739,7 +774,7 @@ class _InventoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _colorsForExpiryState(item.expiryState);
-    final imageUrl = _bestImageUrlForItem(item);
+    final imageUrl = _bestImageUrlForItem(item) ?? item.categoryIconUrl;
 
     return InkWell(
         onTap: () {
@@ -771,7 +806,7 @@ class _InventoryCard extends StatelessWidget {
               ),
               child: imageUrl == null
                   ? Icon(
-                _iconForCategory(item.category),
+                  _iconForCategory(item.categoryKey),
                 color: const Color(0xFF6BC96A),
                 size: 28,
               )
@@ -779,7 +814,7 @@ class _InventoryCard extends StatelessWidget {
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
                 fallback: Icon(
-                  _iconForCategory(item.category),
+                    _iconForCategory(item.categoryKey),
                   color: const Color(0xFF6BC96A),
                   size: 28,
                 ),
@@ -977,18 +1012,6 @@ class _ErrorView extends StatelessWidget {
       ),
     );
   }
-}
-
-class _CategoryUiData {
-  final String value;
-  final String label;
-  final IconData icon;
-
-  const _CategoryUiData(
-      this.value,
-      this.label,
-      this.icon,
-      );
 }
 
 class _ExpiryColors {

@@ -1,8 +1,10 @@
+import '../categories/categories.dart';
+
 class ShoppingListItemModel {
   final String id;
   final String userId;
   final String name;
-  final String category;
+  final CategoryModel category;
   final double? amount;
   final String? unit;
   final bool isChecked;
@@ -25,12 +27,22 @@ class ShoppingListItemModel {
     required this.updatedAt,
   });
 
+  String get categoryId => category.id;
+
+  String get categoryKey => category.key;
+
+  String get categoryName => category.name;
+
+  String? get categoryIconUrl => category.iconUrl;
+
   factory ShoppingListItemModel.fromJson(Map<String, dynamic> json) {
     return ShoppingListItemModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
       name: json['name'] as String,
-      category: json['category'] as String,
+      category: CategoryModel.fromJson(
+        json['category'] as Map<String, dynamic>,
+      ),
       amount: json['amount'] == null ? null : (json['amount'] as num).toDouble(),
       unit: json['unit'] as String?,
       isChecked: json['is_checked'] as bool,

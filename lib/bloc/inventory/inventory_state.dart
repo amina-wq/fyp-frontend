@@ -20,13 +20,13 @@ class InventoryLoadInProgress extends InventoryState {
 class InventoryLoadSuccess extends InventoryState {
   final List<InventoryItemModel> items;
   final InventoryStatsModel stats;
-  final String? selectedCategory;
+  final String? selectedCategoryId;
   final String? selectedExpiryState;
 
   const InventoryLoadSuccess({
     required this.items,
     required this.stats,
-    this.selectedCategory,
+    required this.selectedCategoryId,
     this.selectedExpiryState,
   });
 
@@ -34,7 +34,7 @@ class InventoryLoadSuccess extends InventoryState {
   List<Object?> get props => [
     items,
     stats,
-    selectedCategory,
+    selectedCategoryId,
     selectedExpiryState,
   ];
 }
@@ -42,13 +42,13 @@ class InventoryLoadSuccess extends InventoryState {
 class InventoryActionInProgress extends InventoryState {
   final List<InventoryItemModel> items;
   final InventoryStatsModel stats;
-  final String? selectedCategory;
+  final String? selectedCategoryId;
   final String? selectedExpiryState;
 
   const InventoryActionInProgress({
     required this.items,
     required this.stats,
-    this.selectedCategory,
+    this.selectedCategoryId,
     this.selectedExpiryState,
   });
 
@@ -56,7 +56,7 @@ class InventoryActionInProgress extends InventoryState {
   List<Object?> get props => [
     items,
     stats,
-    selectedCategory,
+    selectedCategoryId,
     selectedExpiryState,
   ];
 }

@@ -1,10 +1,13 @@
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../bloc/categories/categories.dart';
 import '../../bloc/inventory/inventory.dart';
+import '../../models/categories/categories.dart';
 import '../../models/inventory/inventory.dart';
 import '../../models/product/product.dart';
 import '../../ui/theme/app_colors.dart';
@@ -33,30 +36,12 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
 
   XFile? _pickedImage;
 
-  String _selectedCategory = 'other';
+  String? _selectedCategoryId;
   String _selectedLocation = 'fridge';
   String _selectedUnit = 'pcs';
   DateTime? _expirationDate;
 
   bool _isSaving = false;
-
-  static const _categories = [
-    _OptionItem('dairy', 'Dairy'),
-    _OptionItem('meat', 'Meat'),
-    _OptionItem('seafood', 'Seafood'),
-    _OptionItem('fruits', 'Fruits'),
-    _OptionItem('vegetables', 'Vegetables'),
-    _OptionItem('bakery', 'Bakery'),
-    _OptionItem('grains', 'Grains'),
-    _OptionItem('beverages', 'Beverages'),
-    _OptionItem('snacks', 'Snacks'),
-    _OptionItem('frozen', 'Frozen'),
-    _OptionItem('canned', 'Canned'),
-    _OptionItem('cooked_food', 'Cooked food'),
-    _OptionItem('leftovers', 'Leftovers'),
-    _OptionItem('condiments', 'Condiments'),
-    _OptionItem('other', 'Other'),
-  ];
 
   static const _locations = [
     _OptionItem('fridge', 'Fridge'),
@@ -77,6 +62,15 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
     _OptionItem('can', 'can'),
     _OptionItem('other', 'other'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<CategoriesBloc>().add(
+      const CategoriesLoadRequested(),
+    );
+  }
 
   @override
   void dispose() {
@@ -128,11 +122,15 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
     });
   }
 
-
   void _saveProductToInventory() {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) return;
+
+    if (_selectedCategoryId == null) {
+      _showMessage('Please select category');
+      return;
+    }
 
     if (_expirationDate == null) {
       _showMessage('Please select expiration date');
@@ -154,7 +152,7 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
           productId: widget.product.id,
           barcode: widget.product.barcode,
           customName: null,
-          category: _selectedCategory,
+          categoryId: _selectedCategoryId!,
           notes: _cleanOptionalText(_notesController.text),
           location: _selectedLocation,
           amount: amount,
@@ -164,6 +162,20 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
         imagePath: _pickedImage?.path,
       ),
     );
+  }
+
+  String? _defaultCategoryId(List<CategoryModel> categories) {
+    for (final category in categories) {
+      if (category.key == 'other') {
+        return category.id;
+      }
+    }
+
+    if (categories.isEmpty) {
+      return null;
+    }
+
+    return categories.first.id;
   }
 
   String? _cleanOptionalText(String value) {
@@ -226,7 +238,8 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
                 _ProductPhotoPicker(
                   localImagePath: _pickedImage?.path,
                   onTakePhoto: _isSaving ? null : _takePhoto,
-                  onRemovePhoto: _isSaving || _pickedImage == null ? null : _removePhoto,
+                  onRemovePhoto:
+                  _isSaving || _pickedImage == null ? null : _removePhoto,
                 ),
                 const SizedBox(height: 18),
                 _FormCard(
@@ -271,13 +284,45 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
                       onTap: _pickExpirationDate,
                     ),
                     const SizedBox(height: 12),
-                    _DropdownInput(
-                      label: 'Category',
-                      icon: Icons.category_outlined,
-                      value: _selectedCategory,
-                      items: _categories,
-                      onChanged: (value) {
-                        setState(() => _selectedCategory = value);
+                    BlocBuilder<CategoriesBloc, CategoriesState>(
+                      builder: (context, categoriesState) {
+                        if (categoriesState is CategoriesLoading ||
+                            categoriesState is CategoriesInitial) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (categoriesState is CategoriesFailure) {
+                          return Text(
+                            categoriesState.message,
+                            style: const TextStyle(
+                              color: AppColors.expiredBorder,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }
+
+                        if (categoriesState is! CategoriesLoaded) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final categories = categoriesState.categories;
+
+                        if (_selectedCategoryId == null &&
+                            categories.isNotEmpty) {
+                          _selectedCategoryId = _defaultCategoryId(categories);
+                        }
+
+                        return _CategoryDropdownInput(
+                          label: 'Category',
+                          icon: Icons.category_outlined,
+                          value: _selectedCategoryId,
+                          categories: categories,
+                          onChanged: (value) {
+                            setState(() => _selectedCategoryId = value);
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 12),
@@ -425,6 +470,7 @@ class _ProductPreviewCard extends StatelessWidget {
           Container(
             width: 68,
             height: 68,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: AppColors.categoryActiveFill,
               borderRadius: BorderRadius.circular(18),
@@ -437,7 +483,7 @@ class _ProductPreviewCard extends StatelessWidget {
             )
                 : ClipRRect(
               borderRadius: BorderRadius.circular(18),
-              child:AppCachedNetworkImage(
+              child: AppCachedNetworkImage(
                 imageUrl: product.imageUrl!,
                 fit: BoxFit.cover,
                 fallback: const Icon(
@@ -445,7 +491,7 @@ class _ProductPreviewCard extends StatelessWidget {
                   color: AppColors.bottomNavigationBar,
                   size: 34,
                 ),
-              )
+              ),
             ),
           ),
           const SizedBox(width: 14),
@@ -495,7 +541,6 @@ class _ProductPreviewCard extends StatelessWidget {
     );
   }
 }
-
 
 class _ProductPhotoPicker extends StatelessWidget {
   final String? localImagePath;
@@ -591,7 +636,6 @@ class _ProductPhotoPicker extends StatelessWidget {
   }
 }
 
-
 class _FormCard extends StatelessWidget {
   final List<Widget> children;
 
@@ -649,6 +693,45 @@ class _TextInput extends StatelessWidget {
         label: label,
         icon: icon,
       ),
+    );
+  }
+}
+
+class _CategoryDropdownInput extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String? value;
+  final List<CategoryModel> categories;
+  final ValueChanged<String?> onChanged;
+
+  const _CategoryDropdownInput({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.categories,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSelectedValue = categories.any(
+          (category) => category.id == value,
+    );
+
+    return DropdownButtonFormField<String>(
+      value: hasSelectedValue ? value : null,
+      isExpanded: true,
+      decoration: _inputDecoration(
+        label: label,
+        icon: icon,
+      ),
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category.id,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 }

@@ -40,7 +40,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
 
   @override
   Future<List<InventoryItemModel>> getInventoryItems({
-    String? category,
+    String? categoryId,
     String? expiryState,
   }) async {
     try {
@@ -49,7 +49,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
       final response = await _apiClient.get(
         ApiConstants.inventoryEndpoint,
         queryParameters: {
-          if (category != null) 'category': category,
+          if (categoryId != null) 'category_id': categoryId,
           if (expiryState != null) 'expiry_state': expiryState,
         },
         accessToken: accessToken,

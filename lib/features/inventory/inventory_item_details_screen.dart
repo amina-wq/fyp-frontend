@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../models/inventory/inventory.dart';
-import '../../ui/theme/app_colors.dart';
 import '../../router/router.dart';
+import '../../ui/theme/app_colors.dart';
 import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
@@ -47,7 +47,7 @@ class _InventoryItemDetailsScreenState
     await showAddToShoppingListDialog(
       context: context,
       initialName: _item.displayName,
-      initialCategory: _item.category,
+      initialCategoryId: _item.categoryId,
       source: 'inventory',
       sourceId: _item.id,
       initialAmount: _item.amount,
@@ -71,7 +71,8 @@ class _InventoryItemDetailsScreenState
             ),
             const SizedBox(height: 24),
             _ProductImagePlaceholder(
-              category: _item.category,
+              categoryKey: _item.categoryKey,
+              categoryIconUrl: _item.categoryIconUrl,
               imageUrl: _bestImageUrlForItem(_item),
             ),
             const SizedBox(height: 22),
@@ -111,7 +112,7 @@ class _InventoryItemDetailsScreenState
                 const SizedBox(height: 12),
                 _DetailsField(
                   icon: Icons.category_outlined,
-                  label: _formatText(_item.category),
+                  label: _item.categoryName,
                 ),
                 const SizedBox(height: 12),
                 _DetailsField(
@@ -200,17 +201,21 @@ class _HeaderButton extends StatelessWidget {
 }
 
 class _ProductImagePlaceholder extends StatelessWidget {
-  final String category;
+  final String categoryKey;
+  final String? categoryIconUrl;
   final String? imageUrl;
 
   const _ProductImagePlaceholder({
-    required this.category,
+    required this.categoryKey,
+    required this.categoryIconUrl,
     required this.imageUrl,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+    final hasProductImage = imageUrl != null && imageUrl!.isNotEmpty;
+    final hasCategoryIcon =
+        categoryIconUrl != null && categoryIconUrl!.isNotEmpty;
 
     return Center(
       child: Container(
@@ -228,22 +233,62 @@ class _ProductImagePlaceholder extends StatelessWidget {
             ),
           ],
         ),
-        child: hasImage
+        child: hasProductImage
             ? AppCachedNetworkImage(
           imageUrl: imageUrl!,
           fit: BoxFit.cover,
+          fallback: _CategoryIcon(
+            categoryKey: categoryKey,
+            categoryIconUrl: categoryIconUrl,
+          ),
+        )
+            : hasCategoryIcon
+            ? AppCachedNetworkImage(
+          imageUrl: categoryIconUrl!,
+          fit: BoxFit.cover,
           fallback: Icon(
-            _iconForCategory(category),
+            _iconForCategory(categoryKey),
             size: 78,
             color: AppColors.bottomNavigationBar,
           ),
         )
             : Icon(
-          _iconForCategory(category),
+          _iconForCategory(categoryKey),
           size: 78,
           color: AppColors.bottomNavigationBar,
         ),
       ),
+    );
+  }
+}
+
+class _CategoryIcon extends StatelessWidget {
+  final String categoryKey;
+  final String? categoryIconUrl;
+
+  const _CategoryIcon({
+    required this.categoryKey,
+    required this.categoryIconUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (categoryIconUrl != null && categoryIconUrl!.isNotEmpty) {
+      return AppCachedNetworkImage(
+        imageUrl: categoryIconUrl!,
+        fit: BoxFit.cover,
+        fallback: Icon(
+          _iconForCategory(categoryKey),
+          size: 78,
+          color: AppColors.bottomNavigationBar,
+        ),
+      );
+    }
+
+    return Icon(
+      _iconForCategory(categoryKey),
+      size: 78,
+      color: AppColors.bottomNavigationBar,
     );
   }
 }
@@ -446,8 +491,8 @@ String _formatText(String value) {
       .join(' ');
 }
 
-IconData _iconForCategory(String category) {
-  switch (category) {
+IconData _iconForCategory(String categoryKey) {
+  switch (categoryKey) {
     case 'dairy':
       return Icons.local_drink_outlined;
     case 'meat':
@@ -481,7 +526,6 @@ IconData _iconForCategory(String category) {
       return Icons.category_outlined;
   }
 }
-
 
 String? _bestImageUrlForItem(InventoryItemModel item) {
   if (item.itemImageUrl != null && item.itemImageUrl!.isNotEmpty) {

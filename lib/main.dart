@@ -6,11 +6,6 @@ import 'bloc/bloc.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/token_storage.dart';
 import 'repositories/repositories.dart';
-import 'repositories/auth/auth_repository_interface.dart';
-import 'repositories/inventory/inventory_repository_interface.dart';
-import 'repositories/products/product_repository_interface.dart';
-import 'repositories/shopping_list/shopping_list_repository_interface.dart';
-import 'repositories/recipes/recipes_repository_interface.dart';
 import 'router/router.dart';
 import 'ui/ui.dart';
 
@@ -55,6 +50,11 @@ void main() {
     tokenStorage: tokenStorage,
   );
 
+  final categoriesRepository = CategoriesRepository(
+    apiClient: apiClient,
+    tokenStorage: tokenStorage,
+  );
+
   final appRouter = AppRouter(
     authRepository: authRepository,
   );
@@ -68,6 +68,7 @@ void main() {
       inventoryRepository: inventoryRepository,
       shoppingListRepository: shoppingListRepository,
       recipesRepository: recipesRepository,
+      categoriesRepository: categoriesRepository,
       appRouter: appRouter,
     ),
   );
@@ -81,6 +82,7 @@ class FoodTrackApp extends StatelessWidget {
   final InventoryRepositoryInterface inventoryRepository;
   final ShoppingListRepositoryInterface shoppingListRepository;
   final RecipesRepositoryInterface recipesRepository;
+  final CategoriesRepositoryInterface categoriesRepository;
   final AppRouter appRouter;
 
   const FoodTrackApp({
@@ -92,6 +94,7 @@ class FoodTrackApp extends StatelessWidget {
     required this.inventoryRepository,
     required this.shoppingListRepository,
     required this.recipesRepository,
+    required this.categoriesRepository,
     required this.appRouter,
   });
 
@@ -119,6 +122,9 @@ class FoodTrackApp extends StatelessWidget {
         ),
         RepositoryProvider<RecipesRepositoryInterface>.value(
           value: recipesRepository,
+        ),
+        RepositoryProvider<CategoriesRepositoryInterface>.value(
+          value: categoriesRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -152,6 +158,11 @@ class FoodTrackApp extends StatelessWidget {
           BlocProvider<RecipesBloc>(
             create: (context) => RecipesBloc(
               recipesRepository: context.read<RecipesRepositoryInterface>(),
+            ),
+          ),
+          BlocProvider<CategoriesBloc>(
+            create: (context) => CategoriesBloc(
+              categoriesRepository: context.read<CategoriesRepositoryInterface>(),
             ),
           ),
         ],

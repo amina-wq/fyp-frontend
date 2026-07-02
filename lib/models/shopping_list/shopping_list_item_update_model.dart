@@ -1,13 +1,13 @@
 class ShoppingListItemUpdateModel {
   final String? name;
-  final String? category;
+  final String? categoryId;
   final double? amount;
   final String? unit;
   final bool? isChecked;
 
   const ShoppingListItemUpdateModel({
     this.name,
-    this.category,
+    this.categoryId,
     this.amount,
     this.unit,
     this.isChecked,
@@ -16,7 +16,7 @@ class ShoppingListItemUpdateModel {
   Map<String, dynamic> toJson() {
     return {
       if (name != null) 'name': name,
-      if (category != null) 'category': category,
+      if (categoryId != null) 'category_id': categoryId,
       if (amount != null) 'amount': amount,
       if (unit != null) 'unit': unit,
       if (isChecked != null) 'is_checked': isChecked,

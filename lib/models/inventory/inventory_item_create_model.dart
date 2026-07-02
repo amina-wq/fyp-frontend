@@ -2,7 +2,7 @@ class InventoryItemCreateModel {
   final String? productId;
   final String? barcode;
   final String? customName;
-  final String category;
+  final String categoryId;
   final String? notes;
   final String location;
   final double amount;
@@ -13,7 +13,7 @@ class InventoryItemCreateModel {
     required this.productId,
     required this.barcode,
     required this.customName,
-    required this.category,
+    required this.categoryId,
     required this.notes,
     required this.location,
     required this.amount,
@@ -26,7 +26,7 @@ class InventoryItemCreateModel {
       if (productId != null) 'product_id': productId,
       if (barcode != null) 'barcode': barcode,
       if (customName != null) 'custom_name': customName,
-      'category': category,
+      'category_id': categoryId,
       'notes': notes,
       'location': location,
       'amount': amount,

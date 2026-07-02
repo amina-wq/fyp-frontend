@@ -1,17 +1,15 @@
 class InventoryItemUpdateModel {
   final String? customName;
-  final String? category;
+  final String? categoryId;
   final String? notes;
   final String? location;
-
   final double? amount;
   final String? unit;
-
   final DateTime? expirationDate;
 
   const InventoryItemUpdateModel({
     this.customName,
-    this.category,
+    this.categoryId,
     this.notes,
     this.location,
     this.amount,
@@ -22,7 +20,7 @@ class InventoryItemUpdateModel {
   Map<String, dynamic> toJson() {
     return {
       if (customName != null) 'custom_name': customName,
-      if (category != null) 'category': category,
+      if (categoryId != null) 'category_id': categoryId,
       if (notes != null) 'notes': notes,
       if (location != null) 'location': location,
       if (amount != null) 'amount': amount,

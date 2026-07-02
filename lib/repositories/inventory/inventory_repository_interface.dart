@@ -6,7 +6,7 @@ abstract class InventoryRepositoryInterface {
       );
 
   Future<List<InventoryItemModel>> getInventoryItems({
-    String? category,
+    String? categoryId,
     String? expiryState,
   });
 

@@ -20,6 +20,8 @@ class ApiConstants {
   static const String inventoryEndpoint = '/inventory';
   static const String inventoryStatsEndpoint = '/inventory/stats';
 
+  static const String categoriesEndpoint = '/categories';
+
   static String inventoryItemByIdEndpoint(String itemId) {
     return '/inventory/$itemId';
   }

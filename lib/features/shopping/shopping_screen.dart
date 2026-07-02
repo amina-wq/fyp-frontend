@@ -28,7 +28,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     await showAddToShoppingListDialog(
       context: context,
       initialName: '',
-      initialCategory: 'other',
+      initialCategoryId: null,
       source: 'manual',
       sourceId: null,
       initialAmount: null,
@@ -129,20 +129,21 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
   String _buildSubtitle(ShoppingListItemModel item) {
     final amount = item.amount;
     final unit = item.unit;
+    final categoryName = item.categoryName;
 
     if (amount == null && unit == null) {
-      return item.category;
+      return categoryName;
     }
 
     if (amount != null && unit != null) {
-      return '${_formatAmount(amount)} $unit · ${item.category}';
+      return '${_formatAmount(amount)} $unit · $categoryName';
     }
 
     if (amount != null) {
-      return '${_formatAmount(amount)} · ${item.category}';
+      return '${_formatAmount(amount)} · $categoryName';
     }
 
-    return '$unit · ${item.category}';
+    return '$unit · $categoryName';
   }
 
   String _formatAmount(double amount) {
