@@ -16,6 +16,10 @@ abstract class AuthRepositoryInterface {
 
   Future<UserModel> getCurrentUser();
 
+  Future<UserModel> updateFcmToken({
+    required String? fcmToken,
+  });
+
   Future<void> logout();
 
   Future<bool> isLoggedIn();

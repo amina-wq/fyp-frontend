@@ -1,11 +1,16 @@
 class ApiConstants {
-  static const String serverUrl = 'http://52.77.124.3';
+  // static const String serverUrl = 'http://52.77.124.3';
+  static const String serverUrl = 'http://192.168.1.2';
   static const String baseUrl = '$serverUrl/api/v1';
 
   static const String registerEndpoint = '/auth/register';
   static const String loginEndpoint = '/auth/login';
   static const String refreshEndpoint = '/auth/refresh';
   static const String meEndpoint = '/auth/me';
+
+  static const String fcmTokenEndpoint = '/auth/fcm-token';
+  static const String updateNameEndpoint = '/auth/me/name';
+  static const String updateSettingsEndpoint = '/auth/me/settings';
 
   static String productByBarcodeEndpoint(String barcode) {
     return '/products/barcode/$barcode';

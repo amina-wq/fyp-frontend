@@ -6,10 +6,11 @@ import 'bloc/bloc.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/token_storage.dart';
 import 'repositories/repositories.dart';
+import 'core/notifications/fcm_service.dart';
 import 'router/router.dart';
 import 'ui/ui.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -28,6 +29,10 @@ void main() {
   final authRepository = AuthRepository(
     apiClient: apiClient,
     tokenStorage: tokenStorage,
+  );
+
+  final fcmService = FcmService(
+    authRepository: authRepository,
   );
 
   final productRepository = ProductRepository(
@@ -59,6 +64,8 @@ void main() {
     authRepository: authRepository,
   );
 
+  await fcmService.initialize();
+
   runApp(
     FoodTrackApp(
       apiClient: apiClient,
@@ -70,6 +77,7 @@ void main() {
       recipesRepository: recipesRepository,
       categoriesRepository: categoriesRepository,
       appRouter: appRouter,
+      fcmService: fcmService,
     ),
   );
 }
@@ -84,6 +92,7 @@ class FoodTrackApp extends StatelessWidget {
   final RecipesRepositoryInterface recipesRepository;
   final CategoriesRepositoryInterface categoriesRepository;
   final AppRouter appRouter;
+  final FcmService fcmService;
 
   const FoodTrackApp({
     super.key,
@@ -96,6 +105,7 @@ class FoodTrackApp extends StatelessWidget {
     required this.recipesRepository,
     required this.categoriesRepository,
     required this.appRouter,
+    required this.fcmService,
   });
 
   @override
@@ -126,12 +136,16 @@ class FoodTrackApp extends StatelessWidget {
         RepositoryProvider<CategoriesRepositoryInterface>.value(
           value: categoriesRepository,
         ),
+        RepositoryProvider<FcmService>.value(
+          value: fcmService,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(
               authRepository: context.read<AuthRepositoryInterface>(),
+              fcmService: context.read<FcmService>(),
             ),
           ),
           BlocProvider<InventoryBloc>(

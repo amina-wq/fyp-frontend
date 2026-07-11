@@ -1,15 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/auth/auth_repository_interface.dart';
+import '../../core/notifications/fcm_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepositoryInterface _authRepository;
+  final FcmService _fcmService;
 
   AuthBloc({
     required AuthRepositoryInterface authRepository,
-  })  : _authRepository = authRepository, super(const AuthInitial()) {
+    required FcmService fcmService,
+  })  : _authRepository = authRepository,
+        _fcmService = fcmService,
+        super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
@@ -33,6 +38,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final user = await _authRepository.getCurrentUser();
 
+      await _fcmService.syncTokenWithBackend();
+
       emit(AuthAuthenticated(user: user));
     } catch (_) {
       await _authRepository.logout();
@@ -54,6 +61,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       final user = await _authRepository.getCurrentUser();
+
+      await _fcmService.syncTokenWithBackend();
 
       emit(AuthAuthenticated(user: user));
     } catch (error) {
@@ -78,6 +87,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       final user = await _authRepository.getCurrentUser();
+
+      await _fcmService.syncTokenWithBackend();
 
       emit(AuthAuthenticated(user: user));
     } catch (error) {

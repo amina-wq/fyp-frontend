@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fyp_frontend/core/network/api_client.dart';
+import 'package:fyp_frontend/core/notifications/fcm_service.dart';
 import 'package:fyp_frontend/core/storage/token_storage.dart';
 import 'package:fyp_frontend/main.dart';
 import 'package:fyp_frontend/repositories/repositories.dart';
@@ -46,6 +47,10 @@ void main() {
       tokenStorage: tokenStorage,
     );
 
+    final fcmService = FcmService(
+      authRepository: authRepository,
+    );
+
     final appRouter = AppRouter(
       authRepository: authRepository,
     );
@@ -60,12 +65,13 @@ void main() {
         shoppingListRepository: shoppingListRepository,
         recipesRepository: recipesRepository,
         categoriesRepository: categoriesRepository,
+        fcmService: fcmService,
         appRouter: appRouter,
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    expect(find.text('FoodTrack'), findsWidgets);
+    expect(find.byType(FoodTrackApp), findsOneWidget);
   });
 }

@@ -130,6 +130,33 @@ class AuthRepository implements AuthRepositoryInterface {
   }
 
   @override
+  Future<UserModel> updateFcmToken({
+    required String? fcmToken,
+  }) async {
+    try {
+      final accessToken = await _tokenStorage.getAccessToken();
+
+      if (accessToken == null) {
+        throw Exception('Access token not found');
+      }
+
+      final response = await _apiClient.patch(
+        ApiConstants.fcmTokenEndpoint,
+        accessToken: accessToken,
+        data: {
+          'fcm_token': fcmToken,
+        },
+      );
+
+      return UserModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractErrorMessage(error));
+    }
+  }
+
+  @override
   Future<void> logout() async {
     await _tokenStorage.clearTokens();
   }
