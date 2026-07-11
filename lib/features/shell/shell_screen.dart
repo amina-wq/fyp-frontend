@@ -9,21 +9,27 @@ class ShellScreen extends StatelessWidget {
   const ShellScreen({super.key});
 
   void _openAddOptions(BuildContext context) {
+    final colors = context.appColors;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       builder: (context) {
         return Container(
           margin: const EdgeInsets.all(20),
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colors.card,
             borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: colors.border,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.12),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: colors.shadow,
+                blurRadius: 24,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
@@ -67,6 +73,8 @@ class ShellScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return AutoTabsRouter(
       routes: const [
         HomeRoute(),
@@ -83,24 +91,27 @@ class ShellScreen extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             heroTag: 'add_fab',
             onPressed: () => _openAddOptions(context),
-            backgroundColor: AppColors.bottomNavigationBar,
+            backgroundColor: colors.primary,
+            foregroundColor: colors.textOnPrimary,
+            elevation: 8,
             shape: const CircleBorder(),
             child: const Icon(
               Icons.add,
-              color: Colors.white,
               size: 30,
             ),
           ),
           floatingActionButtonLocation:
           FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: BottomAppBar(
-            color: Colors.white,
+            color: colors.card,
             elevation: 12,
+            shadowColor: colors.shadow,
+            surfaceTintColor: Colors.transparent,
             shape: const CircularNotchedRectangle(),
             notchMargin: 8,
             child: SizedBox(
-              height: 72,
-              child: Row(
+            height: 72,
+            child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _NavItem(
@@ -165,36 +176,36 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final isSelected = index == activeIndex;
-    final color = isSelected
-        ? AppColors.bottomNavigationBar
-        : Colors.black.withValues(alpha: 0.45);
+    final itemColor = isSelected ? colors.primary : colors.textMuted;
 
     return InkWell(
       onTap: () => onTap(index),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 6,
+          horizontal: 8,
+          vertical: 2,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isSelected ? selectedIcon : icon,
-              color: color,
-              size: 24,
+              color: itemColor,
+              size: 22,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: color,
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: itemColor,
+                fontSize: 10,
+                height: 1,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
               ),
             ),
           ],
@@ -217,6 +228,8 @@ class _AddOptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(22),
@@ -224,10 +237,10 @@ class _AddOptionButton extends StatelessWidget {
         height: 92,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.categoryActiveFill,
+          color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: AppColors.categoryActiveBorder,
+            color: colors.border,
           ),
         ),
         child: Column(
@@ -235,15 +248,15 @@ class _AddOptionButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
               size: 28,
             ),
             const SizedBox(height: 8),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textDark,
+              style: TextStyle(
+                color: colors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
               ),

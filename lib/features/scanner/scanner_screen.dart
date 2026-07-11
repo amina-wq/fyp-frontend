@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../bloc/scanner/scanner.dart';
-import '../../ui/theme/app_colors.dart';
 import '../../models/product/product.dart';
 import '../../router/router.dart';
+import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
 class ScannerScreen extends StatefulWidget {
@@ -63,7 +63,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
     _controller.start();
   }
 
-
   Future<void> _openAddScannedProduct(ProductModel product) async {
     await context.router.push(
       AddScannedProductRoute(
@@ -87,7 +86,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     _resetScanner();
   }
-
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -125,6 +123,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
             MobileScanner(
               controller: _controller,
               onDetect: _onDetect,
+            ),
+            Container(
+              color: Colors.black.withValues(alpha: 0.18),
             ),
             SafeArea(
               child: Padding(
@@ -274,6 +275,8 @@ class _ScannerHeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -281,12 +284,15 @@ class _ScannerHeaderButton extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.16),
+          color: Colors.black.withValues(alpha: 0.36),
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.18),
+          ),
         ),
         child: Icon(
           icon,
-          color: Colors.white,
+          color: colors.primary,
           size: 26,
         ),
       ),
@@ -299,35 +305,37 @@ class _ScannerFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       width: 260,
       height: 190,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white,
+          color: Colors.white.withValues(alpha: 0.88),
           width: 3,
         ),
       ),
       child: Stack(
         children: [
-          _Corner(
+          const _Corner(
             alignment: Alignment.topLeft,
           ),
-          _Corner(
+          const _Corner(
             alignment: Alignment.topRight,
           ),
-          _Corner(
+          const _Corner(
             alignment: Alignment.bottomLeft,
           ),
-          _Corner(
+          const _Corner(
             alignment: Alignment.bottomRight,
           ),
           Center(
             child: Container(
               height: 2,
               margin: const EdgeInsets.symmetric(horizontal: 24),
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
             ),
           ),
         ],
@@ -345,6 +353,12 @@ class _Corner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final borderSide = BorderSide(
+      color: colors.primary,
+      width: 5,
+    );
+
     return Align(
       alignment: alignment,
       child: Container(
@@ -355,31 +369,19 @@ class _Corner extends StatelessWidget {
           border: Border(
             top: alignment == Alignment.topLeft ||
                 alignment == Alignment.topRight
-                ? const BorderSide(
-              color: AppColors.bottomNavigationBar,
-              width: 5,
-            )
+                ? borderSide
                 : BorderSide.none,
             bottom: alignment == Alignment.bottomLeft ||
                 alignment == Alignment.bottomRight
-                ? const BorderSide(
-              color: AppColors.bottomNavigationBar,
-              width: 5,
-            )
+                ? borderSide
                 : BorderSide.none,
             left: alignment == Alignment.topLeft ||
                 alignment == Alignment.bottomLeft
-                ? const BorderSide(
-              color: AppColors.bottomNavigationBar,
-              width: 5,
-            )
+                ? borderSide
                 : BorderSide.none,
             right: alignment == Alignment.topRight ||
                 alignment == Alignment.bottomRight
-                ? const BorderSide(
-              color: AppColors.bottomNavigationBar,
-              width: 5,
-            )
+                ? borderSide
                 : BorderSide.none,
           ),
         ),
@@ -399,25 +401,30 @@ class _ScannerStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 18,
         vertical: 12,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.52),
+        color: Colors.black.withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.12),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isLoading) ...[
-            const SizedBox(
+            SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: colors.primary,
               ),
             ),
             const SizedBox(width: 10),
@@ -457,28 +464,40 @@ class _ScannerResultSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: colors.border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.qr_code_scanner,
               size: 42,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
             ),
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                color: AppColors.textDark,
+              style: TextStyle(
+                color: colors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
               ),
@@ -487,19 +506,32 @@ class _ScannerResultSheet extends StatelessWidget {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: colors.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              barcode,
-              style: const TextStyle(
-                color: Colors.black45,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: colors.surfaceSoft,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: colors.border,
+                ),
+              ),
+              child: Text(
+                barcode,
+                style: TextStyle(
+                  color: colors.textMuted,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
             const SizedBox(height: 18),

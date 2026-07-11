@@ -50,6 +50,38 @@ class AuthRefreshRequested extends AuthEvent {
   const AuthRefreshRequested();
 }
 
+class AuthNameUpdateRequested extends AuthEvent {
+  final String name;
+
+  const AuthNameUpdateRequested({
+    required this.name,
+  });
+
+  @override
+  List<Object?> get props => [
+    name,
+  ];
+}
+
+class AuthSettingsUpdateRequested extends AuthEvent {
+  final List<int> notificationDaysBefore;
+  final bool expiryNotificationsEnabled;
+  final String themeMode;
+
+  const AuthSettingsUpdateRequested({
+    required this.notificationDaysBefore,
+    required this.expiryNotificationsEnabled,
+    required this.themeMode,
+  });
+
+  @override
+  List<Object?> get props => [
+    notificationDaysBefore,
+    expiryNotificationsEnabled,
+    themeMode,
+  ];
+}
+
 class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }

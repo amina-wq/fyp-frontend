@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/recipes/recipes.dart';
 import '../../core/constants/api_constants.dart';
 import '../../models/recipes/recipes.dart';
+import '../../repositories/recipes/recipes_repository_interface.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../ui/widgets/widgets.dart';
-import '../../repositories/recipes/recipes_repository_interface.dart';
 
 @RoutePage()
 class RecipeDetailScreen extends StatefulWidget {
@@ -23,7 +23,6 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RecipeDetailBloc>(
@@ -58,8 +57,10 @@ class _RecipeDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocConsumer<RecipeDetailBloc, RecipeDetailState>(
           listener: (context, state) {
@@ -74,8 +75,10 @@ class _RecipeDetailView extends StatelessWidget {
           builder: (context, state) {
             if (state is RecipeDetailInitial ||
                 state is RecipeDetailLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: colors.primary,
+                ),
               );
             }
 
@@ -110,14 +113,16 @@ class _RecipeDetailContent extends StatelessWidget {
     required this.onRefresh,
   });
 
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final imageUrl = recipe.image == null || recipe.image!.isEmpty
         ? null
         : ApiConstants.resolveImageUrl(recipe.image);
 
     return RefreshIndicator(
+      color: colors.primary,
+      backgroundColor: colors.card,
       onRefresh: onRefresh,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
@@ -132,8 +137,8 @@ class _RecipeDetailContent extends StatelessWidget {
           const SizedBox(height: 22),
           Text(
             recipe.title,
-            style: const TextStyle(
-              color: Color(0xFF17183B),
+            style: TextStyle(
+              color: colors.textPrimary,
               fontSize: 24,
               fontWeight: FontWeight.w900,
               height: 1.18,
@@ -185,18 +190,20 @@ class _RecipeDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Row(
       children: [
         _HeaderButton(
           icon: Icons.chevron_left,
           onTap: onBack,
         ),
-        const Expanded(
+        Expanded(
           child: Text(
             'Recipe Details',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF1F2147),
+              color: colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w900,
             ),
@@ -219,6 +226,8 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -226,12 +235,15 @@ class _HeaderButton extends StatelessWidget {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: AppColors.categoryActiveFill,
+          color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: colors.border,
+          ),
         ),
         child: Icon(
           icon,
-          color: AppColors.bottomNavigationBar,
+          color: colors.primary,
           size: 24,
         ),
       ),
@@ -248,6 +260,7 @@ class _RecipeHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
     return Container(
@@ -255,11 +268,14 @@ class _RecipeHeroImage extends StatelessWidget {
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: colors.shadow,
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -269,15 +285,15 @@ class _RecipeHeroImage extends StatelessWidget {
           ? AppCachedNetworkImage(
         imageUrl: imageUrl!,
         fit: BoxFit.cover,
-        fallback: const Icon(
+        fallback: Icon(
           Icons.restaurant_menu_outlined,
-          color: AppColors.bottomNavigationBar,
+          color: colors.primary,
           size: 70,
         ),
       )
-          : const Icon(
+          : Icon(
         Icons.restaurant_menu_outlined,
-        color: AppColors.bottomNavigationBar,
+        color: colors.primary,
         size: 70,
       ),
     );
@@ -302,9 +318,7 @@ class _RecipeMetaRow extends StatelessWidget {
         Expanded(
           child: _MetaCard(
             icon: Icons.schedule_outlined,
-            label: readyInMinutes == null
-                ? 'Time'
-                : '$readyInMinutes min',
+            label: readyInMinutes == null ? 'Time' : '$readyInMinutes min',
           ),
         ),
         const SizedBox(width: 10),
@@ -318,9 +332,7 @@ class _RecipeMetaRow extends StatelessWidget {
         Expanded(
           child: _MetaCard(
             icon: Icons.local_fire_department_outlined,
-            label: calories == null
-                ? 'Calories'
-                : '${_formatAmount(calories!)} kcal',
+            label: calories == null ? 'Calories' : '${_formatAmount(calories!)} kcal',
           ),
         ),
       ],
@@ -339,14 +351,16 @@ class _MetaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
+        color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.categoryActiveBorder,
+          color: colors.border,
         ),
       ),
       child: Column(
@@ -354,7 +368,7 @@ class _MetaCard extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
             size: 20,
           ),
           const SizedBox(height: 6),
@@ -362,8 +376,8 @@ class _MetaCard extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF1F2147),
+            style: TextStyle(
+              color: colors.textPrimary,
               fontSize: 11,
               fontWeight: FontWeight.w800,
             ),
@@ -383,10 +397,12 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Text(
       title,
-      style: const TextStyle(
-        color: Color(0xFF17183B),
+      style: TextStyle(
+        color: colors.textPrimary,
         fontSize: 21,
         fontWeight: FontWeight.w900,
         letterSpacing: -0.3,
@@ -406,7 +422,10 @@ class _IngredientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusData = _statusDataForIngredient(ingredient);
+    final statusData = _statusDataForIngredient(
+      context: context,
+      ingredient: ingredient,
+    );
 
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
@@ -430,6 +449,7 @@ class _IngredientTile extends StatelessWidget {
             child: _IngredientInfo(
               ingredient: ingredient,
               statusLabel: statusData.label,
+              statusColor: statusData.iconColor,
             ),
           ),
         ],
@@ -441,14 +461,17 @@ class _IngredientTile extends StatelessWidget {
 class _IngredientInfo extends StatelessWidget {
   final RecipeIngredientModel ingredient;
   final String statusLabel;
+  final Color statusColor;
 
   const _IngredientInfo({
     required this.ingredient,
     required this.statusLabel,
+    required this.statusColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final requiredText = _buildRequiredText(ingredient);
     final inventoryText = _buildInventoryText(ingredient);
 
@@ -457,8 +480,8 @@ class _IngredientInfo extends StatelessWidget {
       children: [
         Text(
           ingredient.name,
-          style: const TextStyle(
-            color: Color(0xFF1F2147),
+          style: TextStyle(
+            color: colors.textPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w900,
           ),
@@ -466,8 +489,8 @@ class _IngredientInfo extends StatelessWidget {
         const SizedBox(height: 5),
         Text(
           requiredText,
-          style: const TextStyle(
-            color: Colors.black54,
+          style: TextStyle(
+            color: colors.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
@@ -476,8 +499,8 @@ class _IngredientInfo extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             inventoryText,
-            style: const TextStyle(
-              color: Colors.black54,
+            style: TextStyle(
+              color: colors.textSecondary,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),
@@ -486,8 +509,8 @@ class _IngredientInfo extends StatelessWidget {
         const SizedBox(height: 7),
         Text(
           statusLabel,
-          style: const TextStyle(
-            color: Color(0xFF1F2147),
+          style: TextStyle(
+            color: statusColor,
             fontSize: 12,
             fontWeight: FontWeight.w900,
           ),
@@ -506,14 +529,19 @@ class _StepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: colors.shadow,
             blurRadius: 14,
             offset: const Offset(0, 7),
           ),
@@ -526,14 +554,14 @@ class _StepTile extends StatelessWidget {
             width: 28,
             height: 28,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppColors.bottomNavigationBar,
+            decoration: BoxDecoration(
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             child: Text(
               '${step.number}',
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colors.textOnPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
               ),
@@ -543,8 +571,8 @@ class _StepTile extends StatelessWidget {
           Expanded(
             child: Text(
               step.step,
-              style: const TextStyle(
-                color: Color(0xFF1F2147),
+              style: TextStyle(
+                color: colors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 height: 1.4,
@@ -562,17 +590,22 @@ class _EmptyStepsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.border,
+        ),
       ),
-      child: const Text(
+      child: Text(
         'No preparation steps available for this recipe.',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Colors.black54,
+          color: colors.textSecondary,
           fontSize: 13,
           fontWeight: FontWeight.w700,
         ),
@@ -592,23 +625,25 @@ class _RecipeDetailErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 52,
-              color: Colors.redAccent,
+              color: colors.danger,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Failed to load recipe details',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF1F2147),
+                color: colors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
               ),
@@ -617,8 +652,8 @@ class _RecipeDetailErrorView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: colors.textSecondary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.35,
@@ -630,8 +665,8 @@ class _RecipeDetailErrorView extends StatelessWidget {
               icon: const Icon(Icons.refresh),
               label: const Text('Try again'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.bottomNavigationBar,
-                foregroundColor: Colors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.textOnPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -661,45 +696,48 @@ class _IngredientStatusData {
   });
 }
 
-_IngredientStatusData _statusDataForIngredient(
-    RecipeIngredientModel ingredient,
-    ) {
+_IngredientStatusData _statusDataForIngredient({
+  required BuildContext context,
+  required RecipeIngredientModel ingredient,
+}) {
+  final colors = context.appColors;
+
   if (ingredient.isAvailable) {
-    return const _IngredientStatusData(
+    return _IngredientStatusData(
       icon: Icons.check_circle_outline,
       label: 'Available in your inventory',
-      fillColor: Color(0xFFEAF8ED),
-      borderColor: Color(0xFFC5EBCB),
-      iconColor: Color(0xFF3E9F4D),
+      fillColor: colors.successSoft,
+      borderColor: colors.successBorder,
+      iconColor: colors.success,
     );
   }
 
   if (ingredient.isInsufficient) {
-    return const _IngredientStatusData(
+    return _IngredientStatusData(
       icon: Icons.warning_amber_rounded,
       label: 'Not enough in inventory',
-      fillColor: Color(0xFFFFF6DF),
-      borderColor: Color(0xFFF1D999),
-      iconColor: Color(0xFFD99A35),
+      fillColor: colors.warningSoft,
+      borderColor: colors.warningBorder,
+      iconColor: colors.warning,
     );
   }
 
   if (ingredient.isUnknownAmount) {
-    return const _IngredientStatusData(
+    return _IngredientStatusData(
       icon: Icons.help_outline,
       label: 'You have this item, check amount manually',
-      fillColor: Color(0xFFEFF6FA),
-      borderColor: Color(0xFFC8E1ED),
-      iconColor: AppColors.bottomNavigationBar,
+      fillColor: colors.primarySoft,
+      borderColor: colors.primaryBorder,
+      iconColor: colors.primary,
     );
   }
 
-  return const _IngredientStatusData(
+  return _IngredientStatusData(
     icon: Icons.remove_circle_outline,
     label: 'Missing from inventory',
-    fillColor: Color(0xFFFFEEEE),
-    borderColor: Color(0xFFF3C6C6),
-    iconColor: Color(0xFFD85C5C),
+    fillColor: colors.dangerSoft,
+    borderColor: colors.dangerBorder,
+    iconColor: colors.danger,
   );
 }
 

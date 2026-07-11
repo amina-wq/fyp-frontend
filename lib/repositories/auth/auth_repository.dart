@@ -110,15 +110,61 @@ class AuthRepository implements AuthRepositoryInterface {
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final accessToken = await _tokenStorage.getAccessToken();
+      final response = await _authorizedRequest(
+            (accessToken) => _apiClient.get(
+          ApiConstants.meEndpoint,
+          accessToken: accessToken,
+        ),
+      );
 
-      if (accessToken == null) {
-        throw Exception('Access token not found');
-      }
+      return UserModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractErrorMessage(error));
+    }
+  }
 
-      final response = await _apiClient.get(
-        ApiConstants.meEndpoint,
-        accessToken: accessToken,
+  @override
+  Future<UserModel> updateName({
+    required String name,
+  }) async {
+    try {
+      final response = await _authorizedRequest(
+            (accessToken) => _apiClient.patch(
+          ApiConstants.updateNameEndpoint,
+          accessToken: accessToken,
+          data: {
+            'name': name,
+          },
+        ),
+      );
+
+      return UserModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractErrorMessage(error));
+    }
+  }
+
+  @override
+  Future<UserModel> updateSettings({
+    required List<int> notificationDaysBefore,
+    required bool expiryNotificationsEnabled,
+    required String themeMode,
+  }) async {
+    try {
+      final response = await _authorizedRequest(
+            (accessToken) => _apiClient.patch(
+          ApiConstants.updateSettingsEndpoint,
+          accessToken: accessToken,
+          data: {
+            'notification_days_before': notificationDaysBefore,
+            'expiry_notifications_enabled': expiryNotificationsEnabled,
+            'theme_mode': themeMode,
+          },
+        ),
       );
 
       return UserModel.fromJson(
@@ -134,18 +180,14 @@ class AuthRepository implements AuthRepositoryInterface {
     required String? fcmToken,
   }) async {
     try {
-      final accessToken = await _tokenStorage.getAccessToken();
-
-      if (accessToken == null) {
-        throw Exception('Access token not found');
-      }
-
-      final response = await _apiClient.patch(
-        ApiConstants.fcmTokenEndpoint,
-        accessToken: accessToken,
-        data: {
-          'fcm_token': fcmToken,
-        },
+      final response = await _authorizedRequest(
+            (accessToken) => _apiClient.patch(
+          ApiConstants.fcmTokenEndpoint,
+          accessToken: accessToken,
+          data: {
+            'fcm_token': fcmToken,
+          },
+        ),
       );
 
       return UserModel.fromJson(
@@ -164,6 +206,28 @@ class AuthRepository implements AuthRepositoryInterface {
   @override
   Future<bool> isLoggedIn() async {
     return _tokenStorage.hasTokens();
+  }
+
+  Future<Response<dynamic>> _authorizedRequest(
+      Future<Response<dynamic>> Function(String accessToken) request,
+      ) async {
+    final accessToken = await _tokenStorage.getAccessToken();
+
+    if (accessToken == null) {
+      throw Exception('Access token not found');
+    }
+
+    try {
+      return await request(accessToken);
+    } on DioException catch (error) {
+      if (error.response?.statusCode != 401) {
+        rethrow;
+      }
+
+      final refreshedTokens = await refreshTokens();
+
+      return request(refreshedTokens.accessToken);
+    }
   }
 
   String _extractErrorMessage(DioException error) {

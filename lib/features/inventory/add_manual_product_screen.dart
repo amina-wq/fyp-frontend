@@ -198,6 +198,8 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return BlocListener<AddManualProductBloc, AddManualProductState>(
       listener: (context, state) {
         if (state is AddManualProductSuccess) {
@@ -217,7 +219,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
           final isSaving = state is AddManualProductSaving;
 
           return Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: colors.background,
             body: SafeArea(
               child: Form(
                 key: _formKey,
@@ -232,199 +234,210 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                       },
                     ),
                     const SizedBox(height: 24),
-                    _TextInput(
-                      controller: _nameController,
-                      label: 'Product name *',
-                      icon: Icons.shopping_bag_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
+                    _FormCard(
+                      children: [
+                        _TextInput(
+                          controller: _nameController,
+                          label: 'Product name *',
+                          icon: Icons.shopping_bag_outlined,
+                          validator: (value) {
+                            final text = value?.trim() ?? '';
 
-                        if (text.isEmpty) {
-                          return 'Product name is required';
-                        }
+                            if (text.isEmpty) {
+                              return 'Product name is required';
+                            }
 
-                        if (text.length > 150) {
-                          return 'Maximum 150 characters';
-                        }
+                            if (text.length > 150) {
+                              return 'Maximum 150 characters';
+                            }
 
-                        return null;
-                      },
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _TextInput(
+                          controller: _barcodeController,
+                          label: 'Barcode',
+                          icon: Icons.qr_code_2_outlined,
+                          validator: (value) {
+                            final text = value?.trim() ?? '';
+
+                            if (text.length > 50) {
+                              return 'Maximum 50 characters';
+                            }
+
+                            if (text.contains(' ')) {
+                              return 'Barcode cannot contain spaces';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _TextInput(
+                          controller: _brandController,
+                          label: 'Brand',
+                          icon: Icons.store_outlined,
+                          validator: (value) {
+                            final text = value?.trim() ?? '';
+
+                            if (text.length > 100) {
+                              return 'Maximum 100 characters';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _TextInput(
+                          controller: _quantityController,
+                          label: 'Product quantity, e.g. 1L or 500g',
+                          icon: Icons.scale_outlined,
+                          validator: (value) {
+                            final text = value?.trim() ?? '';
+
+                            if (text.length > 50) {
+                              return 'Maximum 50 characters';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _TextInput(
+                          controller: _tagsController,
+                          label: 'Tags, separated by comma',
+                          icon: Icons.sell_outlined,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _barcodeController,
-                      label: 'Barcode',
-                      icon: Icons.qr_code_2_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 50) {
-                          return 'Maximum 50 characters';
-                        }
-
-                        if (text.contains(' ')) {
-                          return 'Barcode cannot contain spaces';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _brandController,
-                      label: 'Brand',
-                      icon: Icons.store_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 100) {
-                          return 'Maximum 100 characters';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _quantityController,
-                      label: 'Product quantity, e.g. 1L or 500g',
-                      icon: Icons.scale_outlined,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 50) {
-                          return 'Maximum 50 characters';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _tagsController,
-                      label: 'Tags, separated by comma',
-                      icon: Icons.sell_outlined,
-                    ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 18),
                     _ProductPhotoPicker(
                       localImagePath: _pickedImage?.path,
                       onTakePhoto: isSaving ? null : _takePhoto,
                       onRemovePhoto:
                       isSaving || _pickedImage == null ? null : _removePhoto,
                     ),
-                    const SizedBox(height: 24),
-                    BlocBuilder<CategoriesBloc, CategoriesState>(
-                      builder: (context, categoriesState) {
-                        if (categoriesState is CategoriesLoading ||
-                            categoriesState is CategoriesInitial) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        if (categoriesState is CategoriesFailure) {
-                          return Text(
-                            categoriesState.message,
-                            style: const TextStyle(
-                              color: AppColors.expiredBorder,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          );
-                        }
-
-                        if (categoriesState is! CategoriesLoaded) {
-                          return const SizedBox.shrink();
-                        }
-
-                        final categories = categoriesState.categories;
-
-                        if (_selectedCategoryId == null &&
-                            categories.isNotEmpty) {
-                          _selectedCategoryId = _defaultCategoryId(categories);
-                        }
-
-                        return _CategoryDropdownInput(
-                          label: 'Category',
-                          icon: Icons.category_outlined,
-                          value: _selectedCategoryId,
-                          categories: categories,
-                          onChanged: (value) {
-                            setState(() => _selectedCategoryId = value);
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
+                    const SizedBox(height: 18),
+                    _FormCard(
                       children: [
-                        Expanded(
-                          child: _TextInput(
-                            controller: _amountController,
-                            label: 'Amount *',
-                            icon: Icons.numbers_outlined,
-                            keyboardType: TextInputType.number,
-                          ),
+                        BlocBuilder<CategoriesBloc, CategoriesState>(
+                          builder: (context, categoriesState) {
+                            if (categoriesState is CategoriesLoading ||
+                                categoriesState is CategoriesInitial) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: colors.primary,
+                                ),
+                              );
+                            }
+
+                            if (categoriesState is CategoriesFailure) {
+                              return Text(
+                                categoriesState.message,
+                                style: TextStyle(
+                                  color: colors.danger,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              );
+                            }
+
+                            if (categoriesState is! CategoriesLoaded) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final categories = categoriesState.categories;
+
+                            if (_selectedCategoryId == null &&
+                                categories.isNotEmpty) {
+                              _selectedCategoryId =
+                                  _defaultCategoryId(categories);
+                            }
+
+                            return _CategoryDropdownInput(
+                              label: 'Category',
+                              icon: Icons.category_outlined,
+                              value: _selectedCategoryId,
+                              categories: categories,
+                              onChanged: (value) {
+                                setState(() => _selectedCategoryId = value);
+                              },
+                            );
+                          },
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _DropdownInput(
-                            label: 'Unit',
-                            icon: Icons.straighten_outlined,
-                            value: _selectedUnit,
-                            items: const [
-                              _OptionItem('pcs', 'pcs'),
-                              _OptionItem('g', 'g'),
-                              _OptionItem('kg', 'kg'),
-                              _OptionItem('ml', 'ml'),
-                              _OptionItem('l', 'l'),
-                              _OptionItem('pack', 'pack'),
-                              _OptionItem('bottle', 'bottle'),
-                              _OptionItem('can', 'can'),
-                              _OptionItem('other', 'other'),
-                            ],
-                            onChanged: (value) {
-                              setState(() => _selectedUnit = value);
-                            },
-                          ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _TextInput(
+                                controller: _amountController,
+                                label: 'Amount *',
+                                icon: Icons.numbers_outlined,
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _DropdownInput(
+                                label: 'Unit',
+                                icon: Icons.straighten_outlined,
+                                value: _selectedUnit,
+                                items: const [
+                                  _OptionItem('pcs', 'pcs'),
+                                  _OptionItem('g', 'g'),
+                                  _OptionItem('kg', 'kg'),
+                                  _OptionItem('ml', 'ml'),
+                                  _OptionItem('l', 'l'),
+                                  _OptionItem('pack', 'pack'),
+                                  _OptionItem('bottle', 'bottle'),
+                                  _OptionItem('can', 'can'),
+                                  _OptionItem('other', 'other'),
+                                ],
+                                onChanged: (value) {
+                                  setState(() => _selectedUnit = value);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        _DropdownInput(
+                          label: 'Location',
+                          icon: Icons.location_on_outlined,
+                          value: _selectedLocation,
+                          items: const [
+                            _OptionItem('fridge', 'Fridge'),
+                            _OptionItem('freezer', 'Freezer'),
+                            _OptionItem('pantry', 'Pantry'),
+                            _OptionItem('counter', 'Counter'),
+                            _OptionItem('other', 'Other'),
+                          ],
+                          onChanged: (value) {
+                            setState(() => _selectedLocation = value);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _DateInput(
+                          selectedDate: _expirationDate,
+                          onTap: _pickExpirationDate,
+                        ),
+                        const SizedBox(height: 12),
+                        _TextInput(
+                          controller: _notesController,
+                          label: 'Notes',
+                          icon: Icons.notes_outlined,
+                          maxLines: 4,
+                          validator: (value) {
+                            final text = value?.trim() ?? '';
+
+                            if (text.length > 500) {
+                              return 'Maximum 500 characters';
+                            }
+
+                            return null;
+                          },
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 12),
-                    _DropdownInput(
-                      label: 'Location',
-                      icon: Icons.location_on_outlined,
-                      value: _selectedLocation,
-                      items: const [
-                        _OptionItem('fridge', 'Fridge'),
-                        _OptionItem('freezer', 'Freezer'),
-                        _OptionItem('pantry', 'Pantry'),
-                        _OptionItem('counter', 'Counter'),
-                        _OptionItem('other', 'Other'),
-                      ],
-                      onChanged: (value) {
-                        setState(() => _selectedLocation = value);
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _DateInput(
-                      selectedDate: _expirationDate,
-                      onTap: _pickExpirationDate,
-                    ),
-                    const SizedBox(height: 12),
-                    _TextInput(
-                      controller: _notesController,
-                      label: 'Notes',
-                      icon: Icons.notes_outlined,
-                      maxLines: 4,
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-
-                        if (text.length > 500) {
-                          return 'Maximum 500 characters';
-                        }
-
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 28),
                     SizedBox(
@@ -432,27 +445,29 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                       child: ElevatedButton(
                         onPressed: isSaving ? null : _submit,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.bottomNavigationBar,
-                          foregroundColor: Colors.white,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.textOnPrimary,
+                          disabledBackgroundColor: colors.surfaceSoft,
+                          disabledForegroundColor: colors.textMuted,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
                         ),
                         child: isSaving
-                            ? const SizedBox(
+                            ? SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.4,
-                            color: Colors.white,
+                            color: colors.textOnPrimary,
                           ),
                         )
                             : const Text(
                           'Save product',
                           style: TextStyle(
                             fontSize: 15,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ),
@@ -477,6 +492,8 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Row(
       children: [
         InkWell(
@@ -486,22 +503,25 @@ class _Header extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppColors.categoryActiveFill,
+              color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colors.border,
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.chevron_left,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
               size: 28,
             ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Text(
             'Add Product',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF1F2147),
+              color: colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w900,
             ),
@@ -509,6 +529,40 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(width: 42),
       ],
+    );
+  }
+}
+
+class _FormCard extends StatelessWidget {
+  final List<Widget> children;
+
+  const _FormCard({
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
+      decoration: BoxDecoration(
+        color: colors.card,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: colors.border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: children,
+      ),
     );
   }
 }
@@ -526,16 +580,24 @@ class _ProductPhotoPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasImage = localImagePath != null && localImagePath!.isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
-        borderRadius: BorderRadius.circular(12),
+        color: colors.card,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.categoryActiveBorder,
+          color: colors.border,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -544,18 +606,21 @@ class _ProductPhotoPicker extends StatelessWidget {
             height: 180,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: colors.border,
+              ),
             ),
             child: hasImage
                 ? Image.file(
               File(localImagePath!),
               fit: BoxFit.cover,
             )
-                : const Icon(
+                : Icon(
               Icons.camera_alt_outlined,
               size: 54,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 12),
@@ -569,9 +634,10 @@ class _ProductPhotoPicker extends StatelessWidget {
                     icon: const Icon(Icons.camera_alt_outlined),
                     label: Text(hasImage ? 'Retake photo' : 'Take photo'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.bottomNavigationBar,
-                      side: const BorderSide(
-                        color: AppColors.categoryActiveBorder,
+                      foregroundColor: colors.primary,
+                      disabledForegroundColor: colors.textMuted,
+                      side: BorderSide(
+                        color: colors.primaryBorder,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -587,9 +653,10 @@ class _ProductPhotoPicker extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onRemovePhoto,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.expiredBorder,
-                      side: const BorderSide(
-                        color: AppColors.expiredBorder,
+                      foregroundColor: colors.danger,
+                      disabledForegroundColor: colors.textMuted,
+                      side: BorderSide(
+                        color: colors.dangerBorder,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -626,12 +693,20 @@ class _TextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -656,10 +731,19 @@ class _CategoryDropdownInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return DropdownButtonFormField<String>(
       value: value,
       isExpanded: true,
+      dropdownColor: colors.card,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -691,10 +775,19 @@ class _DropdownInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return DropdownButtonFormField<String>(
       value: value,
       isExpanded: true,
+      dropdownColor: colors.card,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -724,18 +817,23 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
         decoration: _inputDecoration(
+          context: context,
           label: 'Expiration date *',
           icon: Icons.calendar_month_outlined,
         ),
         child: Text(
           selectedDate == null ? 'Select date' : _formatDate(selectedDate!),
           style: TextStyle(
-            color: selectedDate == null ? Colors.black45 : AppColors.textDark,
+            color: selectedDate == null
+                ? colors.textMuted
+                : colors.textPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -756,57 +854,65 @@ class _OptionItem {
 }
 
 InputDecoration _inputDecoration({
+  required BuildContext context,
   required String label,
   required IconData icon,
 }) {
+  final colors = context.appColors;
+
   return InputDecoration(
     labelText: label,
-    labelStyle: const TextStyle(
-      color: Color(0xFF52656E),
+    labelStyle: TextStyle(
+      color: colors.textSecondary,
       fontSize: 13,
       fontWeight: FontWeight.w700,
     ),
     prefixIcon: Icon(
       icon,
-      color: AppColors.bottomNavigationBar,
+      color: colors.primary,
       size: 21,
     ),
     filled: true,
-    fillColor: AppColors.categoryActiveFill,
+    fillColor: colors.surfaceSoft,
     contentPadding: const EdgeInsets.symmetric(
       horizontal: 16,
       vertical: 16,
     ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.categoryActiveBorder,
+      borderSide: BorderSide(
+        color: colors.border,
       ),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.categoryActiveBorder,
+      borderSide: BorderSide(
+        color: colors.border,
       ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.bottomNavigationBar,
+      borderSide: BorderSide(
+        color: colors.primary,
         width: 1.5,
       ),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.expiredBorder,
+      borderSide: BorderSide(
+        color: colors.dangerBorder,
       ),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.expiredBorder,
+      borderSide: BorderSide(
+        color: colors.danger,
+        width: 1.5,
       ),
+    ),
+    errorStyle: TextStyle(
+      color: colors.danger,
+      fontWeight: FontWeight.w700,
     ),
   );
 }

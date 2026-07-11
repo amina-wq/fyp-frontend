@@ -187,15 +187,21 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.card,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
+        side: BorderSide(
+          color: colors.border,
+        ),
       ),
-      title: const Text(
+      title: Text(
         'Add to Shopping List',
         style: TextStyle(
-          color: Color(0xFF1F2147),
+          color: colors.textPrimary,
           fontSize: 18,
           fontWeight: FontWeight.w900,
         ),
@@ -207,7 +213,13 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
             TextField(
               controller: _nameController,
               enabled: widget.allowNameEditing,
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
               decoration: _inputDecoration(
+                context: context,
                 label: 'Item name',
                 hint: 'Milk',
               ),
@@ -218,7 +230,13 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
               decoration: _inputDecoration(
+                context: context,
                 label: 'Amount',
                 hint: 'Optional',
               ),
@@ -226,6 +244,12 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               value: _selectedUnit,
+              dropdownColor: colors.card,
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
               items: [
                 const DropdownMenuItem<String>(
                   value: null,
@@ -244,6 +268,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                 });
               },
               decoration: _inputDecoration(
+                context: context,
                 label: 'Unit',
                 hint: 'Optional',
               ),
@@ -254,16 +279,18 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
               builder: (context, categoriesState) {
                 if (categoriesState is CategoriesLoading ||
                     categoriesState is CategoriesInitial) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: colors.primary,
+                    ),
                   );
                 }
 
                 if (categoriesState is CategoriesFailure) {
                   return Text(
                     categoriesState.message,
-                    style: const TextStyle(
-                      color: AppColors.expiredBorder,
+                    style: TextStyle(
+                      color: colors.danger,
                       fontWeight: FontWeight.w700,
                     ),
                   );
@@ -285,6 +312,12 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
 
                 return DropdownButtonFormField<String>(
                   value: hasSelectedCategory ? _selectedCategoryId : null,
+                  dropdownColor: colors.card,
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
                   items: categories.map((category) {
                     return DropdownMenuItem<String>(
                       value: category.id,
@@ -301,6 +334,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                   }
                       : null,
                   decoration: _inputDecoration(
+                    context: context,
                     label: 'Category',
                     hint: 'Category',
                   ),
@@ -314,10 +348,10 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text(
+          child: Text(
             'Cancel',
             style: TextStyle(
-              color: Colors.black54,
+              color: colors.textSecondary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -325,8 +359,8 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
         ElevatedButton(
           onPressed: _addItem,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.bottomNavigationBar,
-            foregroundColor: Colors.white,
+            backgroundColor: colors.primary,
+            foregroundColor: colors.textOnPrimary,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
@@ -345,34 +379,54 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
 }
 
 InputDecoration _inputDecoration({
+  required BuildContext context,
   required String label,
   required String hint,
 }) {
+  final colors = context.appColors;
+
   return InputDecoration(
     labelText: label,
     hintText: hint,
+    labelStyle: TextStyle(
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+    ),
+    hintStyle: TextStyle(
+      color: colors.textMuted,
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+    ),
     filled: true,
-    fillColor: AppColors.categoryActiveFill,
+    fillColor: colors.surfaceSoft,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 16,
+    ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(
+        color: colors.border,
+      ),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
       borderSide: BorderSide(
-        color: AppColors.categoryActiveBorder,
+        color: colors.border,
       ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: const BorderSide(
-        color: AppColors.bottomNavigationBar,
+      borderSide: BorderSide(
+        color: colors.primary,
         width: 1.4,
       ),
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
       borderSide: BorderSide(
-        color: AppColors.categoryActiveBorder,
+        color: colors.border,
       ),
     ),
   );

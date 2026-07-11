@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/auth/auth.dart';
-import '../../bloc/inventory/inventory.dart';
-import '../../models/inventory/inventory.dart';
 import '../../bloc/categories/categories.dart';
-import '../../models/categories/categories.dart';
-import '../../ui/theme/app_colors.dart';
-import '../../router/router.dart';
+import '../../bloc/inventory/inventory.dart';
 import '../../core/constants/api_constants.dart';
+import '../../models/categories/categories.dart';
+import '../../models/inventory/inventory.dart';
+import '../../router/router.dart';
+import '../../ui/theme/app_colors.dart';
 import '../../ui/widgets/widgets.dart';
 
 @RoutePage()
@@ -96,14 +96,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocBuilder<InventoryBloc, InventoryState>(
           builder: (context, state) {
             if (state is InventoryLoadInProgress) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: colors.primary,
+                ),
               );
             }
 
@@ -183,7 +187,11 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return RefreshIndicator(
+      color: colors.primary,
+      backgroundColor: colors.card,
       onRefresh: onRefresh,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
@@ -193,6 +201,8 @@ class _HomeContent extends StatelessWidget {
               String userName = 'User';
 
               if (authState is AuthAuthenticated) {
+                userName = authState.user.name;
+              } else if (authState is AuthActionInProgress) {
                 userName = authState.user.name;
               }
 
@@ -251,15 +261,16 @@ class _WelcomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final displayName = userName.trim().isEmpty ? 'User' : userName.trim();
 
     return Center(
       child: Text(
         'Welcome back, $displayName!',
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF1F2147),
+          color: colors.textPrimary,
         ),
       ),
     );
@@ -275,18 +286,19 @@ class _SimpleSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 26,
         fontWeight: FontWeight.w900,
-        color: Color(0xFF17183B),
+        color: colors.textPrimary,
         letterSpacing: -0.5,
       ),
     );
   }
 }
-
 
 class _SectionTitle extends StatelessWidget {
   final String title;
@@ -301,15 +313,17 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Row(
       children: [
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF17183B),
+              color: colors.textPrimary,
               letterSpacing: -0.5,
             ),
           ),
@@ -321,10 +335,10 @@ class _SectionTitle extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             child: Text(
               actionText,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF8DB4C6),
+                color: colors.primary,
               ),
             ),
           ),
@@ -343,6 +357,8 @@ class _AnalyticsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Column(
       children: [
         Row(
@@ -352,9 +368,9 @@ class _AnalyticsGrid extends StatelessWidget {
                 value: stats.expiredCount,
                 label: 'Expired',
                 icon: Icons.close,
-                fillColor: AppColors.expiredFill,
-                borderColor: AppColors.expiredBorder,
-                valueColor: const Color(0xFFD85C5C),
+                fillColor: colors.dangerSoft,
+                borderColor: colors.dangerBorder,
+                valueColor: colors.danger,
               ),
             ),
             const SizedBox(width: 12),
@@ -363,9 +379,9 @@ class _AnalyticsGrid extends StatelessWidget {
                 value: stats.expiringTomorrowCount,
                 label: 'Expires tomorrow',
                 icon: Icons.warning_rounded,
-                fillColor: AppColors.expiringTomorrowFill,
-                borderColor: AppColors.expiringTomorrowBorder,
-                valueColor: const Color(0xFFD99A35),
+                fillColor: colors.warningSoft,
+                borderColor: colors.warningBorder,
+                valueColor: colors.warning,
               ),
             ),
           ],
@@ -378,9 +394,9 @@ class _AnalyticsGrid extends StatelessWidget {
                 value: stats.expiringInFiveDaysCount,
                 label: 'Expires in 5 days',
                 icon: Icons.schedule,
-                fillColor: AppColors.expiringInFiveDaysFill,
-                borderColor: AppColors.expiringInFiveDaysBorder,
-                valueColor: const Color(0xFFD7C934),
+                fillColor: colors.warningSoft,
+                borderColor: colors.warningBorder,
+                valueColor: colors.warning,
               ),
             ),
             const SizedBox(width: 12),
@@ -389,9 +405,9 @@ class _AnalyticsGrid extends StatelessWidget {
                 value: stats.freshCount,
                 label: 'Fresh',
                 icon: Icons.check_circle,
-                fillColor: AppColors.freshFill,
-                borderColor: AppColors.freshBorder,
-                valueColor: const Color(0xFF65D96B),
+                fillColor: colors.successSoft,
+                borderColor: colors.successBorder,
+                valueColor: colors.success,
               ),
             ),
           ],
@@ -420,27 +436,36 @@ class _AnalyticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
-      height: 74,
+      height: 76,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: fillColor,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            width: 26,
-            height: 26,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.65),
+              color: colors.surface.withValues(alpha: 0.65),
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 16,
-              color: valueColor.withValues(alpha: 0.75),
+              color: valueColor,
             ),
           ),
           const SizedBox(width: 10),
@@ -465,8 +490,8 @@ class _AnalyticsCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: valueColor.withValues(alpha: 0.65),
+                    fontWeight: FontWeight.w800,
+                    color: valueColor.withValues(alpha: 0.82),
                   ),
                 ),
               ],
@@ -489,13 +514,17 @@ class _CategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return BlocBuilder<CategoriesBloc, CategoriesState>(
       builder: (context, state) {
         if (state is CategoriesLoading || state is CategoriesInitial) {
-          return const SizedBox(
+          return SizedBox(
             height: 86,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: colors.primary,
+              ),
             ),
           );
         }
@@ -506,9 +535,10 @@ class _CategorySelector extends StatelessWidget {
             child: Center(
               child: Text(
                 state.message,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black54,
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -557,6 +587,7 @@ class _CategoryCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final iconUrl = category.iconUrl;
 
     return SizedBox(
@@ -571,19 +602,17 @@ class _CategoryCircle extends StatelessWidget {
               height: 56,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.categoryActiveFill
-                    : const Color(0xFFF7F7F8),
+                color: isSelected ? colors.chipSelected : colors.surface,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.categoryActiveBorder
-                      : const Color(0xFFE2E2E5),
+                      ? colors.chipSelectedBorder
+                      : colors.border,
                   width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: colors.shadow,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -593,7 +622,7 @@ class _CategoryCircle extends StatelessWidget {
                   ? Icon(
                 _iconForCategory(category.key),
                 size: 28,
-                color: const Color(0xFF353535),
+                color: isSelected ? colors.primary : colors.textSecondary,
               )
                   : AppCachedNetworkImage(
                 imageUrl: iconUrl,
@@ -601,7 +630,8 @@ class _CategoryCircle extends StatelessWidget {
                 fallback: Icon(
                   _iconForCategory(category.key),
                   size: 28,
-                  color: const Color(0xFF353535),
+                  color:
+                  isSelected ? colors.primary : colors.textSecondary,
                 ),
               ),
             ),
@@ -613,9 +643,7 @@ class _CategoryCircle extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                color: isSelected
-                    ? AppColors.bottomNavigationBar
-                    : Colors.black54,
+                color: isSelected ? colors.primary : colors.textSecondary,
               ),
             ),
           ],
@@ -679,32 +707,28 @@ class _SmallPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Expanded(
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          height: 24,
+          height: 28,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.categoryActiveFill
-                : AppColors.cardBackground,
+            color: isSelected ? colors.chipSelected : colors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.categoryActiveBorder
-                  : const Color(0xFFE4E4E4),
+              color: isSelected ? colors.chipSelectedBorder : colors.border,
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
               fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: isSelected
-                  ? AppColors.bottomNavigationBar
-                  : Colors.black54,
+              fontWeight: FontWeight.w800,
+              color: isSelected ? colors.primary : colors.textSecondary,
             ),
           ),
         ),
@@ -724,39 +748,45 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return TextField(
       onChanged: onChanged,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: InputDecoration(
         hintText: 'Search',
-        hintStyle: const TextStyle(
+        hintStyle: TextStyle(
           fontSize: 13,
-          color: Color(0xFFB3B5C0),
+          color: colors.textMuted,
           fontWeight: FontWeight.w600,
         ),
-        prefixIcon: const Icon(
+        prefixIcon: Icon(
           Icons.search,
           size: 20,
-          color: Color(0xFF9CB4C1),
+          color: colors.primary,
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: colors.card,
         contentPadding: EdgeInsets.zero,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: const BorderSide(
-            color: Color(0xFFE7E7EA),
+          borderSide: BorderSide(
+            color: colors.border,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: const BorderSide(
-            color: Color(0xFFE7E7EA),
+          borderSide: BorderSide(
+            color: colors.border,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: const BorderSide(
-            color: AppColors.bottomNavigationBar,
+          borderSide: BorderSide(
+            color: colors.primary,
           ),
         ),
       ),
@@ -773,49 +803,65 @@ class _InventoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _colorsForExpiryState(item.expiryState);
+    final colors = context.appColors;
+    final expiryColors = _colorsForExpiryState(
+      context: context,
+      expiryState: item.expiryState,
+    );
     final imageUrl = _bestImageUrlForItem(item) ?? item.categoryIconUrl;
 
     return InkWell(
-        onTap: () {
-          context.router.push(
-            InventoryItemDetailsRoute(item: item),
-          );
-        },
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-        height: 94,
+      onTap: () {
+        context.router.push(
+          InventoryItemDetailsRoute(item: item),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        constraints: const BoxConstraints(
+          minHeight: 96,
+        ),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-        color: const Color(0xFFF8F5F6),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-        color: colors.border,
-        width: 2,
+          color: colors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: expiryColors.border,
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadow,
+              blurRadius: 14,
+              offset: const Offset(0, 7),
+            ),
+          ],
         ),
-      ),
         child: Row(
           children: [
             Container(
-              width: 46,
-              height: 46,
+              width: 48,
+              height: 48,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: colors.fill,
-                borderRadius: BorderRadius.circular(12),
+                color: expiryColors.fill,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: expiryColors.border,
+                ),
               ),
               child: imageUrl == null
                   ? Icon(
-                  _iconForCategory(item.categoryKey),
-                color: const Color(0xFF6BC96A),
+                _iconForCategory(item.categoryKey),
+                color: expiryColors.foreground,
                 size: 28,
               )
                   : AppCachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
                 fallback: Icon(
-                    _iconForCategory(item.categoryKey),
-                  color: const Color(0xFF6BC96A),
+                  _iconForCategory(item.categoryKey),
+                  color: expiryColors.foreground,
                   size: 28,
                 ),
               ),
@@ -823,8 +869,8 @@ class _InventoryCard extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: DefaultTextStyle(
-                style: const TextStyle(
-                  color: Color(0xFF52515B),
+                style: TextStyle(
+                  color: colors.textSecondary,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -834,36 +880,38 @@ class _InventoryCard extends StatelessWidget {
                       item.displayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         height: 1,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF55545D),
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 7),
                     Text(
                       _formatAmount(item.amount, item.unit),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _formatLocation(item.location),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Added ${_formatDate(item.addedAt)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF8A8991),
+                        fontWeight: FontWeight.w700,
+                        color: colors.textMuted,
                       ),
                     ),
                   ],
@@ -876,7 +924,7 @@ class _InventoryCard extends StatelessWidget {
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }
@@ -890,25 +938,30 @@ class _ExpiryStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isExpired = expiryState == 'expired';
+    final colors = _colorsForExpiryState(
+      context: context,
+      expiryState: expiryState,
+    );
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Icon(
-          isExpired ? Icons.warning_rounded : Icons.check_circle,
+          expiryState == 'expired'
+              ? Icons.warning_rounded
+              : expiryState == 'expiring'
+              ? Icons.schedule
+              : Icons.check_circle,
           size: 18,
-          color: isExpired
-              ? const Color(0xFF7ED36D)
-              : const Color(0xFF7ED36D),
+          color: colors.foreground,
         ),
         const SizedBox(height: 2),
         Text(
           _formatExpiryState(expiryState),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 9,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF7ED36D),
+            fontWeight: FontWeight.w900,
+            color: colors.foreground,
           ),
         ),
       ],
@@ -921,38 +974,48 @@ class _EmptyInventoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: colors.card,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.black.withValues(alpha: 0.06),
+          color: colors.border,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Icon(
             Icons.inventory_2_outlined,
             size: 46,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'No food items yet',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF17183B),
+              color: colors.textPrimary,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             'Scan or add your first product to start tracking expiration dates.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.black54,
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
               height: 1.4,
             ),
           ),
@@ -973,33 +1036,36 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 48,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
             ),
             const SizedBox(height: 14),
-            const Text(
+            Text(
               'Something went wrong',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
-                color: Color(0xFF17183B),
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Colors.black54,
+                color: colors.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 18),
@@ -1017,30 +1083,40 @@ class _ErrorView extends StatelessWidget {
 class _ExpiryColors {
   final Color fill;
   final Color border;
+  final Color foreground;
 
   const _ExpiryColors({
     required this.fill,
     required this.border,
+    required this.foreground,
   });
 }
 
-_ExpiryColors _colorsForExpiryState(String expiryState) {
+_ExpiryColors _colorsForExpiryState({
+  required BuildContext context,
+  required String expiryState,
+}) {
+  final colors = context.appColors;
+
   switch (expiryState) {
     case 'expired':
-      return const _ExpiryColors(
-        fill: AppColors.expiredFill,
-        border: AppColors.freshBorder,
+      return _ExpiryColors(
+        fill: colors.dangerSoft,
+        border: colors.dangerBorder,
+        foreground: colors.danger,
       );
     case 'expiring':
-      return const _ExpiryColors(
-        fill: AppColors.expiringTomorrowFill,
-        border: AppColors.freshBorder,
+      return _ExpiryColors(
+        fill: colors.warningSoft,
+        border: colors.warningBorder,
+        foreground: colors.warning,
       );
     case 'fresh':
     default:
-      return const _ExpiryColors(
-        fill: AppColors.freshFill,
-        border: AppColors.freshBorder,
+      return _ExpiryColors(
+        fill: colors.successSoft,
+        border: colors.successBorder,
+        foreground: colors.success,
       );
   }
 }
@@ -1125,7 +1201,6 @@ String _formatDate(DateTime date) {
 
   return '${date.day} ${months[date.month - 1]} ${date.year}';
 }
-
 
 String? _bestImageUrlForItem(InventoryItemModel item) {
   if (item.itemImageUrl != null && item.itemImageUrl!.isNotEmpty) {

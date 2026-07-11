@@ -30,6 +30,19 @@ class AuthAuthenticated extends AuthState {
   ];
 }
 
+class AuthActionInProgress extends AuthState {
+  final UserModel user;
+
+  const AuthActionInProgress({
+    required this.user,
+  });
+
+  @override
+  List<Object?> get props => [
+    user,
+  ];
+}
+
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../repositories/auth/auth_repository_interface.dart';
 import '../../core/notifications/fcm_service.dart';
+import '../../repositories/auth/auth_repository_interface.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -19,6 +19,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthRefreshRequested>(_onAuthRefreshRequested);
+    on<AuthNameUpdateRequested>(_onAuthNameUpdateRequested);
+    on<AuthSettingsUpdateRequested>(_onAuthSettingsUpdateRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
 
@@ -109,10 +111,76 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final user = await _authRepository.getCurrentUser();
 
+      await _fcmService.syncTokenWithBackend();
+
       emit(AuthAuthenticated(user: user));
     } catch (_) {
       await _authRepository.logout();
       emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onAuthNameUpdateRequested(
+      AuthNameUpdateRequested event,
+      Emitter<AuthState> emit,
+      ) async {
+    final currentState = state;
+
+    if (currentState is! AuthAuthenticated) {
+      return;
+    }
+
+    emit(AuthActionInProgress(user: currentState.user));
+
+    try {
+      final updatedUser = await _authRepository.updateName(
+        name: event.name,
+      );
+
+      emit(AuthAuthenticated(user: updatedUser));
+    } catch (error) {
+      emit(AuthAuthenticated(user: currentState.user));
+
+      emit(
+        AuthFailure(
+          message: error.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
+
+      emit(AuthAuthenticated(user: currentState.user));
+    }
+  }
+
+  Future<void> _onAuthSettingsUpdateRequested(
+      AuthSettingsUpdateRequested event,
+      Emitter<AuthState> emit,
+      ) async {
+    final currentState = state;
+
+    if (currentState is! AuthAuthenticated) {
+      return;
+    }
+
+    emit(AuthActionInProgress(user: currentState.user));
+
+    try {
+      final updatedUser = await _authRepository.updateSettings(
+        notificationDaysBefore: event.notificationDaysBefore,
+        expiryNotificationsEnabled: event.expiryNotificationsEnabled,
+        themeMode: event.themeMode,
+      );
+
+      emit(AuthAuthenticated(user: updatedUser));
+    } catch (error) {
+      emit(AuthAuthenticated(user: currentState.user));
+
+      emit(
+        AuthFailure(
+          message: error.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
+
+      emit(AuthAuthenticated(user: currentState.user));
     }
   }
 

@@ -1,33 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
+
 import '../../core/constants/api_constants.dart';
-import '../../core/network/api_client.dart';
-import '../../core/storage/token_storage.dart';
+import '../../core/network/authenticated_api_client.dart';
 import '../../models/inventory/inventory.dart';
 import 'inventory_repository_interface.dart';
 
-
 class InventoryRepository implements InventoryRepositoryInterface {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final AuthenticatedApiClient _apiClient;
 
   InventoryRepository({
-    required ApiClient apiClient,
-    required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+    required AuthenticatedApiClient apiClient,
+  }) : _apiClient = apiClient;
 
   @override
   Future<InventoryItemModel> createInventoryItem(
       InventoryItemCreateModel data,
       ) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.post(
         ApiConstants.inventoryEndpoint,
         data: data.toJson(),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -44,15 +37,12 @@ class InventoryRepository implements InventoryRepositoryInterface {
     String? expiryState,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.inventoryEndpoint,
         queryParameters: {
           if (categoryId != null) 'category_id': categoryId,
           if (expiryState != null) 'expiry_state': expiryState,
         },
-        accessToken: accessToken,
       );
 
       final data = response.data as List<dynamic>;
@@ -72,11 +62,8 @@ class InventoryRepository implements InventoryRepositoryInterface {
   @override
   Future<InventoryStatsModel> getInventoryStats() async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.inventoryStatsEndpoint,
-        accessToken: accessToken,
       );
 
       return InventoryStatsModel.fromJson(
@@ -90,11 +77,8 @@ class InventoryRepository implements InventoryRepositoryInterface {
   @override
   Future<InventoryItemModel> getInventoryItemById(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.inventoryItemByIdEndpoint(itemId),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -111,12 +95,9 @@ class InventoryRepository implements InventoryRepositoryInterface {
     required InventoryItemUpdateModel data,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.patch(
         ApiConstants.inventoryItemByIdEndpoint(itemId),
         data: data.toJson(),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -133,21 +114,18 @@ class InventoryRepository implements InventoryRepositoryInterface {
     required String imagePath,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
-      final fileName = path.basename(imagePath);
-
-      final formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(
-          imagePath,
-          filename: fileName,
-        ),
-      });
-
       final response = await _apiClient.postMultipart(
         ApiConstants.inventoryItemImageEndpoint(itemId),
-        data: formData,
-        accessToken: accessToken,
+        dataBuilder: () async {
+          final fileName = path.basename(imagePath);
+
+          return FormData.fromMap({
+            'image': await MultipartFile.fromFile(
+              imagePath,
+              filename: fileName,
+            ),
+          });
+        },
       );
 
       return InventoryItemModel.fromJson(
@@ -157,16 +135,12 @@ class InventoryRepository implements InventoryRepositoryInterface {
       throw Exception(_extractErrorMessage(error));
     }
   }
-
 
   @override
   Future<InventoryItemModel> deleteInventoryItemImage(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.delete(
         ApiConstants.inventoryItemImageEndpoint(itemId),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -177,15 +151,11 @@ class InventoryRepository implements InventoryRepositoryInterface {
     }
   }
 
-
   @override
   Future<InventoryItemModel> consumeInventoryItem(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.patch(
         ApiConstants.consumeInventoryItemEndpoint(itemId),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -199,11 +169,8 @@ class InventoryRepository implements InventoryRepositoryInterface {
   @override
   Future<InventoryItemModel> wasteInventoryItem(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.patch(
         ApiConstants.wasteInventoryItemEndpoint(itemId),
-        accessToken: accessToken,
       );
 
       return InventoryItemModel.fromJson(
@@ -217,25 +184,12 @@ class InventoryRepository implements InventoryRepositoryInterface {
   @override
   Future<void> deleteInventoryItem(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       await _apiClient.delete(
         ApiConstants.inventoryItemByIdEndpoint(itemId),
-        accessToken: accessToken,
       );
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
-  }
-
-  Future<String> _getAccessToken() async {
-    final accessToken = await _tokenStorage.getAccessToken();
-
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    return accessToken;
   }
 
   String _extractErrorMessage(DioException error) {

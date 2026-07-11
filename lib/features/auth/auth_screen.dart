@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/auth/auth.dart';
 import '../../router/router.dart';
-
+import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
 class AuthScreen extends StatefulWidget {
@@ -40,11 +40,17 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: const Text('FoodTrack'),
+        backgroundColor: colors.background,
+        foregroundColor: colors.textPrimary,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: _handleAuthState,
@@ -54,133 +60,186 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 20),
+
                 Text(
                   _isSignUp ? 'Create your account' : 'Welcome back',
                   style: theme.textTheme.headlineMedium?.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+
                 const SizedBox(height: 8),
+
                 Text(
                   _isSignUp
                       ? 'Register to start tracking your food expiry dates.'
                       : 'Sign in to continue managing your food inventory.',
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 32),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _toggleForm(false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: !_isSignUp
-                              ? theme.primaryColor
-                              : theme.colorScheme.surfaceContainerHighest,
-                          foregroundColor: !_isSignUp
-                              ? Colors.white
-                              : theme.primaryColor,
-                        ),
-                        child: const Text('Sign In'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _toggleForm(true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _isSignUp
-                              ? theme.primaryColor
-                              : theme.colorScheme.surfaceContainerHighest,
-                          foregroundColor: _isSignUp
-                              ? Colors.white
-                              : theme.primaryColor,
-                        ),
-                        child: const Text('Sign Up'),
-                      ),
-                    ),
-                  ],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.4,
+                  ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
-                Form(
-                  key: _formKey,
-                  child: Column(
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: colors.surfaceSoft,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: colors.border,
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      if (_isSignUp) ...[
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Name',
-                            border: OutlineInputBorder(),
+                      Expanded(
+                        child: _AuthModeButton(
+                          label: 'Sign In',
+                          isSelected: !_isSignUp,
+                          onTap: () => _toggleForm(false),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: _AuthModeButton(
+                          label: 'Sign Up',
+                          isSelected: _isSignUp,
+                          onTap: () => _toggleForm(true),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: colors.card,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: colors.border,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.shadow,
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        if (_isSignUp) ...[
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: _inputDecoration(
+                              context,
+                              label: 'Name',
+                              icon: Icons.person_outline_rounded,
+                            ),
+                            style: TextStyle(
+                              color: colors.textPrimary,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Enter your name';
+                              }
+
+                              return null;
+                            },
                           ),
+                          const SizedBox(height: 16),
+                        ],
+
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: _inputDecoration(
+                            context,
+                            label: 'Email',
+                            icon: Icons.email_outlined,
+                          ),
+                          style: TextStyle(
+                            color: colors.textPrimary,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Enter your name';
+                            if (value == null || !value.contains('@')) {
+                              return 'Enter a valid email';
                             }
 
                             return null;
                           },
                         ),
+
                         const SizedBox(height: 16),
-                      ],
 
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: _inputDecoration(
+                            context,
+                            label: 'Password',
+                            icon: Icons.lock_outline_rounded,
+                          ),
+                          style: TextStyle(
+                            color: colors.textPrimary,
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+
+                            return null;
+                          },
                         ),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || !value.contains('@')) {
-                            return 'Enter a valid email';
-                          }
 
-                          return null;
-                        },
-                      ),
+                        const SizedBox(height: 24),
 
-                      const SizedBox(height: 16),
+                        BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            if (state is AuthLoading) {
+                              return SizedBox(
+                                height: 52,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: colors.primary,
+                                  ),
+                                ),
+                              );
+                            }
 
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthLoading) {
-                            return const CircularProgressIndicator();
-                          }
-
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: _submit,
-                              child: Text(
-                                _isSignUp ? 'Create Account' : 'Sign In',
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 52,
+                              child: ElevatedButton(
+                                onPressed: _submit,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: colors.primary,
+                                  foregroundColor: colors.textOnPrimary,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: Text(
+                                  _isSignUp ? 'Create Account' : 'Sign In',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -191,11 +250,72 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
+  InputDecoration _inputDecoration(
+      BuildContext context, {
+        required String label,
+        required IconData icon,
+      }) {
+    final colors = context.appColors;
+
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(
+        color: colors.textMuted,
+      ),
+      prefixIcon: Icon(
+        icon,
+        color: colors.textMuted,
+      ),
+      filled: true,
+      fillColor: colors.surfaceSoft,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: colors.border,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: colors.border,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: colors.primary,
+          width: 1.4,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: colors.danger,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: colors.danger,
+          width: 1.4,
+        ),
+      ),
+    );
+  }
+
   void _handleAuthState(BuildContext context, AuthState state) {
     if (state is AuthFailure) {
+      final colors = context.appColors;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(state.message),
+          backgroundColor: colors.dangerSoft,
+          content: Text(
+            state.message,
+            style: TextStyle(
+              color: colors.textPrimary,
+            ),
+          ),
         ),
       );
     }
@@ -232,5 +352,47 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       );
     }
+  }
+}
+
+class _AuthModeButton extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _AuthModeButton({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      decoration: BoxDecoration(
+        color: isSelected ? colors.primary : Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          foregroundColor:
+          isSelected ? colors.textOnPrimary : colors.textSecondary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+          ),
+        ),
+      ),
+    );
   }
 }

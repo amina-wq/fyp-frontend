@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/recipes/recipes.dart';
 import '../../core/constants/api_constants.dart';
 import '../../models/recipes/recipes.dart';
+import '../../router/router.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../ui/widgets/widgets.dart';
-import '../../router/router.dart';
 
 @RoutePage()
 class RecipesScreen extends StatefulWidget {
@@ -39,8 +39,10 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocConsumer<RecipesBloc, RecipesState>(
           listener: (context, state) {
@@ -54,8 +56,10 @@ class _RecipesScreenState extends State<RecipesScreen> {
           },
           builder: (context, state) {
             if (state is RecipesInitial || state is RecipesLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: colors.primary,
+                ),
               );
             }
 
@@ -92,7 +96,11 @@ class _RecipesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return RefreshIndicator(
+      color: colors.primary,
+      backgroundColor: colors.card,
       onRefresh: onRefresh,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
@@ -128,15 +136,17 @@ class _RecipesHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: Text(
             'Recipe Suggestions',
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF17183B),
+              color: colors.textPrimary,
               letterSpacing: -0.5,
             ),
           ),
@@ -149,9 +159,9 @@ class _RecipesHeader extends StatelessWidget {
               ),
             );
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.refresh,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
           ),
         ),
       ],
@@ -164,29 +174,31 @@ class _RecipesInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
+        color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.categoryActiveBorder,
+          color: colors.border,
         ),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             Icons.auto_awesome_outlined,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
             size: 22,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Recipes are suggested based on your active inventory items. Higher match score means more ingredients are already available.',
               style: TextStyle(
-                color: Color(0xFF1F2147),
+                color: colors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 height: 1.35,
@@ -210,6 +222,7 @@ class _RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final imageUrl = recipe.image == null || recipe.image!.isEmpty
         ? null
         : ApiConstants.resolveImageUrl(recipe.image);
@@ -220,11 +233,14 @@ class _RecipeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.card,
           borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: colors.border,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: colors.shadow,
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -242,9 +258,9 @@ class _RecipeCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: Colors.black38,
+              color: colors.textMuted,
             ),
           ],
         ),
@@ -262,6 +278,7 @@ class _RecipeImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
     return Container(
@@ -269,22 +286,25 @@ class _RecipeImage extends StatelessWidget {
       height: 82,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
+        color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.border,
+        ),
       ),
       child: hasImage
           ? AppCachedNetworkImage(
         imageUrl: imageUrl!,
         fit: BoxFit.cover,
-        fallback: const Icon(
+        fallback: Icon(
           Icons.restaurant_menu_outlined,
-          color: AppColors.bottomNavigationBar,
+          color: colors.primary,
           size: 34,
         ),
       )
-          : const Icon(
+          : Icon(
         Icons.restaurant_menu_outlined,
-        color: AppColors.bottomNavigationBar,
+        color: colors.primary,
         size: 34,
       ),
     );
@@ -300,6 +320,8 @@ class _RecipeCardInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -307,8 +329,8 @@ class _RecipeCardInfo extends StatelessWidget {
           recipe.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Color(0xFF1F2147),
+          style: TextStyle(
+            color: colors.textPrimary,
             fontSize: 15,
             fontWeight: FontWeight.w900,
             height: 1.2,
@@ -349,16 +371,18 @@ class _RecipeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 9,
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
+        color: colors.chipSelected,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppColors.categoryActiveBorder,
+          color: colors.chipSelectedBorder,
         ),
       ),
       child: Row(
@@ -367,13 +391,13 @@ class _RecipeBadge extends StatelessWidget {
           Icon(
             icon,
             size: 14,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
           ),
           const SizedBox(width: 5),
           Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF1F2147),
+            style: TextStyle(
+              color: colors.textPrimary,
               fontSize: 11,
               fontWeight: FontWeight.w800,
             ),
@@ -389,42 +413,47 @@ class _EmptyRecipesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: colors.shadow,
             blurRadius: 14,
             offset: const Offset(0, 7),
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Icon(
             Icons.restaurant_menu_outlined,
             size: 50,
-            color: Colors.black38,
+            color: colors.primary,
           ),
-          SizedBox(height: 14),
+          const SizedBox(height: 14),
           Text(
             'No recipes found',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF1F2147),
+              color: colors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w900,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Add more products to your inventory and try again.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.black54,
+              color: colors.textSecondary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.35,
@@ -447,23 +476,25 @@ class _RecipesErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 52,
-              color: Colors.redAccent,
+              color: colors.danger,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Failed to load recipes',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF1F2147),
+                color: colors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
               ),
@@ -472,8 +503,8 @@ class _RecipesErrorView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: colors.textSecondary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.35,
@@ -485,8 +516,8 @@ class _RecipesErrorView extends StatelessWidget {
               icon: const Icon(Icons.refresh),
               label: const Text('Try again'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.bottomNavigationBar,
-                foregroundColor: Colors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.textOnPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),

@@ -198,6 +198,8 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return BlocListener<InventoryBloc, InventoryState>(
       listener: (context, state) {
         if (!_isSaving) return;
@@ -215,7 +217,7 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: colors.background,
         body: SafeArea(
           child: Form(
             key: _formKey,
@@ -288,16 +290,18 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
                       builder: (context, categoriesState) {
                         if (categoriesState is CategoriesLoading ||
                             categoriesState is CategoriesInitial) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: colors.primary,
+                            ),
                           );
                         }
 
                         if (categoriesState is CategoriesFailure) {
                           return Text(
                             categoriesState.message,
-                            style: const TextStyle(
-                              color: AppColors.expiredBorder,
+                            style: TextStyle(
+                              color: colors.danger,
                               fontWeight: FontWeight.w700,
                             ),
                           );
@@ -375,18 +379,20 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Row(
       children: [
         _HeaderButton(
           icon: Icons.chevron_left,
           onTap: onBack,
         ),
-        const Expanded(
+        Expanded(
           child: Text(
             'Add Scanned Product',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF1F2147),
+              color: colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w900,
             ),
@@ -415,6 +421,8 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return InkWell(
       onTap: isLoading ? null : onTap,
       borderRadius: BorderRadius.circular(12),
@@ -422,20 +430,23 @@ class _HeaderButton extends StatelessWidget {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: AppColors.categoryActiveFill,
+          color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: colors.border,
+          ),
         ),
         child: isLoading
-            ? const Padding(
-          padding: EdgeInsets.all(11),
+            ? Padding(
+          padding: const EdgeInsets.all(11),
           child: CircularProgressIndicator(
             strokeWidth: 2.2,
-            color: AppColors.bottomNavigationBar,
+            color: colors.primary,
           ),
         )
             : Icon(
           icon,
-          color: AppColors.bottomNavigationBar,
+          color: onTap == null ? colors.textMuted : colors.primary,
           size: 24,
         ),
       ),
@@ -452,14 +463,19 @@ class _ProductPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(
+          color: colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: colors.shadow,
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -472,13 +488,16 @@ class _ProductPreviewCard extends StatelessWidget {
             height: 68,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: AppColors.categoryActiveFill,
+              color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: colors.border,
+              ),
             ),
             child: product.imageUrl == null || product.imageUrl!.isEmpty
-                ? const Icon(
+                ? Icon(
               Icons.inventory_2_outlined,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
               size: 34,
             )
                 : ClipRRect(
@@ -486,9 +505,9 @@ class _ProductPreviewCard extends StatelessWidget {
               child: AppCachedNetworkImage(
                 imageUrl: product.imageUrl!,
                 fit: BoxFit.cover,
-                fallback: const Icon(
+                fallback: Icon(
                   Icons.inventory_2_outlined,
-                  color: AppColors.bottomNavigationBar,
+                  color: colors.primary,
                   size: 34,
                 ),
               ),
@@ -503,8 +522,8 @@ class _ProductPreviewCard extends StatelessWidget {
                   product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.textDark,
+                  style: TextStyle(
+                    color: colors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                   ),
@@ -515,8 +534,8 @@ class _ProductPreviewCard extends StatelessWidget {
                     product.brand!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.black54,
+                    style: TextStyle(
+                      color: colors.textSecondary,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -526,8 +545,8 @@ class _ProductPreviewCard extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     product.barcode!,
-                    style: const TextStyle(
-                      color: Colors.black38,
+                    style: TextStyle(
+                      color: colors.textMuted,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
@@ -555,16 +574,24 @@ class _ProductPhotoPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasImage = localImagePath != null && localImagePath!.isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.categoryActiveFill,
-        borderRadius: BorderRadius.circular(12),
+        color: colors.card,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.categoryActiveBorder,
+          color: colors.border,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -573,18 +600,21 @@ class _ProductPhotoPicker extends StatelessWidget {
             height: 180,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: colors.border,
+              ),
             ),
             child: hasImage
                 ? Image.file(
               File(localImagePath!),
               fit: BoxFit.cover,
             )
-                : const Icon(
+                : Icon(
               Icons.camera_alt_outlined,
               size: 54,
-              color: AppColors.bottomNavigationBar,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 12),
@@ -598,9 +628,10 @@ class _ProductPhotoPicker extends StatelessWidget {
                     icon: const Icon(Icons.camera_alt_outlined),
                     label: Text(hasImage ? 'Retake photo' : 'Take photo'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.bottomNavigationBar,
-                      side: const BorderSide(
-                        color: AppColors.categoryActiveBorder,
+                      foregroundColor: colors.primary,
+                      disabledForegroundColor: colors.textMuted,
+                      side: BorderSide(
+                        color: colors.primaryBorder,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -616,9 +647,10 @@ class _ProductPhotoPicker extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onRemovePhoto,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.expiredBorder,
-                      side: const BorderSide(
-                        color: AppColors.expiredBorder,
+                      foregroundColor: colors.danger,
+                      disabledForegroundColor: colors.textMuted,
+                      side: BorderSide(
+                        color: colors.dangerBorder,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -645,14 +677,19 @@ class _FormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: colors.shadow,
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -684,12 +721,20 @@ class _TextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -714,6 +759,7 @@ class _CategoryDropdownInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasSelectedValue = categories.any(
           (category) => category.id == value,
     );
@@ -721,7 +767,14 @@ class _CategoryDropdownInput extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: hasSelectedValue ? value : null,
       isExpanded: true,
+      dropdownColor: colors.card,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -753,10 +806,19 @@ class _DropdownInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return DropdownButtonFormField<String>(
       value: value,
       isExpanded: true,
+      dropdownColor: colors.card,
+      style: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: _inputDecoration(
+        context: context,
         label: label,
         icon: icon,
       ),
@@ -786,6 +848,7 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasDate = selectedDate != null;
 
     return InkWell(
@@ -793,13 +856,14 @@ class _DateInput extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
         decoration: _inputDecoration(
+          context: context,
           label: 'Expiration date',
           icon: Icons.calendar_month_outlined,
         ),
         child: Text(
           hasDate ? _formatDate(selectedDate!) : 'Select date',
           style: TextStyle(
-            color: hasDate ? AppColors.textDark : Colors.black45,
+            color: hasDate ? colors.textPrimary : colors.textMuted,
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -820,57 +884,65 @@ class _OptionItem {
 }
 
 InputDecoration _inputDecoration({
+  required BuildContext context,
   required String label,
   required IconData icon,
 }) {
+  final colors = context.appColors;
+
   return InputDecoration(
     labelText: label,
-    labelStyle: const TextStyle(
-      color: Color(0xFF52656E),
+    labelStyle: TextStyle(
+      color: colors.textSecondary,
       fontSize: 13,
       fontWeight: FontWeight.w700,
     ),
     prefixIcon: Icon(
       icon,
-      color: AppColors.bottomNavigationBar,
+      color: colors.primary,
       size: 21,
     ),
     filled: true,
-    fillColor: AppColors.categoryActiveFill,
+    fillColor: colors.surfaceSoft,
     contentPadding: const EdgeInsets.symmetric(
       horizontal: 16,
       vertical: 16,
     ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.categoryActiveBorder,
+      borderSide: BorderSide(
+        color: colors.border,
       ),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.categoryActiveBorder,
+      borderSide: BorderSide(
+        color: colors.border,
       ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.bottomNavigationBar,
+      borderSide: BorderSide(
+        color: colors.primary,
         width: 1.5,
       ),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.expiredBorder,
+      borderSide: BorderSide(
+        color: colors.dangerBorder,
       ),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.expiredBorder,
+      borderSide: BorderSide(
+        color: colors.danger,
+        width: 1.5,
       ),
+    ),
+    errorStyle: TextStyle(
+      color: colors.danger,
+      fontWeight: FontWeight.w700,
     ),
   );
 }

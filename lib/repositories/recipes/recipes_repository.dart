@@ -2,34 +2,27 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../core/constants/api_constants.dart';
-import '../../core/network/api_client.dart';
-import '../../core/storage/token_storage.dart';
+import '../../core/network/authenticated_api_client.dart';
 import '../../models/recipes/recipes.dart';
 import 'recipes_repository_interface.dart';
 
 class RecipesRepository implements RecipesRepositoryInterface {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final AuthenticatedApiClient _apiClient;
 
   RecipesRepository({
-    required ApiClient apiClient,
-    required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+    required AuthenticatedApiClient apiClient,
+  }) : _apiClient = apiClient;
 
   @override
   Future<List<RecipeSummaryModel>> getRecipesByInventory({
     int number = 10,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.post(
         ApiConstants.recipesByIngredientsEndpoint,
         data: {
           'number': number,
         },
-        accessToken: accessToken,
       );
 
       final data = response.data as List<dynamic>;
@@ -51,11 +44,8 @@ class RecipesRepository implements RecipesRepositoryInterface {
     required int spoonacularId,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.recipeDetailsEndpoint(spoonacularId),
-        accessToken: accessToken,
       );
 
       return RecipeDetailModel.fromJson(
@@ -64,16 +54,6 @@ class RecipesRepository implements RecipesRepositoryInterface {
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
-  }
-
-  Future<String> _getAccessToken() async {
-    final accessToken = await _tokenStorage.getAccessToken();
-
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    return accessToken;
   }
 
   String _extractErrorMessage(DioException error) {

@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fyp_frontend/core/network/api_client.dart';
+import 'package:fyp_frontend/core/network/authenticated_api_client.dart';
 import 'package:fyp_frontend/core/notifications/fcm_service.dart';
 import 'package:fyp_frontend/core/storage/token_storage.dart';
 import 'package:fyp_frontend/main.dart';
@@ -17,6 +18,11 @@ void main() {
     final apiClient = ApiClient();
     final tokenStorage = TokenStorage();
 
+    final authenticatedApiClient = AuthenticatedApiClient(
+      apiClient: apiClient,
+      tokenStorage: tokenStorage,
+    );
+
     final authRepository = AuthRepository(
       apiClient: apiClient,
       tokenStorage: tokenStorage,
@@ -28,18 +34,15 @@ void main() {
     );
 
     final inventoryRepository = InventoryRepository(
-      apiClient: apiClient,
-      tokenStorage: tokenStorage,
+      apiClient: authenticatedApiClient,
     );
 
     final shoppingListRepository = ShoppingListRepository(
-      apiClient: apiClient,
-      tokenStorage: tokenStorage,
+      apiClient: authenticatedApiClient,
     );
 
     final recipesRepository = RecipesRepository(
-      apiClient: apiClient,
-      tokenStorage: tokenStorage,
+      apiClient: authenticatedApiClient,
     );
 
     final categoriesRepository = CategoriesRepository(
@@ -58,6 +61,7 @@ void main() {
     await tester.pumpWidget(
       FoodTrackApp(
         apiClient: apiClient,
+        authenticatedApiClient: authenticatedApiClient,
         tokenStorage: tokenStorage,
         authRepository: authRepository,
         productRepository: productRepository,

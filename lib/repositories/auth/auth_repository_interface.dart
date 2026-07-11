@@ -16,6 +16,16 @@ abstract class AuthRepositoryInterface {
 
   Future<UserModel> getCurrentUser();
 
+  Future<UserModel> updateName({
+    required String name,
+  });
+
+  Future<UserModel> updateSettings({
+    required List<int> notificationDaysBefore,
+    required bool expiryNotificationsEnabled,
+    required String themeMode,
+  });
+
   Future<UserModel> updateFcmToken({
     required String? fcmToken,
   });

@@ -1,34 +1,27 @@
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';
-import '../../core/network/api_client.dart';
-import '../../core/storage/token_storage.dart';
+import '../../core/network/authenticated_api_client.dart';
 import '../../models/shopping_list/shopping_list.dart';
 import 'shopping_list_repository_interface.dart';
 
 class ShoppingListRepository implements ShoppingListRepositoryInterface {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final AuthenticatedApiClient _apiClient;
 
   ShoppingListRepository({
-    required ApiClient apiClient,
-    required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+    required AuthenticatedApiClient apiClient,
+  }) : _apiClient = apiClient;
 
   @override
   Future<List<ShoppingListItemModel>> getShoppingListItems({
     bool includeChecked = true,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.shoppingListEndpoint,
         queryParameters: {
           'include_checked': includeChecked,
         },
-        accessToken: accessToken,
       );
 
       final data = response.data as List<dynamic>;
@@ -50,12 +43,9 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
       ShoppingListItemCreateModel data,
       ) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.post(
         ApiConstants.shoppingListEndpoint,
         data: data.toJson(),
-        accessToken: accessToken,
       );
 
       return ShoppingListItemModel.fromJson(
@@ -72,12 +62,9 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
     required ShoppingListItemUpdateModel data,
   }) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.patch(
         ApiConstants.shoppingListItemByIdEndpoint(itemId),
         data: data.toJson(),
-        accessToken: accessToken,
       );
 
       return ShoppingListItemModel.fromJson(
@@ -91,11 +78,8 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
   @override
   Future<ShoppingListItemModel> toggleShoppingListItem(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.patch(
         ApiConstants.shoppingListItemCheckEndpoint(itemId),
-        accessToken: accessToken,
       );
 
       return ShoppingListItemModel.fromJson(
@@ -109,11 +93,8 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
   @override
   Future<void> deleteShoppingListItem(String itemId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       await _apiClient.delete(
         ApiConstants.shoppingListItemByIdEndpoint(itemId),
-        accessToken: accessToken,
       );
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
@@ -123,25 +104,12 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
   @override
   Future<void> clearCheckedItems() async {
     try {
-      final accessToken = await _getAccessToken();
-
       await _apiClient.delete(
         ApiConstants.shoppingListCheckedEndpoint,
-        accessToken: accessToken,
       );
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
-  }
-
-  Future<String> _getAccessToken() async {
-    final accessToken = await _tokenStorage.getAccessToken();
-
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    return accessToken;
   }
 
   String _extractErrorMessage(DioException error) {
