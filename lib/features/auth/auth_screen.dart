@@ -192,8 +192,26 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           obscureText: true,
                           validator: (value) {
-                            if (value == null || value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                            final password = value ?? '';
+
+                            if (password.length < 8) {
+                              return 'Password must be at least 8 characters';
+                            }
+
+                            if (!RegExp(r'[A-Z]').hasMatch(password)) {
+                              return 'Password must contain one uppercase letter';
+                            }
+
+                            if (!RegExp(r'[a-z]').hasMatch(password)) {
+                              return 'Password must contain one lowercase letter';
+                            }
+
+                            if (!RegExp(r'[0-9]').hasMatch(password)) {
+                              return 'Password must contain one number';
+                            }
+
+                            if (!RegExp(r'[^A-Za-z0-9]').hasMatch(password)) {
+                              return 'Password must contain one special character';
                             }
 
                             return null;

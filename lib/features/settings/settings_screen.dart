@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
 
         if (state is AuthUnauthenticated) {
-          context.router.replacePath('/login');
+          context.router.replacePath('/auth');
         }
       },
       builder: (context, state) {
@@ -384,6 +384,17 @@ class _NotificationSettingsCard extends StatelessWidget {
                 if (selected) {
                   updatedDays.add(day);
                 } else {
+                  if (updatedDays.length == 1) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Select at least one reminder day.'),
+                        backgroundColor: context.appColors.warningSoft,
+                      ),
+                    );
+
+                    return;
+                  }
+
                   updatedDays.remove(day);
                 }
 
