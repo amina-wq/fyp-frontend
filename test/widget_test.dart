@@ -29,8 +29,7 @@ void main() {
     );
 
     final productRepository = ProductRepository(
-      apiClient: apiClient,
-      tokenStorage: tokenStorage,
+      apiClient: authenticatedApiClient,
     );
 
     final inventoryRepository = InventoryRepository(
@@ -46,8 +45,7 @@ void main() {
     );
 
     final categoriesRepository = CategoriesRepository(
-      apiClient: apiClient,
-      tokenStorage: tokenStorage,
+      apiClient: authenticatedApiClient,
     );
 
     final fcmService = FcmService(

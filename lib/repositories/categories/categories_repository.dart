@@ -1,49 +1,36 @@
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';
-import '../../core/network/api_client.dart';
-import '../../core/storage/token_storage.dart';
+import '../../core/network/authenticated_api_client.dart';
 import '../../models/categories/categories.dart';
 import 'categories_repository_interface.dart';
 
 class CategoriesRepository implements CategoriesRepositoryInterface {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final AuthenticatedApiClient _apiClient;
 
   CategoriesRepository({
-    required ApiClient apiClient,
-    required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+    required AuthenticatedApiClient apiClient,
+  }) : _apiClient = apiClient;
 
   @override
   Future<List<CategoryModel>> getCategories() async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.categoriesEndpoint,
-        accessToken: accessToken,
       );
 
       final data = response.data as List<dynamic>;
 
       return data
-          .map((item) => CategoryModel.fromJson(item as Map<String, dynamic>))
+          .map(
+            (item) => CategoryModel.fromJson(
+          item as Map<String, dynamic>,
+        ),
+      )
           .toList();
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
-  }
-
-  Future<String> _getAccessToken() async {
-    final accessToken = await _tokenStorage.getAccessToken();
-
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    return accessToken;
   }
 
   String _extractErrorMessage(DioException error) {

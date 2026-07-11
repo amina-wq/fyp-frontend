@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/authenticated_api_client.dart';
@@ -58,11 +57,6 @@ class RecipesRepository implements RecipesRepositoryInterface {
 
   String _extractErrorMessage(DioException error) {
     final responseData = error.response?.data;
-    final statusCode = error.response?.statusCode;
-
-    debugPrint('RECIPES API ERROR STATUS: $statusCode');
-    debugPrint('RECIPES API ERROR DATA: $responseData');
-    debugPrint('RECIPES API ERROR MESSAGE: ${error.message}');
 
     if (responseData is Map<String, dynamic>) {
       final detail = responseData['detail'];

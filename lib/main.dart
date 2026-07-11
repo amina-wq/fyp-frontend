@@ -42,8 +42,7 @@ Future<void> main() async {
   );
 
   final productRepository = ProductRepository(
-    apiClient: apiClient,
-    tokenStorage: tokenStorage,
+    apiClient: authenticatedApiClient,
   );
 
   final inventoryRepository = InventoryRepository(
@@ -59,8 +58,7 @@ Future<void> main() async {
   );
 
   final categoriesRepository = CategoriesRepository(
-    apiClient: apiClient,
-    tokenStorage: tokenStorage,
+    apiClient: authenticatedApiClient,
   );
 
   final appRouter = AppRouter(

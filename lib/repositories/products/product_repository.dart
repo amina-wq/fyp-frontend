@@ -1,29 +1,22 @@
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';
-import '../../core/network/api_client.dart';
-import '../../core/storage/token_storage.dart';
+import '../../core/network/authenticated_api_client.dart';
 import '../../models/product/product.dart';
 import 'product_repository_interface.dart';
 
 class ProductRepository implements ProductRepositoryInterface {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final AuthenticatedApiClient _apiClient;
 
   ProductRepository({
-    required ApiClient apiClient,
-    required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+    required AuthenticatedApiClient apiClient,
+  }) : _apiClient = apiClient;
 
   @override
   Future<ProductModel> getProductByBarcode(String barcode) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.productByBarcodeEndpoint(barcode),
-        accessToken: accessToken,
       );
 
       return ProductModel.fromJson(
@@ -37,11 +30,8 @@ class ProductRepository implements ProductRepositoryInterface {
   @override
   Future<ProductModel> getProductById(String productId) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.get(
         ApiConstants.productByIdEndpoint(productId),
-        accessToken: accessToken,
       );
 
       return ProductModel.fromJson(
@@ -57,12 +47,9 @@ class ProductRepository implements ProductRepositoryInterface {
       ManualProductCreateModel data,
       ) async {
     try {
-      final accessToken = await _getAccessToken();
-
       final response = await _apiClient.post(
         ApiConstants.manualProductEndpoint,
         data: data.toJson(),
-        accessToken: accessToken,
       );
 
       return ProductModel.fromJson(
@@ -71,16 +58,6 @@ class ProductRepository implements ProductRepositoryInterface {
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
-  }
-
-  Future<String> _getAccessToken() async {
-    final accessToken = await _tokenStorage.getAccessToken();
-
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    return accessToken;
   }
 
   String _extractErrorMessage(DioException error) {
