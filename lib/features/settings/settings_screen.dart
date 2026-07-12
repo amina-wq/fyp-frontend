@@ -110,89 +110,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required BuildContext context,
     required String currentName,
   }) async {
-    final controller = TextEditingController(text: currentName);
+    String draftName = currentName;
 
-    final newName = await showDialog<String>(
+    final newName = await showModalBottomSheet<String>(
       context: context,
-      builder: (dialogContext) {
-        final dialogColors = dialogContext.appColors;
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: context.appColors.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      ),
+      builder: (sheetContext) {
+        final sheetColors = sheetContext.appColors;
 
-        return AlertDialog(
-          backgroundColor: dialogColors.card,
-          surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+        return SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 22,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 22,
           ),
-          title: Text(
-            'Edit name',
-            style: TextStyle(
-              color: dialogColors.textPrimary,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          content: TextField(
-            controller: controller,
-            textInputAction: TextInputAction.done,
-            style: TextStyle(
-              color: dialogColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-            decoration: InputDecoration(
-              hintText: 'Enter your name',
-              filled: true,
-              fillColor: dialogColors.surfaceSoft,
-              hintStyle: TextStyle(
-                color: dialogColors.textMuted,
-                fontWeight: FontWeight.w600,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: dialogColors.border),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: dialogColors.border),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: dialogColors.primary, width: 1.4),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(
-                'Cancel',
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Edit name',
                 style: TextStyle(
-                  color: dialogColors.textSecondary,
-                  fontWeight: FontWeight.w800,
+                  color: sheetColors.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(controller.text.trim());
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: dialogColors.primary,
-                foregroundColor: dialogColors.textOnPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: currentName,
+                autofocus: true,
+                textInputAction: TextInputAction.done,
+                style: TextStyle(
+                  color: sheetColors.textPrimary,
+                  fontWeight: FontWeight.w700,
                 ),
+                decoration: InputDecoration(
+                  hintText: 'Enter your name',
+                  filled: true,
+                  fillColor: sheetColors.surfaceSoft,
+                ),
+                onChanged: (value) {
+                  draftName = value;
+                },
+                onFieldSubmitted: (value) {
+                  Navigator.of(sheetContext).pop(value.trim());
+                },
               ),
-              child: const Text(
-                'Save',
-                style: TextStyle(fontWeight: FontWeight.w900),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: sheetColors.textSecondary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(sheetContext).pop(draftName.trim());
+                      },
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
-
-    controller.dispose();
 
     if (newName == null) return;
     if (newName.isEmpty) return;
