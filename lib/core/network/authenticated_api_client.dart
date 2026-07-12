@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../models/auth/auth.dart';
 import '../constants/api_constants.dart';
 import '../storage/token_storage.dart';
+import '../logging/app_logger.dart';
 import 'api_client.dart';
 
 class AuthenticatedApiClient {
@@ -109,17 +110,41 @@ class AuthenticatedApiClient {
     final accessToken = await _tokenStorage.getAccessToken();
 
     if (accessToken == null) {
+      AppLogger.warning(
+        'Authenticated request blocked because access token is missing.',
+        name: 'AuthenticatedApiClient',
+      );
+
       throw Exception('Access token not found');
     }
 
     try {
       return await request(accessToken);
-    } on DioException catch (error) {
-      if (error.response?.statusCode != 401) {
+    } on DioException catch (error, stackTrace) {
+      final statusCode = error.response?.statusCode;
+
+      if (statusCode != 401) {
+        AppLogger.error(
+          'Authenticated request failed with statusCode=$statusCode.',
+          name: 'AuthenticatedApiClient',
+          error: error,
+          stackTrace: stackTrace,
+        );
+
         rethrow;
       }
 
+      AppLogger.warning(
+        'Access token expired. Trying to refresh token.',
+        name: 'AuthenticatedApiClient',
+      );
+
       final refreshedAccessToken = await _refreshAccessToken();
+
+      AppLogger.info(
+        'Access token refreshed successfully. Retrying request.',
+        name: 'AuthenticatedApiClient',
+      );
 
       return request(refreshedAccessToken);
     }
@@ -129,21 +154,42 @@ class AuthenticatedApiClient {
     final refreshToken = await _tokenStorage.getRefreshToken();
 
     if (refreshToken == null) {
+      AppLogger.warning(
+        'Token refresh failed because refresh token is missing.',
+        name: 'AuthenticatedApiClient',
+      );
+
       throw Exception('Refresh token not found');
     }
 
-    final response = await _apiClient.post(
-      ApiConstants.refreshEndpoint,
-      data: {'refresh_token': refreshToken},
-    );
+    try {
+      final response = await _apiClient.post(
+        ApiConstants.refreshEndpoint,
+        data: {'refresh_token': refreshToken},
+      );
 
-    final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
+      final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
 
-    await _tokenStorage.saveTokens(
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    );
+      await _tokenStorage.saveTokens(
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      );
 
-    return tokens.accessToken;
+      AppLogger.info(
+        'Token refresh completed and tokens were saved.',
+        name: 'AuthenticatedApiClient',
+      );
+
+      return tokens.accessToken;
+    } on DioException catch (error, stackTrace) {
+      AppLogger.error(
+        'Token refresh request failed.',
+        name: 'AuthenticatedApiClient',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
+      rethrow;
+    }
   }
 }

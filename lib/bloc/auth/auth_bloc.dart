@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/notifications/fcm_service.dart';
 import '../../repositories/auth/auth_repository_interface.dart';
+import '../../core/logging/app_logger.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -30,10 +31,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
 
+    AppLogger.info('Auth check started.', name: 'AuthBloc');
+
     try {
       final isLoggedIn = await _authRepository.isLoggedIn();
 
       if (!isLoggedIn) {
+        AppLogger.info(
+          'Auth check completed: user is not logged in.',
+          name: 'AuthBloc',
+        );
         emit(const AuthUnauthenticated());
         return;
       }
@@ -42,8 +49,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _fcmService.syncTokenWithBackend();
 
+      AppLogger.info(
+        'Auth check completed: user authenticated.',
+        name: 'AuthBloc',
+      );
+
       emit(AuthAuthenticated(user: user));
-    } catch (_) {
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Auth check failed. Logging user out.',
+        name: 'AuthBloc',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
       await _authRepository.logout();
       emit(const AuthUnauthenticated());
     }
@@ -66,8 +85,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _fcmService.syncTokenWithBackend();
 
+      AppLogger.info('User registration completed.', name: 'AuthBloc');
+
       emit(AuthAuthenticated(user: user));
     } catch (error) {
+      AppLogger.error(
+        'User registration failed.',
+        name: 'AuthBloc',
+        error: error,
+      );
+
       emit(
         AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
@@ -87,8 +114,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _fcmService.syncTokenWithBackend();
 
+      AppLogger.info('User login completed.', name: 'AuthBloc');
+
       emit(AuthAuthenticated(user: user));
     } catch (error) {
+      AppLogger.error('User login failed.', name: 'AuthBloc', error: error);
+
       emit(
         AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
@@ -106,8 +137,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _fcmService.syncTokenWithBackend();
 
+      AppLogger.info('Auth refresh completed.', name: 'AuthBloc');
+
       emit(AuthAuthenticated(user: user));
     } catch (_) {
+      AppLogger.warning(
+        'Auth refresh failed. Logging user out.',
+        name: 'AuthBloc',
+      );
+
       await _authRepository.logout();
       emit(const AuthUnauthenticated());
     }
@@ -128,8 +166,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final updatedUser = await _authRepository.updateName(name: event.name);
 
+      AppLogger.info('User name updated.', name: 'AuthBloc');
+
       emit(AuthAuthenticated(user: updatedUser));
     } catch (error) {
+      AppLogger.error(
+        'User name update failed.',
+        name: 'AuthBloc',
+        error: error,
+      );
+
       emit(AuthAuthenticated(user: currentState.user));
 
       emit(
@@ -159,8 +205,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         themeMode: event.themeMode,
       );
 
+      AppLogger.info('User settings updated.', name: 'AuthBloc');
+
       emit(AuthAuthenticated(user: updatedUser));
     } catch (error) {
+      AppLogger.error(
+        'User settings update failed.',
+        name: 'AuthBloc',
+        error: error,
+      );
+
       emit(AuthAuthenticated(user: currentState.user));
 
       emit(
@@ -176,6 +230,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _authRepository.logout();
+
+    AppLogger.info('User logged out.', name: 'AuthBloc');
 
     emit(const AuthUnauthenticated());
   }
