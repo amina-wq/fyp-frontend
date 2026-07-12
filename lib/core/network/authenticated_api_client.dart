@@ -125,9 +125,8 @@ class AuthenticatedApiClient {
 
       if (statusCode != 401) {
         AppLogger.error(
-          'Authenticated request failed with statusCode=$statusCode.',
+          'Authenticated request failed with statusCode=$statusCode path=${error.requestOptions.path}.',
           name: 'AuthenticatedApiClient',
-          error: error,
           stackTrace: stackTrace,
         );
 
@@ -183,9 +182,8 @@ class AuthenticatedApiClient {
       return tokens.accessToken;
     } on DioException catch (error, stackTrace) {
       AppLogger.error(
-        'Token refresh request failed.',
+        'Token refresh request failed with statusCode=${error.response?.statusCode}.',
         name: 'AuthenticatedApiClient',
-        error: error,
         stackTrace: stackTrace,
       );
 
