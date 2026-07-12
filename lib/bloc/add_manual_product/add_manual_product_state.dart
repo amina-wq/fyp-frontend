@@ -19,9 +19,7 @@ class AddManualProductSaving extends AddManualProductState {
 class AddManualProductSuccess extends AddManualProductState {
   final InventoryItemModel item;
 
-  const AddManualProductSuccess({
-    required this.item,
-  });
+  const AddManualProductSuccess({required this.item});
 
   @override
   List<Object?> get props => [item];
@@ -30,9 +28,7 @@ class AddManualProductSuccess extends AddManualProductState {
 class AddManualProductFailure extends AddManualProductState {
   final String message;
 
-  const AddManualProductFailure({
-    required this.message,
-  });
+  const AddManualProductFailure({required this.message});
 
   @override
   List<Object?> get props => [message];

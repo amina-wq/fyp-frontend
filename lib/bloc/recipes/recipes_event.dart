@@ -5,7 +5,5 @@ abstract class RecipesEvent {
 class RecipesLoadRequested extends RecipesEvent {
   final int number;
 
-  const RecipesLoadRequested({
-    this.number = 10,
-  });
+  const RecipesLoadRequested({this.number = 10});
 }

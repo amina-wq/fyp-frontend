@@ -15,10 +15,7 @@ import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
 class AddManualProductScreen extends StatefulWidget {
-  const AddManualProductScreen({
-    super.key,
-    this.prefilledBarcode,
-  });
+  const AddManualProductScreen({super.key, this.prefilledBarcode});
 
   final String? prefilledBarcode;
 
@@ -54,9 +51,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
       text: widget.prefilledBarcode ?? '',
     );
 
-    context.read<CategoriesBloc>().add(
-      const CategoriesLoadRequested(),
-    );
+    context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
   }
 
   @override
@@ -189,11 +184,9 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -203,9 +196,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
     return BlocListener<AddManualProductBloc, AddManualProductState>(
       listener: (context, state) {
         if (state is AddManualProductSuccess) {
-          context.read<InventoryBloc>().add(
-            const InventoryLoadRequested(),
-          );
+          context.read<InventoryBloc>().add(const InventoryLoadRequested());
 
           context.router.maybePop(state.item);
         }
@@ -315,8 +306,9 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                     _ProductPhotoPicker(
                       localImagePath: _pickedImage?.path,
                       onTakePhoto: isSaving ? null : _takePhoto,
-                      onRemovePhoto:
-                      isSaving || _pickedImage == null ? null : _removePhoto,
+                      onRemovePhoto: isSaving || _pickedImage == null
+                          ? null
+                          : _removePhoto,
                     ),
                     const SizedBox(height: 18),
                     _FormCard(
@@ -350,8 +342,9 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 
                             if (_selectedCategoryId == null &&
                                 categories.isNotEmpty) {
-                              _selectedCategoryId =
-                                  _defaultCategoryId(categories);
+                              _selectedCategoryId = _defaultCategoryId(
+                                categories,
+                              );
                             }
 
                             return _CategoryDropdownInput(
@@ -456,20 +449,20 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                         ),
                         child: isSaving
                             ? SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            color: colors.textOnPrimary,
-                          ),
-                        )
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: colors.textOnPrimary,
+                                ),
+                              )
                             : const Text(
-                          'Save product',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
+                                'Save product',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -486,9 +479,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
 class _Header extends StatelessWidget {
   final VoidCallback onBack;
 
-  const _Header({
-    required this.onBack,
-  });
+  const _Header({required this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -505,15 +496,9 @@ class _Header extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
-            child: Icon(
-              Icons.chevron_left,
-              color: colors.primary,
-              size: 28,
-            ),
+            child: Icon(Icons.chevron_left, color: colors.primary, size: 28),
           ),
         ),
         Expanded(
@@ -536,9 +521,7 @@ class _Header extends StatelessWidget {
 class _FormCard extends StatelessWidget {
   final List<Widget> children;
 
-  const _FormCard({
-    required this.children,
-  });
+  const _FormCard({required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -549,9 +532,7 @@ class _FormCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -560,9 +541,7 @@ class _FormCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 }
@@ -588,9 +567,7 @@ class _ProductPhotoPicker extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -608,20 +585,15 @@ class _ProductPhotoPicker extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
             child: hasImage
-                ? Image.file(
-              File(localImagePath!),
-              fit: BoxFit.cover,
-            )
+                ? Image.file(File(localImagePath!), fit: BoxFit.cover)
                 : Icon(
-              Icons.camera_alt_outlined,
-              size: 54,
-              color: colors.primary,
-            ),
+                    Icons.camera_alt_outlined,
+                    size: 54,
+                    color: colors.primary,
+                  ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -636,9 +608,7 @@ class _ProductPhotoPicker extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.primary,
                       disabledForegroundColor: colors.textMuted,
-                      side: BorderSide(
-                        color: colors.primaryBorder,
-                      ),
+                      side: BorderSide(color: colors.primaryBorder),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -655,9 +625,7 @@ class _ProductPhotoPicker extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.danger,
                       disabledForegroundColor: colors.textMuted,
-                      side: BorderSide(
-                        color: colors.dangerBorder,
-                      ),
+                      side: BorderSide(color: colors.dangerBorder),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -705,11 +673,7 @@ class _TextInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
     );
   }
 }
@@ -742,11 +706,7 @@ class _CategoryDropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: categories.map((category) {
         return DropdownMenuItem<String>(
           value: category.id,
@@ -786,11 +746,7 @@ class _DropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: items.map((item) {
         return DropdownMenuItem<String>(
           value: item.value,
@@ -810,10 +766,7 @@ class _DateInput extends StatelessWidget {
   final DateTime? selectedDate;
   final VoidCallback onTap;
 
-  const _DateInput({
-    required this.selectedDate,
-    required this.onTap,
-  });
+  const _DateInput({required this.selectedDate, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -831,9 +784,7 @@ class _DateInput extends StatelessWidget {
         child: Text(
           selectedDate == null ? 'Select date' : _formatDate(selectedDate!),
           style: TextStyle(
-            color: selectedDate == null
-                ? colors.textMuted
-                : colors.textPrimary,
+            color: selectedDate == null ? colors.textMuted : colors.textPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -847,10 +798,7 @@ class _OptionItem {
   final String value;
   final String label;
 
-  const _OptionItem(
-      this.value,
-      this.label,
-      );
+  const _OptionItem(this.value, this.label);
 }
 
 InputDecoration _inputDecoration({
@@ -867,53 +815,31 @@ InputDecoration _inputDecoration({
       fontSize: 13,
       fontWeight: FontWeight.w700,
     ),
-    prefixIcon: Icon(
-      icon,
-      color: colors.primary,
-      size: 21,
-    ),
+    prefixIcon: Icon(icon, color: colors.primary, size: 21),
     filled: true,
     fillColor: colors.surfaceSoft,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 16,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.primary,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.primary, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.dangerBorder,
-      ),
+      borderSide: BorderSide(color: colors.dangerBorder),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.danger,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.danger, width: 1.5),
     ),
-    errorStyle: TextStyle(
-      color: colors.danger,
-      fontWeight: FontWeight.w700,
-    ),
+    errorStyle: TextStyle(color: colors.danger, fontWeight: FontWeight.w700),
   );
 }
 

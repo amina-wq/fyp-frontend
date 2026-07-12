@@ -20,37 +20,18 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
   void initState() {
     super.initState();
 
-    context.read<ShoppingListBloc>().add(
-      const ShoppingListLoadRequested(),
-    );
+    context.read<ShoppingListBloc>().add(const ShoppingListLoadRequested());
   }
 
   Future<void> _openManualAddDialog() async {
-    await showAddToShoppingListDialog(
-      context: context,
-      initialName: '',
-      initialCategoryId: null,
-      source: 'manual',
-      sourceId: null,
-      initialAmount: null,
-      initialUnit: null,
-      allowNameEditing: true,
-      allowCategoryEditing: true,
-    );
+    await showAddToShoppingListDialog(context: context);
   }
 
-  Widget _buildBody(
-      BuildContext context,
-      ShoppingListState state,
-      ) {
+  Widget _buildBody(BuildContext context, ShoppingListState state) {
     final colors = context.appColors;
 
     if (state is ShoppingListInitial || state is ShoppingListLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: colors.primary,
-        ),
-      );
+      return Center(child: CircularProgressIndicator(color: colors.primary));
     }
 
     if (state is ShoppingListFailure) {
@@ -66,9 +47,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
 
     if (state is ShoppingListLoaded) {
       if (state.items.isEmpty) {
-        return _EmptyShoppingListView(
-          onAddItem: _openManualAddDialog,
-        );
+        return _EmptyShoppingListView(onAddItem: _openManualAddDialog);
       }
 
       return RefreshIndicator(
@@ -89,23 +68,19 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
               ),
               const SizedBox(height: 10),
               ...state.uncheckedItems.map(
-                    (item) => Padding(
+                (item) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _ShoppingItemTile(
                     item: item,
                     subtitle: _buildSubtitle(item),
                     onToggle: () {
                       context.read<ShoppingListBloc>().add(
-                        ShoppingListItemToggleRequested(
-                          itemId: item.id,
-                        ),
+                        ShoppingListItemToggleRequested(itemId: item.id),
                       );
                     },
                     onDelete: () {
                       context.read<ShoppingListBloc>().add(
-                        ShoppingListItemDeleteRequested(
-                          itemId: item.id,
-                        ),
+                        ShoppingListItemDeleteRequested(itemId: item.id),
                       );
                     },
                   ),
@@ -120,23 +95,19 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
               ),
               const SizedBox(height: 10),
               ...state.checkedItems.map(
-                    (item) => Padding(
+                (item) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _ShoppingItemTile(
                     item: item,
                     subtitle: _buildSubtitle(item),
                     onToggle: () {
                       context.read<ShoppingListBloc>().add(
-                        ShoppingListItemToggleRequested(
-                          itemId: item.id,
-                        ),
+                        ShoppingListItemToggleRequested(itemId: item.id),
                       );
                     },
                     onDelete: () {
                       context.read<ShoppingListBloc>().add(
-                        ShoppingListItemDeleteRequested(
-                          itemId: item.id,
-                        ),
+                        ShoppingListItemDeleteRequested(itemId: item.id),
                       );
                     },
                   ),
@@ -186,11 +157,9 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     return BlocConsumer<ShoppingListBloc, ShoppingListState>(
       listener: (context, state) {
         if (state is ShoppingListFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       builder: (context, state) {
@@ -212,9 +181,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                     );
                   },
                 ),
-                Expanded(
-                  child: _buildBody(context, state),
-                ),
+                Expanded(child: _buildBody(context, state)),
               ],
             ),
           ),
@@ -254,11 +221,7 @@ class _ShoppingHeader extends StatelessWidget {
               ),
             ),
           ),
-          _HeaderIconButton(
-            icon: Icons.add,
-            tooltip: 'Add item',
-            onTap: onAdd,
-          ),
+          _HeaderIconButton(icon: Icons.add, tooltip: 'Add item', onTap: onAdd),
           const SizedBox(width: 8),
           _HeaderIconButton(
             icon: Icons.refresh,
@@ -303,15 +266,9 @@ class _HeaderIconButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.surfaceSoft,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: colors.border,
-            ),
+            border: Border.all(color: colors.border),
           ),
-          child: Icon(
-            icon,
-            color: colors.primary,
-            size: 22,
-          ),
+          child: Icon(icon, color: colors.primary, size: 22),
         ),
       ),
     );
@@ -322,10 +279,7 @@ class _SectionHeader extends StatelessWidget {
   final String title;
   final int count;
 
-  const _SectionHeader({
-    required this.title,
-    required this.count,
-  });
+  const _SectionHeader({required this.title, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -343,16 +297,11 @@ class _SectionHeader extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 9,
-            vertical: 4,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
           decoration: BoxDecoration(
             color: colors.chipSelected,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colors.chipSelectedBorder,
-            ),
+            border: Border.all(color: colors.chipSelectedBorder),
           ),
           child: Text(
             count.toString(),
@@ -395,10 +344,7 @@ class _ShoppingItemTile extends StatelessWidget {
           color: colors.danger,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(
-          Icons.delete_outline,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       onDismissed: (_) => onDelete(),
       child: InkWell(
@@ -489,9 +435,7 @@ class _ShoppingItemTile extends StatelessWidget {
 class _EmptyShoppingListView extends StatelessWidget {
   final VoidCallback onAddItem;
 
-  const _EmptyShoppingListView({
-    required this.onAddItem,
-  });
+  const _EmptyShoppingListView({required this.onAddItem});
 
   @override
   Widget build(BuildContext context) {
@@ -505,9 +449,7 @@ class _EmptyShoppingListView extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.card,
             borderRadius: BorderRadius.circular(26),
-            border: Border.all(
-              color: colors.border,
-            ),
+            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
@@ -571,10 +513,7 @@ class _ShoppingErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ShoppingErrorView({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ShoppingErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -586,11 +525,7 @@ class _ShoppingErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 52,
-              color: colors.danger,
-            ),
+            Icon(Icons.error_outline, size: 52, color: colors.danger),
             const SizedBox(height: 16),
             Text(
               'Failed to load shopping list',

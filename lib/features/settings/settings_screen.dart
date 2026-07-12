@@ -23,9 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final state = context.read<AuthBloc>().state;
 
       if (state is AuthInitial || state is AuthUnauthenticated) {
-        context.read<AuthBloc>().add(
-          const AuthCheckRequested(),
-        );
+        context.read<AuthBloc>().add(const AuthCheckRequested());
       }
     });
   }
@@ -37,11 +35,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
 
         if (state is AuthUnauthenticated) {
@@ -57,9 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return Scaffold(
             backgroundColor: colors.background,
             body: Center(
-              child: CircularProgressIndicator(
-                color: colors.primary,
-              ),
+              child: CircularProgressIndicator(color: colors.primary),
             ),
           );
         }
@@ -91,9 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   isActionInProgress: isActionInProgress,
                 ),
                 const SizedBox(height: 18),
-                _LogoutCard(
-                  isActionInProgress: isActionInProgress,
-                ),
+                _LogoutCard(isActionInProgress: isActionInProgress),
               ],
             ),
           ),
@@ -155,22 +147,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: dialogColors.border,
-                ),
+                borderSide: BorderSide(color: dialogColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: dialogColors.border,
-                ),
+                borderSide: BorderSide(color: dialogColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: dialogColors.primary,
-                  width: 1.4,
-                ),
+                borderSide: BorderSide(color: dialogColors.primary, width: 1.4),
               ),
             ),
           ),
@@ -187,9 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop(
-                  controller.text.trim(),
-                );
+                Navigator.of(dialogContext).pop(controller.text.trim());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: dialogColors.primary,
@@ -201,9 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: const Text(
                 'Save',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900),
               ),
             ),
           ],
@@ -218,11 +199,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (newName == currentName) return;
     if (!context.mounted) return;
 
-    context.read<AuthBloc>().add(
-      AuthNameUpdateRequested(
-        name: newName,
-      ),
-    );
+    context.read<AuthBloc>().add(AuthNameUpdateRequested(name: newName));
   }
 }
 
@@ -268,18 +245,11 @@ class _ProfileCard extends StatelessWidget {
           value: user.name,
           trailing: IconButton(
             onPressed: isActionInProgress ? null : onEditName,
-            icon: Icon(
-              Icons.edit_outlined,
-              color: colors.primary,
-            ),
+            icon: Icon(Icons.edit_outlined, color: colors.primary),
           ),
         ),
         const SizedBox(height: 12),
-        _InfoRow(
-          icon: Icons.email_outlined,
-          title: 'Email',
-          value: user.email,
-        ),
+        _InfoRow(icon: Icons.email_outlined, title: 'Email', value: user.email),
         const SizedBox(height: 12),
         _InfoRow(
           icon: Icons.verified_user_outlined,
@@ -300,13 +270,7 @@ class _NotificationSettingsCard extends StatelessWidget {
     required this.isActionInProgress,
   });
 
-  static const List<int> _availableDays = [
-    0,
-    1,
-    3,
-    5,
-    7,
-  ];
+  static const List<int> _availableDays = [0, 1, 3, 5, 7];
 
   @override
   Widget build(BuildContext context) {
@@ -336,12 +300,12 @@ class _NotificationSettingsCard extends StatelessWidget {
           onChanged: isActionInProgress
               ? null
               : (value) {
-            _updateSettings(
-              context: context,
-              user: user,
-              expiryNotificationsEnabled: value,
-            );
-          },
+                  _updateSettings(
+                    context: context,
+                    user: user,
+                    expiryNotificationsEnabled: value,
+                  );
+                },
         ),
         const SizedBox(height: 12),
         Text(
@@ -377,35 +341,37 @@ class _NotificationSettingsCard extends StatelessWidget {
               onSelected: isActionInProgress
                   ? null
                   : (selected) {
-                final updatedDays = List<int>.from(
-                  user.notificationDaysBefore,
-                );
+                      final updatedDays = List<int>.from(
+                        user.notificationDaysBefore,
+                      );
 
-                if (selected) {
-                  updatedDays.add(day);
-                } else {
-                  if (updatedDays.length == 1) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Select at least one reminder day.'),
-                        backgroundColor: context.appColors.warningSoft,
-                      ),
-                    );
+                      if (selected) {
+                        updatedDays.add(day);
+                      } else {
+                        if (updatedDays.length == 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'Select at least one reminder day.',
+                              ),
+                              backgroundColor: context.appColors.warningSoft,
+                            ),
+                          );
 
-                    return;
-                  }
+                          return;
+                        }
 
-                  updatedDays.remove(day);
-                }
+                        updatedDays.remove(day);
+                      }
 
-                updatedDays.sort((a, b) => b.compareTo(a));
+                      updatedDays.sort((a, b) => b.compareTo(a));
 
-                _updateSettings(
-                  context: context,
-                  user: user,
-                  notificationDaysBefore: updatedDays,
-                );
-              },
+                      _updateSettings(
+                        context: context,
+                        user: user,
+                        notificationDaysBefore: updatedDays,
+                      );
+                    },
             );
           }).toList(),
         ),
@@ -423,9 +389,9 @@ class _NotificationSettingsCard extends StatelessWidget {
     context.read<AuthBloc>().add(
       AuthSettingsUpdateRequested(
         notificationDaysBefore:
-        notificationDaysBefore ?? user.notificationDaysBefore,
+            notificationDaysBefore ?? user.notificationDaysBefore,
         expiryNotificationsEnabled:
-        expiryNotificationsEnabled ?? user.expiryNotificationsEnabled,
+            expiryNotificationsEnabled ?? user.expiryNotificationsEnabled,
         themeMode: themeMode ?? user.themeMode,
       ),
     );
@@ -463,33 +429,24 @@ class _ThemeSettingsCard extends StatelessWidget {
           value: 'system',
           groupValue: user.themeMode,
           isDisabled: isActionInProgress,
-          onChanged: (value) => _updateThemeMode(
-            context: context,
-            user: user,
-            themeMode: value,
-          ),
+          onChanged: (value) =>
+              _updateThemeMode(context: context, user: user, themeMode: value),
         ),
         _ThemeOption(
           title: 'Light',
           value: 'light',
           groupValue: user.themeMode,
           isDisabled: isActionInProgress,
-          onChanged: (value) => _updateThemeMode(
-            context: context,
-            user: user,
-            themeMode: value,
-          ),
+          onChanged: (value) =>
+              _updateThemeMode(context: context, user: user, themeMode: value),
         ),
         _ThemeOption(
           title: 'Dark',
           value: 'dark',
           groupValue: user.themeMode,
           isDisabled: isActionInProgress,
-          onChanged: (value) => _updateThemeMode(
-            context: context,
-            user: user,
-            themeMode: value,
-          ),
+          onChanged: (value) =>
+              _updateThemeMode(context: context, user: user, themeMode: value),
         ),
       ],
     );
@@ -515,9 +472,7 @@ class _ThemeSettingsCard extends StatelessWidget {
 class _LogoutCard extends StatelessWidget {
   final bool isActionInProgress;
 
-  const _LogoutCard({
-    required this.isActionInProgress,
-  });
+  const _LogoutCard({required this.isActionInProgress});
 
   @override
   Widget build(BuildContext context) {
@@ -529,17 +484,12 @@ class _LogoutCard extends StatelessWidget {
         onPressed: isActionInProgress
             ? null
             : () {
-          context.read<AuthBloc>().add(
-            const AuthLogoutRequested(),
-          );
-        },
+                context.read<AuthBloc>().add(const AuthLogoutRequested());
+              },
         icon: const Icon(Icons.logout_outlined),
         label: const Text(
           'Logout',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w900,
-          ),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.danger,
@@ -560,10 +510,7 @@ class _SettingsCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _SettingsCard({
-    required this.title,
-    required this.children,
-  });
+  const _SettingsCard({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -575,9 +522,7 @@ class _SettingsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -623,27 +568,16 @@ class _InfoRow extends StatelessWidget {
     final colors = context.appColors;
 
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 64,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 10,
-      ),
+      constraints: const BoxConstraints(minHeight: 64),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: colors.primary,
-            size: 22,
-          ),
+          Icon(icon, color: colors.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -674,10 +608,7 @@ class _InfoRow extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) ...[
-            const SizedBox(width: 8),
-            trailing!,
-          ],
+          if (trailing != null) ...[const SizedBox(width: 8), trailing!],
         ],
       ),
     );
@@ -718,9 +649,9 @@ class _ThemeOption extends StatelessWidget {
       onChanged: isDisabled
           ? null
           : (selectedValue) {
-        if (selectedValue == null) return;
-        onChanged(selectedValue);
-      },
+              if (selectedValue == null) return;
+              onChanged(selectedValue);
+            },
     );
   }
 }
@@ -730,8 +661,8 @@ String _formatText(String value) {
       .replaceAll('_', ' ')
       .split(' ')
       .map((word) {
-    if (word.isEmpty) return word;
-    return word[0].toUpperCase() + word.substring(1);
-  })
+        if (word.isEmpty) return word;
+        return word[0].toUpperCase() + word.substring(1);
+      })
       .join(' ');
 }

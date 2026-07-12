@@ -12,9 +12,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required AuthRepositoryInterface authRepository,
     required FcmService fcmService,
-  })  : _authRepository = authRepository,
-        _fcmService = fcmService,
-        super(const AuthInitial()) {
+  }) : _authRepository = authRepository,
+       _fcmService = fcmService,
+       super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
@@ -25,9 +25,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAuthCheckRequested(
-      AuthCheckRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthCheckRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
 
     try {
@@ -50,9 +50,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAuthRegisterRequested(
-      AuthRegisterRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthRegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
 
     try {
@@ -69,24 +69,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user: user));
     } catch (error) {
       emit(
-        AuthFailure(
-          message: error.toString().replaceFirst('Exception: ', ''),
-        ),
+        AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
     }
   }
 
   Future<void> _onAuthLoginRequested(
-      AuthLoginRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
 
     try {
-      await _authRepository.login(
-        email: event.email,
-        password: event.password,
-      );
+      await _authRepository.login(email: event.email, password: event.password);
 
       final user = await _authRepository.getCurrentUser();
 
@@ -95,17 +90,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user: user));
     } catch (error) {
       emit(
-        AuthFailure(
-          message: error.toString().replaceFirst('Exception: ', ''),
-        ),
+        AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
     }
   }
 
   Future<void> _onAuthRefreshRequested(
-      AuthRefreshRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthRefreshRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
       await _authRepository.refreshTokens();
 
@@ -121,9 +114,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAuthNameUpdateRequested(
-      AuthNameUpdateRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthNameUpdateRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     final currentState = state;
 
     if (currentState is! AuthAuthenticated) {
@@ -133,18 +126,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthActionInProgress(user: currentState.user));
 
     try {
-      final updatedUser = await _authRepository.updateName(
-        name: event.name,
-      );
+      final updatedUser = await _authRepository.updateName(name: event.name);
 
       emit(AuthAuthenticated(user: updatedUser));
     } catch (error) {
       emit(AuthAuthenticated(user: currentState.user));
 
       emit(
-        AuthFailure(
-          message: error.toString().replaceFirst('Exception: ', ''),
-        ),
+        AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
 
       emit(AuthAuthenticated(user: currentState.user));
@@ -152,9 +141,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAuthSettingsUpdateRequested(
-      AuthSettingsUpdateRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthSettingsUpdateRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     final currentState = state;
 
     if (currentState is! AuthAuthenticated) {
@@ -175,9 +164,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user: currentState.user));
 
       emit(
-        AuthFailure(
-          message: error.toString().replaceFirst('Exception: ', ''),
-        ),
+        AuthFailure(message: error.toString().replaceFirst('Exception: ', '')),
       );
 
       emit(AuthAuthenticated(user: currentState.user));
@@ -185,9 +172,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAuthLogoutRequested(
-      AuthLogoutRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     await _authRepository.logout();
 
     emit(const AuthUnauthenticated());

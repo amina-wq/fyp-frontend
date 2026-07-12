@@ -22,9 +22,7 @@ class ShellScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.card,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: colors.border,
-            ),
+            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
@@ -43,9 +41,7 @@ class ShellScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
 
-                      context.router.push(
-                        AddManualProductRoute(),
-                      );
+                      context.router.push(AddManualProductRoute());
                     },
                   ),
                 ),
@@ -57,9 +53,7 @@ class ShellScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
 
-                      context.router.push(
-                        ScannerRoute(),
-                      );
+                      context.router.push(const ScannerRoute());
                     },
                   ),
                 ),
@@ -95,13 +89,10 @@ class ShellScreen extends StatelessWidget {
             foregroundColor: colors.textOnPrimary,
             elevation: 8,
             shape: const CircleBorder(),
-            child: const Icon(
-              Icons.add,
-              size: 30,
-            ),
+            child: const Icon(Icons.add, size: 30),
           ),
           floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
+              FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: BottomAppBar(
             color: colors.card,
             elevation: 12,
@@ -110,8 +101,8 @@ class ShellScreen extends StatelessWidget {
             shape: const CircularNotchedRectangle(),
             notchMargin: 8,
             child: SizedBox(
-            height: 72,
-            child: Row(
+              height: 72,
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _NavItem(
@@ -184,18 +175,11 @@ class _NavItem extends StatelessWidget {
       onTap: () => onTap(index),
       borderRadius: BorderRadius.circular(14),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 2,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              isSelected ? selectedIcon : icon,
-              color: itemColor,
-              size: 22,
-            ),
+            Icon(isSelected ? selectedIcon : icon, color: itemColor, size: 22),
             const SizedBox(height: 2),
             Text(
               label,
@@ -239,18 +223,12 @@ class _AddOptionButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: colors.primary,
-              size: 28,
-            ),
+            Icon(icon, color: colors.primary, size: 28),
             const SizedBox(height: 8),
             Text(
               title,

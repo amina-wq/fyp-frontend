@@ -8,9 +8,8 @@ import 'shopping_list_repository_interface.dart';
 class ShoppingListRepository implements ShoppingListRepositoryInterface {
   final AuthenticatedApiClient _apiClient;
 
-  ShoppingListRepository({
-    required AuthenticatedApiClient apiClient,
-  }) : _apiClient = apiClient;
+  ShoppingListRepository({required AuthenticatedApiClient apiClient})
+    : _apiClient = apiClient;
 
   @override
   Future<List<ShoppingListItemModel>> getShoppingListItems({
@@ -19,19 +18,16 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
     try {
       final response = await _apiClient.get(
         ApiConstants.shoppingListEndpoint,
-        queryParameters: {
-          'include_checked': includeChecked,
-        },
+        queryParameters: {'include_checked': includeChecked},
       );
 
       final data = response.data as List<dynamic>;
 
       return data
           .map(
-            (item) => ShoppingListItemModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
+            (item) =>
+                ShoppingListItemModel.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
@@ -40,8 +36,8 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
 
   @override
   Future<ShoppingListItemModel> createShoppingListItem(
-      ShoppingListItemCreateModel data,
-      ) async {
+    ShoppingListItemCreateModel data,
+  ) async {
     try {
       final response = await _apiClient.post(
         ApiConstants.shoppingListEndpoint,
@@ -104,9 +100,7 @@ class ShoppingListRepository implements ShoppingListRepositoryInterface {
   @override
   Future<void> clearCheckedItems() async {
     try {
-      await _apiClient.delete(
-        ApiConstants.shoppingListCheckedEndpoint,
-      );
+      await _apiClient.delete(ApiConstants.shoppingListCheckedEndpoint);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }

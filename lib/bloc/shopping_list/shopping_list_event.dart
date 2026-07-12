@@ -11,25 +11,19 @@ class ShoppingListLoadRequested extends ShoppingListEvent {
 class ShoppingListItemCreateRequested extends ShoppingListEvent {
   final ShoppingListItemCreateModel item;
 
-  const ShoppingListItemCreateRequested({
-    required this.item,
-  });
+  const ShoppingListItemCreateRequested({required this.item});
 }
 
 class ShoppingListItemToggleRequested extends ShoppingListEvent {
   final String itemId;
 
-  const ShoppingListItemToggleRequested({
-    required this.itemId,
-  });
+  const ShoppingListItemToggleRequested({required this.itemId});
 }
 
 class ShoppingListItemDeleteRequested extends ShoppingListEvent {
   final String itemId;
 
-  const ShoppingListItemDeleteRequested({
-    required this.itemId,
-  });
+  const ShoppingListItemDeleteRequested({required this.itemId});
 }
 
 class ShoppingListCheckedClearRequested extends ShoppingListEvent {

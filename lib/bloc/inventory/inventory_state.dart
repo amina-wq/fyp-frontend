@@ -64,9 +64,7 @@ class InventoryActionInProgress extends InventoryState {
 class InventoryFailure extends InventoryState {
   final String message;
 
-  const InventoryFailure({
-    required this.message,
-  });
+  const InventoryFailure({required this.message});
 
   @override
   List<Object?> get props => [message];

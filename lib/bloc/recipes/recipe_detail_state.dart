@@ -15,15 +15,11 @@ class RecipeDetailLoading extends RecipeDetailState {
 class RecipeDetailLoaded extends RecipeDetailState {
   final RecipeDetailModel recipe;
 
-  const RecipeDetailLoaded({
-    required this.recipe,
-  });
+  const RecipeDetailLoaded({required this.recipe});
 }
 
 class RecipeDetailFailure extends RecipeDetailState {
   final String message;
 
-  const RecipeDetailFailure({
-    required this.message,
-  });
+  const RecipeDetailFailure({required this.message});
 }

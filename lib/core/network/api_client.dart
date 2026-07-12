@@ -21,10 +21,10 @@ class ApiClient {
   }
 
   Future<Response<dynamic>> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-        String? accessToken,
-      }) async {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
     return _dio.get(
       path,
       queryParameters: queryParameters,
@@ -33,11 +33,11 @@ class ApiClient {
   }
 
   Future<Response<dynamic>> post(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-        String? accessToken,
-      }) async {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
     return _dio.post(
       path,
       data: data,
@@ -46,12 +46,11 @@ class ApiClient {
     );
   }
 
-
   Future<Response<dynamic>> postMultipart(
-      String path, {
-        required FormData data,
-        String? accessToken,
-      }) async {
+    String path, {
+    required FormData data,
+    String? accessToken,
+  }) async {
     return _dio.post(
       path,
       data: data,
@@ -65,13 +64,12 @@ class ApiClient {
     );
   }
 
-
   Future<Response<dynamic>> put(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-        String? accessToken,
-      }) async {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
     return _dio.put(
       path,
       data: data,
@@ -81,11 +79,11 @@ class ApiClient {
   }
 
   Future<Response<dynamic>> delete(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-        String? accessToken,
-      }) async {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
     return _dio.delete(
       path,
       data: data,
@@ -94,13 +92,12 @@ class ApiClient {
     );
   }
 
-
   Future<Response<dynamic>> patch(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-        String? accessToken,
-      }) async {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
     return _dio.patch(
       path,
       data: data,
@@ -109,16 +106,11 @@ class ApiClient {
     );
   }
 
-
   Options? _buildOptions(String? accessToken) {
     if (accessToken == null) {
       return null;
     }
 
-    return Options(
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
+    return Options(headers: {'Authorization': 'Bearer $accessToken'});
   }
 }

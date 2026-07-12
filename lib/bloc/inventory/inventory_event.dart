@@ -17,32 +17,20 @@ class InventoryFilterChanged extends InventoryEvent {
   final String? categoryId;
   final String? expiryState;
 
-  const InventoryFilterChanged({
-    this.categoryId,
-    this.expiryState,
-  });
+  const InventoryFilterChanged({this.categoryId, this.expiryState});
 
   @override
-  List<Object?> get props => [
-    categoryId,
-    expiryState,
-  ];
+  List<Object?> get props => [categoryId, expiryState];
 }
 
 class InventoryItemCreateRequested extends InventoryEvent {
   final InventoryItemCreateModel data;
   final String? imagePath;
 
-  const InventoryItemCreateRequested({
-    required this.data,
-    this.imagePath,
-  });
+  const InventoryItemCreateRequested({required this.data, this.imagePath});
 
   @override
-  List<Object?> get props => [
-    data,
-    imagePath,
-  ];
+  List<Object?> get props => [data, imagePath];
 }
 
 class InventoryItemUpdateRequested extends InventoryEvent {
@@ -55,12 +43,8 @@ class InventoryItemUpdateRequested extends InventoryEvent {
   });
 
   @override
-  List<Object?> get props => [
-    itemId,
-    data,
-  ];
+  List<Object?> get props => [itemId, data];
 }
-
 
 class InventoryItemImageUploadRequested extends InventoryEvent {
   final String itemId;
@@ -72,30 +56,22 @@ class InventoryItemImageUploadRequested extends InventoryEvent {
   });
 
   @override
-  List<Object?> get props => [
-    itemId,
-    imagePath,
-  ];
+  List<Object?> get props => [itemId, imagePath];
 }
 
 class InventoryItemImageDeleteRequested extends InventoryEvent {
   final String itemId;
 
-  const InventoryItemImageDeleteRequested({
-    required this.itemId,
-  });
+  const InventoryItemImageDeleteRequested({required this.itemId});
 
   @override
   List<Object?> get props => [itemId];
 }
 
-
 class InventoryItemConsumeRequested extends InventoryEvent {
   final String itemId;
 
-  const InventoryItemConsumeRequested({
-    required this.itemId,
-  });
+  const InventoryItemConsumeRequested({required this.itemId});
 
   @override
   List<Object?> get props => [itemId];
@@ -104,9 +80,7 @@ class InventoryItemConsumeRequested extends InventoryEvent {
 class InventoryItemWasteRequested extends InventoryEvent {
   final String itemId;
 
-  const InventoryItemWasteRequested({
-    required this.itemId,
-  });
+  const InventoryItemWasteRequested({required this.itemId});
 
   @override
   List<Object?> get props => [itemId];
@@ -115,9 +89,7 @@ class InventoryItemWasteRequested extends InventoryEvent {
 class InventoryItemDeleteRequested extends InventoryEvent {
   final String itemId;
 
-  const InventoryItemDeleteRequested({
-    required this.itemId,
-  });
+  const InventoryItemDeleteRequested({required this.itemId});
 
   @override
   List<Object?> get props => [itemId];

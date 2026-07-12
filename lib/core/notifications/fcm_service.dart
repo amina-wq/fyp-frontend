@@ -8,9 +8,8 @@ class FcmService {
 
   FirebaseMessaging? _firebaseMessaging;
 
-  FcmService({
-    required AuthRepositoryInterface authRepository,
-  }) : _authRepository = authRepository;
+  FcmService({required AuthRepositoryInterface authRepository})
+    : _authRepository = authRepository;
 
   Future<void> initialize() async {
     await Firebase.initializeApp();
@@ -42,11 +41,8 @@ class FcmService {
         return;
       }
 
-      await _authRepository.updateFcmToken(
-        fcmToken: token,
-      );
-    } catch (_) {
-    }
+      await _authRepository.updateFcmToken(fcmToken: token);
+    } catch (_) {}
   }
 
   Future<void> _requestPermission() async {
@@ -56,11 +52,7 @@ class FcmService {
       return;
     }
 
-    await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await messaging.requestPermission();
   }
 
   void _listenForTokenRefresh() {
@@ -78,16 +70,12 @@ class FcmService {
           return;
         }
 
-        await _authRepository.updateFcmToken(
-          fcmToken: token,
-        );
-      } catch (_) {
-      }
+        await _authRepository.updateFcmToken(fcmToken: token);
+      } catch (_) {}
     });
   }
 
   void _listenForForegroundMessages() {
-    FirebaseMessaging.onMessage.listen((message) {
-    });
+    FirebaseMessaging.onMessage.listen((message) {});
   }
 }

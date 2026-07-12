@@ -10,9 +10,7 @@ import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({
-    super.key,
-  });
+  const ScannerScreen({super.key});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
@@ -45,18 +43,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
     _controller.stop();
 
     context.read<ScannerBloc>().add(
-      ScannerBarcodeDetected(
-        barcode: barcode.trim(),
-      ),
+      ScannerBarcodeDetected(barcode: barcode.trim()),
     );
   }
 
   void _resetScanner() {
     if (!mounted) return;
 
-    context.read<ScannerBloc>().add(
-      const ScannerResetRequested(),
-    );
+    context.read<ScannerBloc>().add(const ScannerResetRequested());
 
     setState(() => _isProcessing = false);
 
@@ -64,11 +58,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   Future<void> _openAddScannedProduct(ProductModel product) async {
-    await context.router.push(
-      AddScannedProductRoute(
-        product: product,
-      ),
-    );
+    await context.router.push(AddScannedProductRoute(product: product));
 
     if (!mounted) return;
 
@@ -76,11 +66,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   Future<void> _openAddManualProduct(String barcode) async {
-    await context.router.push(
-      AddManualProductRoute(
-        prefilledBarcode: barcode,
-      ),
-    );
+    await context.router.push(AddManualProductRoute(prefilledBarcode: barcode));
 
     if (!mounted) return;
 
@@ -88,11 +74,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -100,15 +84,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
     return BlocListener<ScannerBloc, ScannerState>(
       listener: (context, state) {
         if (state is ScannerProductFound) {
-          _showProductFoundSheet(
-            product: state.product,
-          );
+          _showProductFoundSheet(product: state.product);
         }
 
         if (state is ScannerProductNotFound) {
-          _showProductNotFoundSheet(
-            barcode: state.barcode,
-          );
+          _showProductNotFoundSheet(barcode: state.barcode);
         }
 
         if (state is ScannerFailure) {
@@ -120,13 +100,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            MobileScanner(
-              controller: _controller,
-              onDetect: _onDetect,
-            ),
-            Container(
-              color: Colors.black.withValues(alpha: 0.18),
-            ),
+            MobileScanner(controller: _controller, onDetect: _onDetect),
+            Container(color: Colors.black.withValues(alpha: 0.18)),
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -137,7 +112,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         _controller.stop();
                         context.router.maybePop();
                       },
-                      onTorch: () => _controller.toggleTorch(),
+                      onTorch: _controller.toggleTorch,
                     ),
                     const Spacer(),
                     const _ScannerFrame(),
@@ -168,9 +143,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future<void> _showProductFoundSheet({
-    required ProductModel product,
-  }) async {
+  Future<void> _showProductFoundSheet({required ProductModel product}) async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -197,9 +170,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future<void> _showProductNotFoundSheet({
-    required String barcode,
-  }) async {
+  Future<void> _showProductNotFoundSheet({required String barcode}) async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -231,19 +202,13 @@ class _ScannerHeader extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback onTorch;
 
-  const _ScannerHeader({
-    required this.onBack,
-    required this.onTorch,
-  });
+  const _ScannerHeader({required this.onBack, required this.onTorch});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _ScannerHeaderButton(
-          icon: Icons.chevron_left,
-          onTap: onBack,
-        ),
+        _ScannerHeaderButton(icon: Icons.chevron_left, onTap: onBack),
         const Expanded(
           child: Text(
             'Scan Barcode',
@@ -255,10 +220,7 @@ class _ScannerHeader extends StatelessWidget {
             ),
           ),
         ),
-        _ScannerHeaderButton(
-          icon: Icons.flash_on_outlined,
-          onTap: onTorch,
-        ),
+        _ScannerHeaderButton(icon: Icons.flash_on_outlined, onTap: onTorch),
       ],
     );
   }
@@ -268,10 +230,7 @@ class _ScannerHeaderButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _ScannerHeaderButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _ScannerHeaderButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -286,15 +245,9 @@ class _ScannerHeaderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black.withValues(alpha: 0.36),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.18),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
         ),
-        child: Icon(
-          icon,
-          color: colors.primary,
-          size: 26,
-        ),
+        child: Icon(icon, color: colors.primary, size: 26),
       ),
     );
   }
@@ -319,18 +272,10 @@ class _ScannerFrame extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const _Corner(
-            alignment: Alignment.topLeft,
-          ),
-          const _Corner(
-            alignment: Alignment.topRight,
-          ),
-          const _Corner(
-            alignment: Alignment.bottomLeft,
-          ),
-          const _Corner(
-            alignment: Alignment.bottomRight,
-          ),
+          const _Corner(alignment: Alignment.topLeft),
+          const _Corner(alignment: Alignment.topRight),
+          const _Corner(alignment: Alignment.bottomLeft),
+          const _Corner(alignment: Alignment.bottomRight),
           Center(
             child: Container(
               height: 2,
@@ -347,17 +292,12 @@ class _ScannerFrame extends StatelessWidget {
 class _Corner extends StatelessWidget {
   final Alignment alignment;
 
-  const _Corner({
-    required this.alignment,
-  });
+  const _Corner({required this.alignment});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final borderSide = BorderSide(
-      color: colors.primary,
-      width: 5,
-    );
+    final borderSide = BorderSide(color: colors.primary, width: 5);
 
     return Align(
       alignment: alignment,
@@ -367,20 +307,24 @@ class _Corner extends StatelessWidget {
         margin: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border(
-            top: alignment == Alignment.topLeft ||
-                alignment == Alignment.topRight
+            top:
+                alignment == Alignment.topLeft ||
+                    alignment == Alignment.topRight
                 ? borderSide
                 : BorderSide.none,
-            bottom: alignment == Alignment.bottomLeft ||
-                alignment == Alignment.bottomRight
+            bottom:
+                alignment == Alignment.bottomLeft ||
+                    alignment == Alignment.bottomRight
                 ? borderSide
                 : BorderSide.none,
-            left: alignment == Alignment.topLeft ||
-                alignment == Alignment.bottomLeft
+            left:
+                alignment == Alignment.topLeft ||
+                    alignment == Alignment.bottomLeft
                 ? borderSide
                 : BorderSide.none,
-            right: alignment == Alignment.topRight ||
-                alignment == Alignment.bottomRight
+            right:
+                alignment == Alignment.topRight ||
+                    alignment == Alignment.bottomRight
                 ? borderSide
                 : BorderSide.none,
           ),
@@ -394,26 +338,18 @@ class _ScannerStatus extends StatelessWidget {
   final String text;
   final bool isLoading;
 
-  const _ScannerStatus({
-    required this.text,
-    required this.isLoading,
-  });
+  const _ScannerStatus({required this.text, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -472,9 +408,7 @@ class _ScannerResultSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -488,11 +422,7 @@ class _ScannerResultSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.qr_code_scanner,
-              size: 42,
-              color: colors.primary,
-            ),
+            Icon(Icons.qr_code_scanner, size: 42, color: colors.primary),
             const SizedBox(height: 12),
             Text(
               title,
@@ -514,16 +444,11 @@ class _ScannerResultSheet extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: colors.surfaceSoft,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: colors.border,
-                ),
+                border: Border.all(color: colors.border),
               ),
               child: Text(
                 barcode,

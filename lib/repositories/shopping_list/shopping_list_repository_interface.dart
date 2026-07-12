@@ -6,8 +6,8 @@ abstract class ShoppingListRepositoryInterface {
   });
 
   Future<ShoppingListItemModel> createShoppingListItem(
-      ShoppingListItemCreateModel data,
-      );
+    ShoppingListItemCreateModel data,
+  );
 
   Future<ShoppingListItemModel> updateShoppingListItem({
     required String itemId,

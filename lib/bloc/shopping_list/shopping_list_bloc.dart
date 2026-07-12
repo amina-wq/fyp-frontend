@@ -9,8 +9,8 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
 
   ShoppingListBloc({
     required ShoppingListRepositoryInterface shoppingListRepository,
-  })  : _shoppingListRepository = shoppingListRepository,
-        super(const ShoppingListInitial()) {
+  }) : _shoppingListRepository = shoppingListRepository,
+       super(const ShoppingListInitial()) {
     on<ShoppingListLoadRequested>(_onLoadRequested);
     on<ShoppingListItemCreateRequested>(_onCreateRequested);
     on<ShoppingListItemToggleRequested>(_onToggleRequested);
@@ -19,19 +19,15 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   }
 
   Future<void> _onLoadRequested(
-      ShoppingListLoadRequested event,
-      Emitter<ShoppingListState> emit,
-      ) async {
+    ShoppingListLoadRequested event,
+    Emitter<ShoppingListState> emit,
+  ) async {
     emit(const ShoppingListLoading());
 
     try {
       final items = await _shoppingListRepository.getShoppingListItems();
 
-      emit(
-        ShoppingListLoaded(
-          items: items,
-        ),
-      );
+      emit(ShoppingListLoaded(items: items));
     } catch (error) {
       emit(
         ShoppingListFailure(
@@ -42,18 +38,14 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   }
 
   Future<void> _onCreateRequested(
-      ShoppingListItemCreateRequested event,
-      Emitter<ShoppingListState> emit,
-      ) async {
+    ShoppingListItemCreateRequested event,
+    Emitter<ShoppingListState> emit,
+  ) async {
     try {
       await _shoppingListRepository.createShoppingListItem(event.item);
       final items = await _shoppingListRepository.getShoppingListItems();
 
-      emit(
-        ShoppingListLoaded(
-          items: items,
-        ),
-      );
+      emit(ShoppingListLoaded(items: items));
     } catch (error) {
       emit(
         ShoppingListFailure(
@@ -64,18 +56,14 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   }
 
   Future<void> _onToggleRequested(
-      ShoppingListItemToggleRequested event,
-      Emitter<ShoppingListState> emit,
-      ) async {
+    ShoppingListItemToggleRequested event,
+    Emitter<ShoppingListState> emit,
+  ) async {
     try {
       await _shoppingListRepository.toggleShoppingListItem(event.itemId);
       final items = await _shoppingListRepository.getShoppingListItems();
 
-      emit(
-        ShoppingListLoaded(
-          items: items,
-        ),
-      );
+      emit(ShoppingListLoaded(items: items));
     } catch (error) {
       emit(
         ShoppingListFailure(
@@ -86,18 +74,14 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   }
 
   Future<void> _onDeleteRequested(
-      ShoppingListItemDeleteRequested event,
-      Emitter<ShoppingListState> emit,
-      ) async {
+    ShoppingListItemDeleteRequested event,
+    Emitter<ShoppingListState> emit,
+  ) async {
     try {
       await _shoppingListRepository.deleteShoppingListItem(event.itemId);
       final items = await _shoppingListRepository.getShoppingListItems();
 
-      emit(
-        ShoppingListLoaded(
-          items: items,
-        ),
-      );
+      emit(ShoppingListLoaded(items: items));
     } catch (error) {
       emit(
         ShoppingListFailure(
@@ -108,18 +92,14 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   }
 
   Future<void> _onClearCheckedRequested(
-      ShoppingListCheckedClearRequested event,
-      Emitter<ShoppingListState> emit,
-      ) async {
+    ShoppingListCheckedClearRequested event,
+    Emitter<ShoppingListState> emit,
+  ) async {
     try {
       await _shoppingListRepository.clearCheckedItems();
       final items = await _shoppingListRepository.getShoppingListItems();
 
-      emit(
-        ShoppingListLoaded(
-          items: items,
-        ),
-      );
+      emit(ShoppingListLoaded(items: items));
     } catch (error) {
       emit(
         ShoppingListFailure(

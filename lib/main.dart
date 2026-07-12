@@ -37,9 +37,7 @@ Future<void> main() async {
     tokenStorage: tokenStorage,
   );
 
-  final fcmService = FcmService(
-    authRepository: authRepository,
-  );
+  final fcmService = FcmService(authRepository: authRepository);
 
   final productRepository = ProductRepository(
     apiClient: authenticatedApiClient,
@@ -61,9 +59,7 @@ Future<void> main() async {
     apiClient: authenticatedApiClient,
   );
 
-  final appRouter = AppRouter(
-    authRepository: authRepository,
-  );
+  final appRouter = AppRouter(authRepository: authRepository);
 
   await fcmService.initialize();
 
@@ -116,15 +112,11 @@ class FoodTrackApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<ApiClient>.value(
-          value: apiClient,
-        ),
+        RepositoryProvider<ApiClient>.value(value: apiClient),
         RepositoryProvider<AuthenticatedApiClient>.value(
           value: authenticatedApiClient,
         ),
-        RepositoryProvider<TokenStorage>.value(
-          value: tokenStorage,
-        ),
+        RepositoryProvider<TokenStorage>.value(value: tokenStorage),
         RepositoryProvider<AuthRepositoryInterface>.value(
           value: authRepository,
         ),
@@ -143,9 +135,7 @@ class FoodTrackApp extends StatelessWidget {
         RepositoryProvider<CategoriesRepositoryInterface>.value(
           value: categoriesRepository,
         ),
-        RepositoryProvider<FcmService>.value(
-          value: fcmService,
-        ),
+        RepositoryProvider<FcmService>.value(value: fcmService),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -153,9 +143,7 @@ class FoodTrackApp extends StatelessWidget {
             create: (context) => AuthBloc(
               authRepository: context.read<AuthRepositoryInterface>(),
               fcmService: context.read<FcmService>(),
-            )..add(
-              const AuthCheckRequested(),
-            ),
+            )..add(const AuthCheckRequested()),
           ),
           BlocProvider<InventoryBloc>(
             create: (context) => InventoryBloc(
@@ -175,8 +163,8 @@ class FoodTrackApp extends StatelessWidget {
           ),
           BlocProvider<ShoppingListBloc>(
             create: (context) => ShoppingListBloc(
-              shoppingListRepository:
-              context.read<ShoppingListRepositoryInterface>(),
+              shoppingListRepository: context
+                  .read<ShoppingListRepositoryInterface>(),
             ),
           ),
           BlocProvider<RecipesBloc>(
@@ -186,7 +174,8 @@ class FoodTrackApp extends StatelessWidget {
           ),
           BlocProvider<CategoriesBloc>(
             create: (context) => CategoriesBloc(
-              categoriesRepository: context.read<CategoriesRepositoryInterface>(),
+              categoriesRepository: context
+                  .read<CategoriesRepositoryInterface>(),
             ),
           ),
         ],
@@ -248,9 +237,11 @@ SystemUiOverlayStyle _systemUiOverlayStyle(Brightness brightness) {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
     statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-    systemNavigationBarColor:
-    isDark ? AppThemeColors.dark.background : AppThemeColors.light.background,
-    systemNavigationBarIconBrightness:
-    isDark ? Brightness.light : Brightness.dark,
+    systemNavigationBarColor: isDark
+        ? AppThemeColors.dark.background
+        : AppThemeColors.light.background,
+    systemNavigationBarIconBrightness: isDark
+        ? Brightness.light
+        : Brightness.dark,
   );
 }

@@ -8,9 +8,8 @@ import 'product_repository_interface.dart';
 class ProductRepository implements ProductRepositoryInterface {
   final AuthenticatedApiClient _apiClient;
 
-  ProductRepository({
-    required AuthenticatedApiClient apiClient,
-  }) : _apiClient = apiClient;
+  ProductRepository({required AuthenticatedApiClient apiClient})
+    : _apiClient = apiClient;
 
   @override
   Future<ProductModel> getProductByBarcode(String barcode) async {
@@ -19,9 +18,7 @@ class ProductRepository implements ProductRepositoryInterface {
         ApiConstants.productByBarcodeEndpoint(barcode),
       );
 
-      return ProductModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return ProductModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -34,9 +31,7 @@ class ProductRepository implements ProductRepositoryInterface {
         ApiConstants.productByIdEndpoint(productId),
       );
 
-      return ProductModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return ProductModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -44,17 +39,15 @@ class ProductRepository implements ProductRepositoryInterface {
 
   @override
   Future<ProductModel> createManualProduct(
-      ManualProductCreateModel data,
-      ) async {
+    ManualProductCreateModel data,
+  ) async {
     try {
       final response = await _apiClient.post(
         ApiConstants.manualProductEndpoint,
         data: data.toJson(),
       );
 
-      return ProductModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return ProductModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }

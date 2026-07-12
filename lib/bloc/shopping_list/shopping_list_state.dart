@@ -15,9 +15,7 @@ class ShoppingListLoading extends ShoppingListState {
 class ShoppingListLoaded extends ShoppingListState {
   final List<ShoppingListItemModel> items;
 
-  const ShoppingListLoaded({
-    required this.items,
-  });
+  const ShoppingListLoaded({required this.items});
 
   List<ShoppingListItemModel> get uncheckedItems {
     return items.where((item) => !item.isChecked).toList();
@@ -31,7 +29,5 @@ class ShoppingListLoaded extends ShoppingListState {
 class ShoppingListFailure extends ShoppingListState {
   final String message;
 
-  const ShoppingListFailure({
-    required this.message,
-  });
+  const ShoppingListFailure({required this.message});
 }

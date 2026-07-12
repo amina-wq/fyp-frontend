@@ -13,10 +13,7 @@ import '../../ui/widgets/widgets.dart';
 class InventoryItemDetailsScreen extends StatefulWidget {
   final InventoryItemModel item;
 
-  const InventoryItemDetailsScreen({
-    super.key,
-    required this.item,
-  });
+  const InventoryItemDetailsScreen({super.key, required this.item});
 
   @override
   State<InventoryItemDetailsScreen> createState() =>
@@ -115,9 +112,7 @@ class _InventoryItemDetailsScreenState
               ),
               child: const Text(
                 'Delete',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900),
               ),
             ),
           ],
@@ -137,9 +132,7 @@ class _InventoryItemDetailsScreenState
     });
 
     context.read<InventoryBloc>().add(
-      InventoryItemDeleteRequested(
-        itemId: _item.id,
-      ),
+      InventoryItemDeleteRequested(itemId: _item.id),
     );
   }
 
@@ -167,11 +160,9 @@ class _InventoryItemDetailsScreenState
             _isDeleting = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
@@ -193,9 +184,7 @@ class _InventoryItemDetailsScreenState
                 imageUrl: _bestImageUrlForItem(_item),
               ),
               const SizedBox(height: 22),
-              _AddToShoppingListButton(
-                onTap: _addToShoppingList,
-              ),
+              _AddToShoppingListButton(onTap: _addToShoppingList),
               const SizedBox(height: 18),
               _DetailsCard(
                 children: [
@@ -237,9 +226,7 @@ class _InventoryItemDetailsScreenState
                     label: _formatText(_item.location),
                   ),
                   const SizedBox(height: 12),
-                  _NotesField(
-                    notes: _item.notes,
-                  ),
+                  _NotesField(notes: _item.notes),
                 ],
               ),
             ],
@@ -269,10 +256,7 @@ class _DetailsHeader extends StatelessWidget {
 
     return Row(
       children: [
-        _HeaderButton(
-          icon: Icons.chevron_left,
-          onTap: onBack,
-        ),
+        _HeaderButton(icon: Icons.chevron_left, onTap: onBack),
         Expanded(
           child: Text(
             'Product Details',
@@ -325,15 +309,11 @@ class _HeaderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
         ),
         child: Icon(
           icon,
-          color: onTap == null
-              ? colors.textMuted
-              : iconColor ?? colors.primary,
+          color: onTap == null ? colors.textMuted : iconColor ?? colors.primary,
           size: 24,
         ),
       ),
@@ -367,9 +347,7 @@ class _ProductImagePlaceholder extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
               color: colors.shadow,
@@ -380,28 +358,26 @@ class _ProductImagePlaceholder extends StatelessWidget {
         ),
         child: hasProductImage
             ? AppCachedNetworkImage(
-          imageUrl: imageUrl!,
-          fit: BoxFit.cover,
-          fallback: _CategoryIcon(
-            categoryKey: categoryKey,
-            categoryIconUrl: categoryIconUrl,
-          ),
-        )
+                imageUrl: imageUrl!,
+                fallback: _CategoryIcon(
+                  categoryKey: categoryKey,
+                  categoryIconUrl: categoryIconUrl,
+                ),
+              )
             : hasCategoryIcon
             ? AppCachedNetworkImage(
-          imageUrl: categoryIconUrl!,
-          fit: BoxFit.cover,
-          fallback: Icon(
-            _iconForCategory(categoryKey),
-            size: 78,
-            color: colors.primary,
-          ),
-        )
+                imageUrl: categoryIconUrl!,
+                fallback: Icon(
+                  _iconForCategory(categoryKey),
+                  size: 78,
+                  color: colors.primary,
+                ),
+              )
             : Icon(
-          _iconForCategory(categoryKey),
-          size: 78,
-          color: colors.primary,
-        ),
+                _iconForCategory(categoryKey),
+                size: 78,
+                color: colors.primary,
+              ),
       ),
     );
   }
@@ -423,7 +399,6 @@ class _CategoryIcon extends StatelessWidget {
     if (categoryIconUrl != null && categoryIconUrl!.isNotEmpty) {
       return AppCachedNetworkImage(
         imageUrl: categoryIconUrl!,
-        fit: BoxFit.cover,
         fallback: Icon(
           _iconForCategory(categoryKey),
           size: 78,
@@ -432,20 +407,14 @@ class _CategoryIcon extends StatelessWidget {
       );
     }
 
-    return Icon(
-      _iconForCategory(categoryKey),
-      size: 78,
-      color: colors.primary,
-    );
+    return Icon(_iconForCategory(categoryKey), size: 78, color: colors.primary);
   }
 }
 
 class _AddToShoppingListButton extends StatelessWidget {
   final VoidCallback onTap;
 
-  const _AddToShoppingListButton({
-    required this.onTap,
-  });
+  const _AddToShoppingListButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -455,16 +424,10 @@ class _AddToShoppingListButton extends StatelessWidget {
       height: 54,
       child: ElevatedButton.icon(
         onPressed: onTap,
-        icon: const Icon(
-          Icons.playlist_add_outlined,
-          size: 22,
-        ),
+        icon: const Icon(Icons.playlist_add_outlined, size: 22),
         label: const Text(
           'Add to Shopping List',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w900,
-          ),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.primary,
@@ -482,9 +445,7 @@ class _AddToShoppingListButton extends StatelessWidget {
 class _DetailsCard extends StatelessWidget {
   final List<Widget> children;
 
-  const _DetailsCard({
-    required this.children,
-  });
+  const _DetailsCard({required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -495,9 +456,7 @@ class _DetailsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -506,9 +465,7 @@ class _DetailsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 }
@@ -517,37 +474,23 @@ class _DetailsField extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _DetailsField({
-    required this.icon,
-    required this.label,
-  });
+  const _DetailsField({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 56,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 12,
-      ),
+      constraints: const BoxConstraints(minHeight: 56),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: colors.primary,
-            size: 22,
-          ),
+          Icon(icon, color: colors.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -570,9 +513,7 @@ class _DetailsField extends StatelessWidget {
 class _NotesField extends StatelessWidget {
   final String? notes;
 
-  const _NotesField({
-    required this.notes,
-  });
+  const _NotesField({required this.notes});
 
   @override
   Widget build(BuildContext context) {
@@ -582,28 +523,17 @@ class _NotesField extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(
-        minHeight: 92,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 14,
-      ),
+      constraints: const BoxConstraints(minHeight: 92),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
         color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.notes_outlined,
-            color: colors.primary,
-            size: 22,
-          ),
+          Icon(Icons.notes_outlined, color: colors.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -643,9 +573,9 @@ String _formatText(String value) {
       .replaceAll('_', ' ')
       .split(' ')
       .map((word) {
-    if (word.isEmpty) return word;
-    return word[0].toUpperCase() + word.substring(1);
-  })
+        if (word.isEmpty) return word;
+        return word[0].toUpperCase() + word.substring(1);
+      })
       .join(' ');
 }
 

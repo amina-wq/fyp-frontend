@@ -15,15 +15,11 @@ class CategoriesLoading extends CategoriesState {
 class CategoriesLoaded extends CategoriesState {
   final List<CategoryModel> categories;
 
-  const CategoriesLoaded({
-    required this.categories,
-  });
+  const CategoriesLoaded({required this.categories});
 }
 
 class CategoriesFailure extends CategoriesState {
   final String message;
 
-  const CategoriesFailure({
-    required this.message,
-  });
+  const CategoriesFailure({required this.message});
 }

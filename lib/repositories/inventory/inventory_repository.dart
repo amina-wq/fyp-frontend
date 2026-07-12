@@ -9,23 +9,20 @@ import 'inventory_repository_interface.dart';
 class InventoryRepository implements InventoryRepositoryInterface {
   final AuthenticatedApiClient _apiClient;
 
-  InventoryRepository({
-    required AuthenticatedApiClient apiClient,
-  }) : _apiClient = apiClient;
+  InventoryRepository({required AuthenticatedApiClient apiClient})
+    : _apiClient = apiClient;
 
   @override
   Future<InventoryItemModel> createInventoryItem(
-      InventoryItemCreateModel data,
-      ) async {
+    InventoryItemCreateModel data,
+  ) async {
     try {
       final response = await _apiClient.post(
         ApiConstants.inventoryEndpoint,
         data: data.toJson(),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -49,10 +46,8 @@ class InventoryRepository implements InventoryRepositoryInterface {
 
       return data
           .map(
-            (item) => InventoryItemModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
+            (item) => InventoryItemModel.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
@@ -81,9 +76,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         ApiConstants.inventoryItemByIdEndpoint(itemId),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -100,9 +93,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         data: data.toJson(),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -128,9 +119,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         },
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -143,9 +132,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         ApiConstants.inventoryItemImageEndpoint(itemId),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -158,9 +145,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         ApiConstants.consumeInventoryItemEndpoint(itemId),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -173,9 +158,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
         ApiConstants.wasteInventoryItemEndpoint(itemId),
       );
 
-      return InventoryItemModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return InventoryItemModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -184,9 +167,7 @@ class InventoryRepository implements InventoryRepositoryInterface {
   @override
   Future<void> deleteInventoryItem(String itemId) async {
     try {
-      await _apiClient.delete(
-        ApiConstants.inventoryItemByIdEndpoint(itemId),
-      );
+      await _apiClient.delete(ApiConstants.inventoryItemByIdEndpoint(itemId));
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }

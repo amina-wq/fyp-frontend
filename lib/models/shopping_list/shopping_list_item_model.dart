@@ -43,7 +43,9 @@ class ShoppingListItemModel {
       category: CategoryModel.fromJson(
         json['category'] as Map<String, dynamic>,
       ),
-      amount: json['amount'] == null ? null : (json['amount'] as num).toDouble(),
+      amount: json['amount'] == null
+          ? null
+          : (json['amount'] as num).toDouble(),
       unit: json['unit'] as String?,
       isChecked: json['is_checked'] as bool,
       source: json['source'] as String,

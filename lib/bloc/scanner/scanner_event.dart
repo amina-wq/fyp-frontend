@@ -10,9 +10,7 @@ abstract class ScannerEvent extends Equatable {
 class ScannerBarcodeDetected extends ScannerEvent {
   final String barcode;
 
-  const ScannerBarcodeDetected({
-    required this.barcode,
-  });
+  const ScannerBarcodeDetected({required this.barcode});
 
   @override
   List<Object?> get props => [barcode];

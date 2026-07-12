@@ -39,7 +39,7 @@ class UserModel {
         json['notification_days_before'] as List? ?? const [5, 1, 0],
       ),
       expiryNotificationsEnabled:
-      json['expiry_notifications_enabled'] as bool? ?? true,
+          json['expiry_notifications_enabled'] as bool? ?? true,
       themeMode: json['theme_mode'] as String? ?? 'system',
       accountType: json['account_type'] as String? ?? 'personal',
       createdAt: DateTime.parse(json['created_at'] as String),

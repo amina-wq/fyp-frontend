@@ -7,17 +7,16 @@ import 'recipes_state.dart';
 class RecipesBloc extends Bloc<RecipesEvent, RecipesState> {
   final RecipesRepositoryInterface _recipesRepository;
 
-  RecipesBloc({
-    required RecipesRepositoryInterface recipesRepository,
-  })  : _recipesRepository = recipesRepository,
-        super(const RecipesInitial()) {
+  RecipesBloc({required RecipesRepositoryInterface recipesRepository})
+    : _recipesRepository = recipesRepository,
+      super(const RecipesInitial()) {
     on<RecipesLoadRequested>(_onRecipesLoadRequested);
   }
 
   Future<void> _onRecipesLoadRequested(
-      RecipesLoadRequested event,
-      Emitter<RecipesState> emit,
-      ) async {
+    RecipesLoadRequested event,
+    Emitter<RecipesState> emit,
+  ) async {
     emit(const RecipesLoading());
 
     try {
@@ -25,11 +24,7 @@ class RecipesBloc extends Bloc<RecipesEvent, RecipesState> {
         number: event.number,
       );
 
-      emit(
-        RecipesLoaded(
-          recipes: recipes,
-        ),
-      );
+      emit(RecipesLoaded(recipes: recipes));
     } catch (error) {
       emit(
         RecipesFailure(

@@ -89,9 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   decoration: BoxDecoration(
                     color: colors.surfaceSoft,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: colors.border,
-                    ),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Row(
                     children: [
@@ -121,9 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   decoration: BoxDecoration(
                     color: colors.card,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: colors.border,
-                    ),
+                    border: Border.all(color: colors.border),
                     boxShadow: [
                       BoxShadow(
                         color: colors.shadow,
@@ -144,9 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               label: 'Name',
                               icon: Icons.person_outline_rounded,
                             ),
-                            style: TextStyle(
-                              color: colors.textPrimary,
-                            ),
+                            style: TextStyle(color: colors.textPrimary),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Enter your name';
@@ -165,9 +159,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             label: 'Email',
                             icon: Icons.email_outlined,
                           ),
-                          style: TextStyle(
-                            color: colors.textPrimary,
-                          ),
+                          style: TextStyle(color: colors.textPrimary),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || !value.contains('@')) {
@@ -187,9 +179,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             label: 'Password',
                             icon: Icons.lock_outline_rounded,
                           ),
-                          style: TextStyle(
-                            color: colors.textPrimary,
-                          ),
+                          style: TextStyle(color: colors.textPrimary),
                           obscureText: true,
                           validator: (value) {
                             final password = value ?? '';
@@ -269,54 +259,37 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   InputDecoration _inputDecoration(
-      BuildContext context, {
-        required String label,
-        required IconData icon,
-      }) {
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+  }) {
     final colors = context.appColors;
 
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(
-        color: colors.textMuted,
-      ),
-      prefixIcon: Icon(
-        icon,
-        color: colors.textMuted,
-      ),
+      labelStyle: TextStyle(color: colors.textMuted),
+      prefixIcon: Icon(icon, color: colors.textMuted),
       filled: true,
       fillColor: colors.surfaceSoft,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: colors.border,
-        ),
+        borderSide: BorderSide(color: colors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: colors.border,
-        ),
+        borderSide: BorderSide(color: colors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: colors.primary,
-          width: 1.4,
-        ),
+        borderSide: BorderSide(color: colors.primary, width: 1.4),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: colors.danger,
-        ),
+        borderSide: BorderSide(color: colors.danger),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: colors.danger,
-          width: 1.4,
-        ),
+        borderSide: BorderSide(color: colors.danger, width: 1.4),
       ),
     );
   }
@@ -330,9 +303,7 @@ class _AuthScreenState extends State<AuthScreen> {
           backgroundColor: colors.dangerSoft,
           content: Text(
             state.message,
-            style: TextStyle(
-              color: colors.textPrimary,
-            ),
+            style: TextStyle(color: colors.textPrimary),
           ),
         ),
       );
@@ -356,19 +327,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
     if (_isSignUp) {
       authBloc.add(
-        AuthRegisterRequested(
-          name: name,
-          email: email,
-          password: password,
-        ),
+        AuthRegisterRequested(name: name, email: email, password: password),
       );
     } else {
-      authBloc.add(
-        AuthLoginRequested(
-          email: email,
-          password: password,
-        ),
-      );
+      authBloc.add(AuthLoginRequested(email: email, password: password));
     }
   }
 }
@@ -398,8 +360,9 @@ class _AuthModeButton extends StatelessWidget {
       child: TextButton(
         onPressed: onTap,
         style: TextButton.styleFrom(
-          foregroundColor:
-          isSelected ? colors.textOnPrimary : colors.textSecondary,
+          foregroundColor: isSelected
+              ? colors.textOnPrimary
+              : colors.textSecondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),

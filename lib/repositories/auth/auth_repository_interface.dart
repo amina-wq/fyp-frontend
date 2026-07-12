@@ -7,18 +7,13 @@ abstract class AuthRepositoryInterface {
     required String password,
   });
 
-  Future<TokenModel> login({
-    required String email,
-    required String password,
-  });
+  Future<TokenModel> login({required String email, required String password});
 
   Future<TokenModel> refreshTokens();
 
   Future<UserModel> getCurrentUser();
 
-  Future<UserModel> updateName({
-    required String name,
-  });
+  Future<UserModel> updateName({required String name});
 
   Future<UserModel> updateSettings({
     required List<int> notificationDaysBefore,
@@ -26,9 +21,7 @@ abstract class AuthRepositoryInterface {
     required String themeMode,
   });
 
-  Future<UserModel> updateFcmToken({
-    required String? fcmToken,
-  });
+  Future<UserModel> updateFcmToken({required String? fcmToken});
 
   Future<void> logout();
 

@@ -217,10 +217,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   }
 
   @override
-  AppThemeColors lerp(
-      ThemeExtension<AppThemeColors>? other,
-      double t,
-      ) {
+  AppThemeColors lerp(ThemeExtension<AppThemeColors>? other, double t) {
     if (other is! AppThemeColors) {
       return this;
     }
@@ -248,11 +245,17 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       successSoft: Color.lerp(successSoft, other.successSoft, t)!,
       successBorder: Color.lerp(successBorder, other.successBorder, t)!,
       chipSelected: Color.lerp(chipSelected, other.chipSelected, t)!,
-      chipSelectedBorder:
-      Color.lerp(chipSelectedBorder, other.chipSelectedBorder, t)!,
+      chipSelectedBorder: Color.lerp(
+        chipSelectedBorder,
+        other.chipSelectedBorder,
+        t,
+      )!,
       chipUnselected: Color.lerp(chipUnselected, other.chipUnselected, t)!,
-      chipUnselectedBorder:
-      Color.lerp(chipUnselectedBorder, other.chipUnselectedBorder, t)!,
+      chipUnselectedBorder: Color.lerp(
+        chipUnselectedBorder,
+        other.chipUnselectedBorder,
+        t,
+      )!,
       shadow: Color.lerp(shadow, other.shadow, t)!,
     );
   }

@@ -20,27 +20,19 @@ class AuthLoading extends AuthState {
 class AuthAuthenticated extends AuthState {
   final UserModel user;
 
-  const AuthAuthenticated({
-    required this.user,
-  });
+  const AuthAuthenticated({required this.user});
 
   @override
-  List<Object?> get props => [
-    user,
-  ];
+  List<Object?> get props => [user];
 }
 
 class AuthActionInProgress extends AuthState {
   final UserModel user;
 
-  const AuthActionInProgress({
-    required this.user,
-  });
+  const AuthActionInProgress({required this.user});
 
   @override
-  List<Object?> get props => [
-    user,
-  ];
+  List<Object?> get props => [user];
 }
 
 class AuthUnauthenticated extends AuthState {
@@ -50,12 +42,8 @@ class AuthUnauthenticated extends AuthState {
 class AuthFailure extends AuthState {
   final String message;
 
-  const AuthFailure({
-    required this.message,
-  });
+  const AuthFailure({required this.message});
 
   @override
-  List<Object?> get props => [
-    message,
-  ];
+  List<Object?> get props => [message];
 }

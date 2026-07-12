@@ -14,16 +14,16 @@ class AddManualProductBloc
   AddManualProductBloc({
     required ProductRepositoryInterface productRepository,
     required InventoryRepositoryInterface inventoryRepository,
-  })  : _productRepository = productRepository,
-        _inventoryRepository = inventoryRepository,
-        super(const AddManualProductInitial()) {
+  }) : _productRepository = productRepository,
+       _inventoryRepository = inventoryRepository,
+       super(const AddManualProductInitial()) {
     on<AddManualProductSaveRequested>(_onSaveRequested);
   }
 
   Future<void> _onSaveRequested(
-      AddManualProductSaveRequested event,
-      Emitter<AddManualProductState> emit,
-      ) async {
+    AddManualProductSaveRequested event,
+    Emitter<AddManualProductState> emit,
+  ) async {
     emit(const AddManualProductSaving());
 
     try {
@@ -75,11 +75,7 @@ class AddManualProductBloc
         );
       }
 
-      emit(
-        AddManualProductSuccess(
-          item: createdItem,
-        ),
-      );
+      emit(AddManualProductSuccess(item: createdItem));
     } catch (error) {
       emit(
         AddManualProductFailure(

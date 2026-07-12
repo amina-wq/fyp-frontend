@@ -7,10 +7,9 @@ import 'inventory_state.dart';
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final InventoryRepositoryInterface _inventoryRepository;
 
-  InventoryBloc({
-    required InventoryRepositoryInterface inventoryRepository,
-  })  : _inventoryRepository = inventoryRepository,
-        super(const InventoryInitial()) {
+  InventoryBloc({required InventoryRepositoryInterface inventoryRepository})
+    : _inventoryRepository = inventoryRepository,
+      super(const InventoryInitial()) {
     on<InventoryLoadRequested>(_onLoadRequested);
     on<InventoryFilterChanged>(_onFilterChanged);
     on<InventoryItemCreateRequested>(_onItemCreateRequested);
@@ -23,22 +22,18 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onLoadRequested(
-      InventoryLoadRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryLoadRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     emit(const InventoryLoadInProgress());
 
-    await _loadInventory(
-      emit: emit,
-      categoryId: null,
-      expiryState: null,
-    );
+    await _loadInventory(emit: emit, categoryId: null, expiryState: null);
   }
 
   Future<void> _onFilterChanged(
-      InventoryFilterChanged event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryFilterChanged event,
+    Emitter<InventoryState> emit,
+  ) async {
     final currentState = state;
 
     if (currentState is InventoryLoadSuccess) {
@@ -62,9 +57,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemCreateRequested(
-      InventoryItemCreateRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemCreateRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () async {
@@ -87,9 +82,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemUpdateRequested(
-      InventoryItemUpdateRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemUpdateRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.updateInventoryItem(
@@ -100,9 +95,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemImageUploadRequested(
-      InventoryItemImageUploadRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemImageUploadRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.uploadInventoryItemImage(
@@ -113,9 +108,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemImageDeleteRequested(
-      InventoryItemImageDeleteRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemImageDeleteRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.deleteInventoryItemImage(event.itemId),
@@ -123,9 +118,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemConsumeRequested(
-      InventoryItemConsumeRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemConsumeRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.consumeInventoryItem(event.itemId),
@@ -133,9 +128,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemWasteRequested(
-      InventoryItemWasteRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemWasteRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.wasteInventoryItem(event.itemId),
@@ -143,9 +138,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onItemDeleteRequested(
-      InventoryItemDeleteRequested event,
-      Emitter<InventoryState> emit,
-      ) async {
+    InventoryItemDeleteRequested event,
+    Emitter<InventoryState> emit,
+  ) async {
     await _runActionAndReload(
       emit: emit,
       action: () => _inventoryRepository.deleteInventoryItem(event.itemId),
@@ -174,11 +169,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         ),
       );
     } catch (error) {
-      emit(
-        InventoryFailure(
-          message: error.toString(),
-        ),
-      );
+      emit(InventoryFailure(message: error.toString()));
     }
   }
 
@@ -217,11 +208,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         expiryState: expiryState,
       );
     } catch (error) {
-      emit(
-        InventoryFailure(
-          message: error.toString(),
-        ),
-      );
+      emit(InventoryFailure(message: error.toString()));
     }
   }
 }

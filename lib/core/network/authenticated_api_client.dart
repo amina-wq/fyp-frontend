@@ -12,15 +12,15 @@ class AuthenticatedApiClient {
   AuthenticatedApiClient({
     required ApiClient apiClient,
     required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+  }) : _apiClient = apiClient,
+       _tokenStorage = tokenStorage;
 
   Future<Response<dynamic>> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-      }) {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) {
     return _authorizedRequest(
-          (accessToken) => _apiClient.get(
+      (accessToken) => _apiClient.get(
         path,
         queryParameters: queryParameters,
         accessToken: accessToken,
@@ -29,12 +29,12 @@ class AuthenticatedApiClient {
   }
 
   Future<Response<dynamic>> post(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-      }) {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
     return _authorizedRequest(
-          (accessToken) => _apiClient.post(
+      (accessToken) => _apiClient.post(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -44,12 +44,12 @@ class AuthenticatedApiClient {
   }
 
   Future<Response<dynamic>> patch(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-      }) {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
     return _authorizedRequest(
-          (accessToken) => _apiClient.patch(
+      (accessToken) => _apiClient.patch(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -59,12 +59,12 @@ class AuthenticatedApiClient {
   }
 
   Future<Response<dynamic>> put(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-      }) {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
     return _authorizedRequest(
-          (accessToken) => _apiClient.put(
+      (accessToken) => _apiClient.put(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -74,12 +74,12 @@ class AuthenticatedApiClient {
   }
 
   Future<Response<dynamic>> delete(
-      String path, {
-        Object? data,
-        Map<String, dynamic>? queryParameters,
-      }) {
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
     return _authorizedRequest(
-          (accessToken) => _apiClient.delete(
+      (accessToken) => _apiClient.delete(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -89,25 +89,23 @@ class AuthenticatedApiClient {
   }
 
   Future<Response<dynamic>> postMultipart(
-      String path, {
-        required Future<FormData> Function() dataBuilder,
-      }) {
-    return _authorizedRequest(
-          (accessToken) async {
-        final formData = await dataBuilder();
+    String path, {
+    required Future<FormData> Function() dataBuilder,
+  }) {
+    return _authorizedRequest((accessToken) async {
+      final formData = await dataBuilder();
 
-        return _apiClient.postMultipart(
-          path,
-          data: formData,
-          accessToken: accessToken,
-        );
-      },
-    );
+      return _apiClient.postMultipart(
+        path,
+        data: formData,
+        accessToken: accessToken,
+      );
+    });
   }
 
   Future<Response<dynamic>> _authorizedRequest(
-      Future<Response<dynamic>> Function(String accessToken) request,
-      ) async {
+    Future<Response<dynamic>> Function(String accessToken) request,
+  ) async {
     final accessToken = await _tokenStorage.getAccessToken();
 
     if (accessToken == null) {
@@ -136,14 +134,10 @@ class AuthenticatedApiClient {
 
     final response = await _apiClient.post(
       ApiConstants.refreshEndpoint,
-      data: {
-        'refresh_token': refreshToken,
-      },
+      data: {'refresh_token': refreshToken},
     );
 
-    final tokens = TokenModel.fromJson(
-      response.data as Map<String, dynamic>,
-    );
+    final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
 
     await _tokenStorage.saveTokens(
       accessToken: tokens.accessToken,

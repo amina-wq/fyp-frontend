@@ -22,9 +22,5 @@ class AddManualProductSaveRequested extends AddManualProductEvent {
   });
 
   @override
-  List<Object?> get props => [
-    productData,
-    inventoryData,
-    imagePath,
-  ];
+  List<Object?> get props => [productData, inventoryData, imagePath];
 }

@@ -5,7 +5,5 @@ abstract class RecipeDetailEvent {
 class RecipeDetailLoadRequested extends RecipeDetailEvent {
   final int spoonacularId;
 
-  const RecipeDetailLoadRequested({
-    required this.spoonacularId,
-  });
+  const RecipeDetailLoadRequested({required this.spoonacularId});
 }

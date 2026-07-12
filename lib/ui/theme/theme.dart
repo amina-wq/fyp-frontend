@@ -9,7 +9,6 @@ abstract final class AppTheme {
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: _lightPrimary,
-      brightness: Brightness.light,
       primary: _lightPrimary,
       surface: AppThemeColors.light.surface,
     );
@@ -54,9 +53,7 @@ abstract final class AppTheme {
       fontFamily: 'MarkPro',
       textTheme: textTheme,
       primaryTextTheme: textTheme,
-      extensions: [
-        colors,
-      ],
+      extensions: [colors],
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -69,9 +66,7 @@ abstract final class AppTheme {
           fontSize: 22,
           fontFamily: 'MarkPro',
         ),
-        iconTheme: IconThemeData(
-          color: colors.textPrimary,
-        ),
+        iconTheme: IconThemeData(color: colors.textPrimary),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.surface,
@@ -110,9 +105,7 @@ abstract final class AppTheme {
         color: colors.card,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: colors.card,
@@ -129,21 +122,19 @@ abstract final class AppTheme {
           fontSize: 14,
           fontFamily: 'MarkPro',
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: isDark ? const Color(0xFF27313A) : const Color(0xFF1F2147),
+        backgroundColor: isDark
+            ? const Color(0xFF27313A)
+            : const Color(0xFF1F2147),
         contentTextStyle: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,
           fontFamily: 'MarkPro',
         ),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -166,9 +157,7 @@ abstract final class AppTheme {
         selectedColor: colors.chipSelected,
         disabledColor: colors.surfaceSoft,
         checkmarkColor: colors.primary,
-        side: BorderSide(
-          color: colors.chipUnselectedBorder,
-        ),
+        side: BorderSide(color: colors.chipUnselectedBorder),
         labelStyle: TextStyle(
           color: colors.textSecondary,
           fontWeight: FontWeight.w800,
@@ -179,9 +168,7 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w900,
           fontFamily: 'MarkPro',
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -196,22 +183,15 @@ abstract final class AppTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: colors.border,
-          ),
+          borderSide: BorderSide(color: colors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: colors.border,
-          ),
+          borderSide: BorderSide(color: colors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: colors.primary,
-            width: 1.4,
-          ),
+          borderSide: BorderSide(color: colors.primary, width: 1.4),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -239,18 +219,12 @@ abstract final class AppTheme {
           ),
         ),
       ),
-      iconTheme: IconThemeData(
-        color: colors.primary,
-      ),
-      dividerTheme: DividerThemeData(
-        color: colors.border,
-      ),
+      iconTheme: IconThemeData(color: colors.primary),
+      dividerTheme: DividerThemeData(color: colors.border),
       listTileTheme: ListTileThemeData(
         textColor: colors.textPrimary,
         iconColor: colors.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

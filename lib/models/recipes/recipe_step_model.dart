@@ -2,10 +2,7 @@ class RecipeStepModel {
   final int number;
   final String step;
 
-  const RecipeStepModel({
-    required this.number,
-    required this.step,
-  });
+  const RecipeStepModel({required this.number, required this.step});
 
   factory RecipeStepModel.fromJson(Map<String, dynamic> json) {
     return RecipeStepModel(

@@ -15,15 +15,11 @@ class RecipesLoading extends RecipesState {
 class RecipesLoaded extends RecipesState {
   final List<RecipeSummaryModel> recipes;
 
-  const RecipesLoaded({
-    required this.recipes,
-  });
+  const RecipesLoaded({required this.recipes});
 }
 
 class RecipesFailure extends RecipesState {
   final String message;
 
-  const RecipesFailure({
-    required this.message,
-  });
+  const RecipesFailure({required this.message});
 }

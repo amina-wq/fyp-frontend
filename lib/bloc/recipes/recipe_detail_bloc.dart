@@ -7,17 +7,16 @@ import 'recipe_detail_state.dart';
 class RecipeDetailBloc extends Bloc<RecipeDetailEvent, RecipeDetailState> {
   final RecipesRepositoryInterface _recipesRepository;
 
-  RecipeDetailBloc({
-    required RecipesRepositoryInterface recipesRepository,
-  })  : _recipesRepository = recipesRepository,
-        super(const RecipeDetailInitial()) {
+  RecipeDetailBloc({required RecipesRepositoryInterface recipesRepository})
+    : _recipesRepository = recipesRepository,
+      super(const RecipeDetailInitial()) {
     on<RecipeDetailLoadRequested>(_onRecipeDetailLoadRequested);
   }
 
   Future<void> _onRecipeDetailLoadRequested(
-      RecipeDetailLoadRequested event,
-      Emitter<RecipeDetailState> emit,
-      ) async {
+    RecipeDetailLoadRequested event,
+    Emitter<RecipeDetailState> emit,
+  ) async {
     emit(const RecipeDetailLoading());
 
     try {
@@ -25,11 +24,7 @@ class RecipeDetailBloc extends Bloc<RecipeDetailEvent, RecipeDetailState> {
         spoonacularId: event.spoonacularId,
       );
 
-      emit(
-        RecipeDetailLoaded(
-          recipe: recipe,
-        ),
-      );
+      emit(RecipeDetailLoaded(recipe: recipe));
     } catch (error) {
       emit(
         RecipeDetailFailure(

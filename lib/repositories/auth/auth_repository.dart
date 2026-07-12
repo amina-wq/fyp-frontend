@@ -13,8 +13,8 @@ class AuthRepository implements AuthRepositoryInterface {
   AuthRepository({
     required ApiClient apiClient,
     required TokenStorage tokenStorage,
-  })  : _apiClient = apiClient,
-        _tokenStorage = tokenStorage;
+  }) : _apiClient = apiClient,
+       _tokenStorage = tokenStorage;
 
   @override
   Future<TokenModel> register({
@@ -25,16 +25,10 @@ class AuthRepository implements AuthRepositoryInterface {
     try {
       final response = await _apiClient.post(
         ApiConstants.registerEndpoint,
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-        },
+        data: {'name': name, 'email': email, 'password': password},
       );
 
-      final tokens = TokenModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
 
       await _tokenStorage.saveTokens(
         accessToken: tokens.accessToken,
@@ -55,15 +49,10 @@ class AuthRepository implements AuthRepositoryInterface {
     try {
       final response = await _apiClient.post(
         ApiConstants.loginEndpoint,
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
-      final tokens = TokenModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
 
       await _tokenStorage.saveTokens(
         accessToken: tokens.accessToken,
@@ -87,14 +76,10 @@ class AuthRepository implements AuthRepositoryInterface {
 
       final response = await _apiClient.post(
         ApiConstants.refreshEndpoint,
-        data: {
-          'refresh_token': refreshToken,
-        },
+        data: {'refresh_token': refreshToken},
       );
 
-      final tokens = TokenModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final tokens = TokenModel.fromJson(response.data as Map<String, dynamic>);
 
       await _tokenStorage.saveTokens(
         accessToken: tokens.accessToken,
@@ -111,38 +96,28 @@ class AuthRepository implements AuthRepositoryInterface {
   Future<UserModel> getCurrentUser() async {
     try {
       final response = await _authorizedRequest(
-            (accessToken) => _apiClient.get(
-          ApiConstants.meEndpoint,
-          accessToken: accessToken,
-        ),
+        (accessToken) =>
+            _apiClient.get(ApiConstants.meEndpoint, accessToken: accessToken),
       );
 
-      return UserModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return UserModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
   }
 
   @override
-  Future<UserModel> updateName({
-    required String name,
-  }) async {
+  Future<UserModel> updateName({required String name}) async {
     try {
       final response = await _authorizedRequest(
-            (accessToken) => _apiClient.patch(
+        (accessToken) => _apiClient.patch(
           ApiConstants.updateNameEndpoint,
           accessToken: accessToken,
-          data: {
-            'name': name,
-          },
+          data: {'name': name},
         ),
       );
 
-      return UserModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return UserModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -156,7 +131,7 @@ class AuthRepository implements AuthRepositoryInterface {
   }) async {
     try {
       final response = await _authorizedRequest(
-            (accessToken) => _apiClient.patch(
+        (accessToken) => _apiClient.patch(
           ApiConstants.updateSettingsEndpoint,
           accessToken: accessToken,
           data: {
@@ -167,32 +142,24 @@ class AuthRepository implements AuthRepositoryInterface {
         ),
       );
 
-      return UserModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return UserModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
   }
 
   @override
-  Future<UserModel> updateFcmToken({
-    required String? fcmToken,
-  }) async {
+  Future<UserModel> updateFcmToken({required String? fcmToken}) async {
     try {
       final response = await _authorizedRequest(
-            (accessToken) => _apiClient.patch(
+        (accessToken) => _apiClient.patch(
           ApiConstants.fcmTokenEndpoint,
           accessToken: accessToken,
-          data: {
-            'fcm_token': fcmToken,
-          },
+          data: {'fcm_token': fcmToken},
         ),
       );
 
-      return UserModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return UserModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }
@@ -209,8 +176,8 @@ class AuthRepository implements AuthRepositoryInterface {
   }
 
   Future<Response<dynamic>> _authorizedRequest(
-      Future<Response<dynamic>> Function(String accessToken) request,
-      ) async {
+    Future<Response<dynamic>> Function(String accessToken) request,
+  ) async {
     final accessToken = await _tokenStorage.getAccessToken();
 
     if (accessToken == null) {

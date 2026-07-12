@@ -6,15 +6,13 @@ import '../router.dart';
 class AuthRouteGuard extends AutoRouteGuard {
   final AuthRepositoryInterface authRepository;
 
-  AuthRouteGuard({
-    required this.authRepository,
-  });
+  AuthRouteGuard({required this.authRepository});
 
   @override
   Future<void> onNavigation(
-      NavigationResolver resolver,
-      StackRouter router,
-      ) async {
+    NavigationResolver resolver,
+    StackRouter router,
+  ) async {
     final hasTokens = await authRepository.isLoggedIn();
 
     if (!hasTokens) {
@@ -25,12 +23,12 @@ class AuthRouteGuard extends AutoRouteGuard {
     try {
       await authRepository.getCurrentUser();
 
-      resolver.next(true);
+      resolver.next();
     } catch (_) {
       try {
         await authRepository.refreshTokens();
 
-        resolver.next(true);
+        resolver.next();
       } catch (_) {
         await authRepository.logout();
 

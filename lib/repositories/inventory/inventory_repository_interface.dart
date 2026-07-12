@@ -1,9 +1,7 @@
 import '../../models/inventory/inventory.dart';
 
 abstract class InventoryRepositoryInterface {
-  Future<InventoryItemModel> createInventoryItem(
-      InventoryItemCreateModel data,
-      );
+  Future<InventoryItemModel> createInventoryItem(InventoryItemCreateModel data);
 
   Future<List<InventoryItemModel>> getInventoryItems({
     String? categoryId,

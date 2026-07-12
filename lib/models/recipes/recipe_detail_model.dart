@@ -38,16 +38,12 @@ class RecipeDetailModel {
       ingredients: ingredientsData
           .map(
             (ingredient) => RecipeIngredientModel.fromJson(
-          ingredient as Map<String, dynamic>,
-        ),
-      )
+              ingredient as Map<String, dynamic>,
+            ),
+          )
           .toList(),
       steps: stepsData
-          .map(
-            (step) => RecipeStepModel.fromJson(
-          step as Map<String, dynamic>,
-        ),
-      )
+          .map((step) => RecipeStepModel.fromJson(step as Map<String, dynamic>))
           .toList(),
     );
   }

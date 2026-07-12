@@ -13,9 +13,7 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   final AuthRepositoryInterface authRepository;
 
-  AppRouter({
-    required this.authRepository,
-  });
+  AppRouter({required this.authRepository});
 
   late final AuthRouteGuard _authRouteGuard = AuthRouteGuard(
     authRepository: authRepository,
@@ -29,29 +27,13 @@ class AppRouter extends RootStackRouter {
       initial: true,
       guards: [_authRouteGuard],
       children: [
-        AutoRoute(
-          page: HomeRoute.page,
-          path: '',
-          initial: true,
-        ),
-        AutoRoute(
-          page: ShoppingRoute.page,
-          path: 'shopping',
-        ),
-        AutoRoute(
-          page: RecipesRoute.page,
-          path: 'recipes',
-        ),
-        AutoRoute(
-          page: SettingsRoute.page,
-          path: 'settings',
-        ),
+        AutoRoute(page: HomeRoute.page, path: '', initial: true),
+        AutoRoute(page: ShoppingRoute.page, path: 'shopping'),
+        AutoRoute(page: RecipesRoute.page, path: 'recipes'),
+        AutoRoute(page: SettingsRoute.page, path: 'settings'),
       ],
     ),
-    AutoRoute(
-      page: AuthRoute.page,
-      path: '/auth',
-    ),
+    AutoRoute(page: AuthRoute.page, path: '/auth'),
     AutoRoute(
       page: AddManualProductRoute.page,
       path: '/add-manual-product',

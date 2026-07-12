@@ -27,19 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    context.read<CategoriesBloc>().add(
-      const CategoriesLoadRequested(),
-    );
+    context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
 
-    context.read<InventoryBloc>().add(
-      const InventoryLoadRequested(),
-    );
+    context.read<InventoryBloc>().add(const InventoryLoadRequested());
   }
 
   Future<void> _refreshInventory() async {
-    context.read<InventoryBloc>().add(
-      const InventoryLoadRequested(),
-    );
+    context.read<InventoryBloc>().add(const InventoryLoadRequested());
   }
 
   void _changeExpiryFilter(String? expiryState) {
@@ -105,9 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, state) {
             if (state is InventoryLoadInProgress) {
               return Center(
-                child: CircularProgressIndicator(
-                  color: colors.primary,
-                ),
+                child: CircularProgressIndicator(color: colors.primary),
               );
             }
 
@@ -206,9 +198,7 @@ class _HomeContent extends StatelessWidget {
                 userName = authState.user.name;
               }
 
-              return _WelcomeHeader(
-                userName: userName,
-              );
+              return _WelcomeHeader(userName: userName);
             },
           ),
           const SizedBox(height: 26),
@@ -220,9 +210,7 @@ class _HomeContent extends StatelessWidget {
           const SizedBox(height: 12),
           _AnalyticsGrid(stats: stats),
           const SizedBox(height: 26),
-          const _SimpleSectionTitle(
-            title: 'Select Category',
-          ),
+          const _SimpleSectionTitle(title: 'Select Category'),
           const SizedBox(height: 14),
           _CategorySelector(
             selectedCategoryId: selectedCategoryId,
@@ -234,10 +222,7 @@ class _HomeContent extends StatelessWidget {
             onChanged: onExpiryChanged,
           ),
           const SizedBox(height: 18),
-          _SearchField(
-            value: searchQuery,
-            onChanged: onSearchChanged,
-          ),
+          _SearchField(value: searchQuery, onChanged: onSearchChanged),
           const SizedBox(height: 22),
           if (items.isEmpty)
             const _EmptyInventoryCard()
@@ -255,9 +240,7 @@ class _HomeContent extends StatelessWidget {
 class _WelcomeHeader extends StatelessWidget {
   final String userName;
 
-  const _WelcomeHeader({
-    required this.userName,
-  });
+  const _WelcomeHeader({required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -280,9 +263,7 @@ class _WelcomeHeader extends StatelessWidget {
 class _SimpleSectionTitle extends StatelessWidget {
   final String title;
 
-  const _SimpleSectionTitle({
-    required this.title,
-  });
+  const _SimpleSectionTitle({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -351,9 +332,7 @@ class _SectionTitle extends StatelessWidget {
 class _AnalyticsGrid extends StatelessWidget {
   final InventoryStatsModel stats;
 
-  const _AnalyticsGrid({
-    required this.stats,
-  });
+  const _AnalyticsGrid({required this.stats});
 
   @override
   Widget build(BuildContext context) {
@@ -462,11 +441,7 @@ class _AnalyticsCard extends StatelessWidget {
               color: colors.surface.withValues(alpha: 0.65),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 16,
-              color: valueColor,
-            ),
+            child: Icon(icon, size: 16, color: valueColor),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -522,9 +497,7 @@ class _CategorySelector extends StatelessWidget {
           return SizedBox(
             height: 86,
             child: Center(
-              child: CircularProgressIndicator(
-                color: colors.primary,
-              ),
+              child: CircularProgressIndicator(color: colors.primary),
             ),
           );
         }
@@ -605,9 +578,7 @@ class _CategoryCircle extends StatelessWidget {
                 color: isSelected ? colors.chipSelected : colors.surface,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? colors.chipSelectedBorder
-                      : colors.border,
+                  color: isSelected ? colors.chipSelectedBorder : colors.border,
                   width: 2,
                 ),
                 boxShadow: [
@@ -620,20 +591,20 @@ class _CategoryCircle extends StatelessWidget {
               ),
               child: iconUrl == null || iconUrl.isEmpty
                   ? Icon(
-                _iconForCategory(category.key),
-                size: 28,
-                color: isSelected ? colors.primary : colors.textSecondary,
-              )
+                      _iconForCategory(category.key),
+                      size: 28,
+                      color: isSelected ? colors.primary : colors.textSecondary,
+                    )
                   : AppCachedNetworkImage(
-                imageUrl: iconUrl,
-                fit: BoxFit.cover,
-                fallback: Icon(
-                  _iconForCategory(category.key),
-                  size: 28,
-                  color:
-                  isSelected ? colors.primary : colors.textSecondary,
-                ),
-              ),
+                      imageUrl: iconUrl,
+                      fallback: Icon(
+                        _iconForCategory(category.key),
+                        size: 28,
+                        color: isSelected
+                            ? colors.primary
+                            : colors.textSecondary,
+                      ),
+                    ),
             ),
             const SizedBox(height: 6),
             Text(
@@ -741,10 +712,7 @@ class _SearchField extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
-  const _SearchField({
-    required this.value,
-    required this.onChanged,
-  });
+  const _SearchField({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -752,10 +720,7 @@ class _SearchField extends StatelessWidget {
 
     return TextField(
       onChanged: onChanged,
-      style: TextStyle(
-        color: colors.textPrimary,
-        fontWeight: FontWeight.w700,
-      ),
+      style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
       decoration: InputDecoration(
         hintText: 'Search',
         hintStyle: TextStyle(
@@ -763,31 +728,21 @@ class _SearchField extends StatelessWidget {
           color: colors.textMuted,
           fontWeight: FontWeight.w600,
         ),
-        prefixIcon: Icon(
-          Icons.search,
-          size: 20,
-          color: colors.primary,
-        ),
+        prefixIcon: Icon(Icons.search, size: 20, color: colors.primary),
         filled: true,
         fillColor: colors.card,
         contentPadding: EdgeInsets.zero,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: BorderSide(
-            color: colors.border,
-          ),
+          borderSide: BorderSide(color: colors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: BorderSide(
-            color: colors.border,
-          ),
+          borderSide: BorderSide(color: colors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
-          borderSide: BorderSide(
-            color: colors.primary,
-          ),
+          borderSide: BorderSide(color: colors.primary),
         ),
       ),
     );
@@ -797,9 +752,7 @@ class _SearchField extends StatelessWidget {
 class _InventoryCard extends StatelessWidget {
   final InventoryItemModel item;
 
-  const _InventoryCard({
-    required this.item,
-  });
+  const _InventoryCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -812,23 +765,16 @@ class _InventoryCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.router.push(
-          InventoryItemDetailsRoute(item: item),
-        );
+        context.router.push(InventoryItemDetailsRoute(item: item));
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        constraints: const BoxConstraints(
-          minHeight: 96,
-        ),
+        constraints: const BoxConstraints(minHeight: 96),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: expiryColors.border,
-            width: 1.5,
-          ),
+          border: Border.all(color: expiryColors.border, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: colors.shadow,
@@ -846,32 +792,27 @@ class _InventoryCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: expiryColors.fill,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: expiryColors.border,
-                ),
+                border: Border.all(color: expiryColors.border),
               ),
               child: imageUrl == null
                   ? Icon(
-                _iconForCategory(item.categoryKey),
-                color: expiryColors.foreground,
-                size: 28,
-              )
+                      _iconForCategory(item.categoryKey),
+                      color: expiryColors.foreground,
+                      size: 28,
+                    )
                   : AppCachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                fallback: Icon(
-                  _iconForCategory(item.categoryKey),
-                  color: expiryColors.foreground,
-                  size: 28,
-                ),
-              ),
+                      imageUrl: imageUrl,
+                      fallback: Icon(
+                        _iconForCategory(item.categoryKey),
+                        color: expiryColors.foreground,
+                        size: 28,
+                      ),
+                    ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: DefaultTextStyle(
-                style: TextStyle(
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(color: colors.textSecondary),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -919,9 +860,7 @@ class _InventoryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            _ExpiryStatus(
-              expiryState: item.expiryState,
-            ),
+            _ExpiryStatus(expiryState: item.expiryState),
           ],
         ),
       ),
@@ -932,9 +871,7 @@ class _InventoryCard extends StatelessWidget {
 class _ExpiryStatus extends StatelessWidget {
   final String expiryState;
 
-  const _ExpiryStatus({
-    required this.expiryState,
-  });
+  const _ExpiryStatus({required this.expiryState});
 
   @override
   Widget build(BuildContext context) {
@@ -944,7 +881,6 @@ class _ExpiryStatus extends StatelessWidget {
     );
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Icon(
           expiryState == 'expired'
@@ -981,9 +917,7 @@ class _EmptyInventoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -994,11 +928,7 @@ class _EmptyInventoryCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: 46,
-            color: colors.primary,
-          ),
+          Icon(Icons.inventory_2_outlined, size: 46, color: colors.primary),
           const SizedBox(height: 12),
           Text(
             'No food items yet',
@@ -1029,10 +959,7 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
 
-  const _ErrorView({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -1044,11 +971,7 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: colors.primary,
-            ),
+            Icon(Icons.error_outline, size: 48, color: colors.primary),
             const SizedBox(height: 14),
             Text(
               'Something went wrong',
@@ -1069,10 +992,7 @@ class _ErrorView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
-            ElevatedButton(
-              onPressed: onRetry,
-              child: const Text('Try again'),
-            ),
+            ElevatedButton(onPressed: onRetry, child: const Text('Try again')),
           ],
         ),
       ),

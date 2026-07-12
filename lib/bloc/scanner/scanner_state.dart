@@ -20,9 +20,7 @@ class ScannerLoading extends ScannerState {
 class ScannerProductFound extends ScannerState {
   final ProductModel product;
 
-  const ScannerProductFound({
-    required this.product,
-  });
+  const ScannerProductFound({required this.product});
 
   @override
   List<Object?> get props => [product];
@@ -31,9 +29,7 @@ class ScannerProductFound extends ScannerState {
 class ScannerProductNotFound extends ScannerState {
   final String barcode;
 
-  const ScannerProductNotFound({
-    required this.barcode,
-  });
+  const ScannerProductNotFound({required this.barcode});
 
   @override
   List<Object?> get props => [barcode];
@@ -42,9 +38,7 @@ class ScannerProductNotFound extends ScannerState {
 class ScannerFailure extends ScannerState {
   final String message;
 
-  const ScannerFailure({
-    required this.message,
-  });
+  const ScannerFailure({required this.message});
 
   @override
   List<Object?> get props => [message];

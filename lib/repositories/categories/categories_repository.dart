@@ -8,25 +8,18 @@ import 'categories_repository_interface.dart';
 class CategoriesRepository implements CategoriesRepositoryInterface {
   final AuthenticatedApiClient _apiClient;
 
-  CategoriesRepository({
-    required AuthenticatedApiClient apiClient,
-  }) : _apiClient = apiClient;
+  CategoriesRepository({required AuthenticatedApiClient apiClient})
+    : _apiClient = apiClient;
 
   @override
   Future<List<CategoryModel>> getCategories() async {
     try {
-      final response = await _apiClient.get(
-        ApiConstants.categoriesEndpoint,
-      );
+      final response = await _apiClient.get(ApiConstants.categoriesEndpoint);
 
       final data = response.data as List<dynamic>;
 
       return data
-          .map(
-            (item) => CategoryModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
+          .map((item) => CategoryModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));

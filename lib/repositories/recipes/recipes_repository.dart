@@ -8,9 +8,8 @@ import 'recipes_repository_interface.dart';
 class RecipesRepository implements RecipesRepositoryInterface {
   final AuthenticatedApiClient _apiClient;
 
-  RecipesRepository({
-    required AuthenticatedApiClient apiClient,
-  }) : _apiClient = apiClient;
+  RecipesRepository({required AuthenticatedApiClient apiClient})
+    : _apiClient = apiClient;
 
   @override
   Future<List<RecipeSummaryModel>> getRecipesByInventory({
@@ -19,19 +18,15 @@ class RecipesRepository implements RecipesRepositoryInterface {
     try {
       final response = await _apiClient.post(
         ApiConstants.recipesByIngredientsEndpoint,
-        data: {
-          'number': number,
-        },
+        data: {'number': number},
       );
 
       final data = response.data as List<dynamic>;
 
       return data
           .map(
-            (item) => RecipeSummaryModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
+            (item) => RecipeSummaryModel.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
@@ -47,9 +42,7 @@ class RecipesRepository implements RecipesRepositoryInterface {
         ApiConstants.recipeDetailsEndpoint(spoonacularId),
       );
 
-      return RecipeDetailModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return RecipeDetailModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (error) {
       throw Exception(_extractErrorMessage(error));
     }

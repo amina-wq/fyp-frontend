@@ -7,17 +7,16 @@ import 'categories_state.dart';
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   final CategoriesRepositoryInterface _categoriesRepository;
 
-  CategoriesBloc({
-    required CategoriesRepositoryInterface categoriesRepository,
-  })  : _categoriesRepository = categoriesRepository,
-        super(const CategoriesInitial()) {
+  CategoriesBloc({required CategoriesRepositoryInterface categoriesRepository})
+    : _categoriesRepository = categoriesRepository,
+      super(const CategoriesInitial()) {
     on<CategoriesLoadRequested>(_onCategoriesLoadRequested);
   }
 
   Future<void> _onCategoriesLoadRequested(
-      CategoriesLoadRequested event,
-      Emitter<CategoriesState> emit,
-      ) async {
+    CategoriesLoadRequested event,
+    Emitter<CategoriesState> emit,
+  ) async {
     emit(const CategoriesLoading());
 
     try {

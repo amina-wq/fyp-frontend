@@ -89,9 +89,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
   void initState() {
     super.initState();
 
-    _nameController = TextEditingController(
-      text: widget.initialName,
-    );
+    _nameController = TextEditingController(text: widget.initialName);
 
     _amountController = TextEditingController(
       text: widget.initialAmount == null
@@ -137,29 +135,23 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
     final amount = amountText.isEmpty ? null : double.tryParse(amountText);
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter item name'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter item name')));
       return;
     }
 
     if (amountText.isNotEmpty && amount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid amount'),
-        ),
+        const SnackBar(content: Text('Please enter a valid amount')),
       );
       return;
     }
 
     if (_selectedCategoryId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select category'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select category')));
       return;
     }
 
@@ -178,11 +170,9 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
 
     Navigator.of(context).pop();
 
-    ScaffoldMessenger.of(widget.parentContext).showSnackBar(
-      SnackBar(
-        content: Text('$name added to shopping list'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      widget.parentContext,
+    ).showSnackBar(SnackBar(content: Text('$name added to shopping list')));
   }
 
   @override
@@ -194,9 +184,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(
-          color: colors.border,
-        ),
+        side: BorderSide(color: colors.border),
       ),
       title: Text(
         'Add to Shopping List',
@@ -251,15 +239,10 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                 fontWeight: FontWeight.w700,
               ),
               items: [
-                const DropdownMenuItem<String>(
-                  value: null,
-                  child: Text('No unit'),
-                ),
+                const DropdownMenuItem<String>(child: Text('No unit')),
                 ..._units.map(
-                      (unit) => DropdownMenuItem<String>(
-                    value: unit,
-                    child: Text(unit),
-                  ),
+                  (unit) =>
+                      DropdownMenuItem<String>(value: unit, child: Text(unit)),
                 ),
               ],
               onChanged: (value) {
@@ -280,9 +263,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                 if (categoriesState is CategoriesLoading ||
                     categoriesState is CategoriesInitial) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: colors.primary,
-                    ),
+                    child: CircularProgressIndicator(color: colors.primary),
                   );
                 }
 
@@ -307,7 +288,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                 }
 
                 final hasSelectedCategory = categories.any(
-                      (category) => category.id == _selectedCategoryId,
+                  (category) => category.id == _selectedCategoryId,
                 );
 
                 return DropdownButtonFormField<String>(
@@ -326,12 +307,12 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
                   }).toList(),
                   onChanged: widget.allowCategoryEditing
                       ? (value) {
-                    if (value == null) return;
+                          if (value == null) return;
 
-                    setState(() {
-                      _selectedCategoryId = value;
-                    });
-                  }
+                          setState(() {
+                            _selectedCategoryId = value;
+                          });
+                        }
                       : null,
                   decoration: _inputDecoration(
                     context: context,
@@ -368,9 +349,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
           ),
           child: const Text(
             'Add',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w900),
           ),
         ),
       ],
@@ -400,34 +379,22 @@ InputDecoration _inputDecoration({
     ),
     filled: true,
     fillColor: colors.surfaceSoft,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 16,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: colors.primary,
-        width: 1.4,
-      ),
+      borderSide: BorderSide(color: colors.primary, width: 1.4),
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
   );
 }

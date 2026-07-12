@@ -48,13 +48,9 @@ void main() {
       apiClient: authenticatedApiClient,
     );
 
-    final fcmService = FcmService(
-      authRepository: authRepository,
-    );
+    final fcmService = FcmService(authRepository: authRepository);
 
-    final appRouter = AppRouter(
-      authRepository: authRepository,
-    );
+    final appRouter = AppRouter(authRepository: authRepository);
 
     await tester.pumpWidget(
       FoodTrackApp(

@@ -17,10 +17,7 @@ import '../../ui/widgets/widgets.dart';
 class AddScannedProductScreen extends StatefulWidget {
   final ProductModel product;
 
-  const AddScannedProductScreen({
-    super.key,
-    required this.product,
-  });
+  const AddScannedProductScreen({super.key, required this.product});
 
   @override
   State<AddScannedProductScreen> createState() =>
@@ -67,9 +64,7 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
   void initState() {
     super.initState();
 
-    context.read<CategoriesBloc>().add(
-      const CategoriesLoadRequested(),
-    );
+    context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
   }
 
   @override
@@ -189,11 +184,9 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -233,15 +226,14 @@ class _AddScannedProductScreenState extends State<AddScannedProductScreen> {
                   isSaving: _isSaving,
                 ),
                 const SizedBox(height: 24),
-                _ProductPreviewCard(
-                  product: widget.product,
-                ),
+                _ProductPreviewCard(product: widget.product),
                 const SizedBox(height: 18),
                 _ProductPhotoPicker(
                   localImagePath: _pickedImage?.path,
                   onTakePhoto: _isSaving ? null : _takePhoto,
-                  onRemovePhoto:
-                  _isSaving || _pickedImage == null ? null : _removePhoto,
+                  onRemovePhoto: _isSaving || _pickedImage == null
+                      ? null
+                      : _removePhoto,
                 ),
                 const SizedBox(height: 18),
                 _FormCard(
@@ -383,10 +375,7 @@ class _Header extends StatelessWidget {
 
     return Row(
       children: [
-        _HeaderButton(
-          icon: Icons.chevron_left,
-          onTap: onBack,
-        ),
+        _HeaderButton(icon: Icons.chevron_left, onTap: onBack),
         Expanded(
           child: Text(
             'Add Scanned Product',
@@ -432,23 +421,21 @@ class _HeaderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
         ),
         child: isLoading
             ? Padding(
-          padding: const EdgeInsets.all(11),
-          child: CircularProgressIndicator(
-            strokeWidth: 2.2,
-            color: colors.primary,
-          ),
-        )
+                padding: const EdgeInsets.all(11),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                  color: colors.primary,
+                ),
+              )
             : Icon(
-          icon,
-          color: onTap == null ? colors.textMuted : colors.primary,
-          size: 24,
-        ),
+                icon,
+                color: onTap == null ? colors.textMuted : colors.primary,
+                size: 24,
+              ),
       ),
     );
   }
@@ -457,9 +444,7 @@ class _HeaderButton extends StatelessWidget {
 class _ProductPreviewCard extends StatelessWidget {
   final ProductModel product;
 
-  const _ProductPreviewCard({
-    required this.product,
-  });
+  const _ProductPreviewCard({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -470,9 +455,7 @@ class _ProductPreviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -490,28 +473,25 @@ class _ProductPreviewCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
             child: product.imageUrl == null || product.imageUrl!.isEmpty
                 ? Icon(
-              Icons.inventory_2_outlined,
-              color: colors.primary,
-              size: 34,
-            )
+                    Icons.inventory_2_outlined,
+                    color: colors.primary,
+                    size: 34,
+                  )
                 : ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: AppCachedNetworkImage(
-                imageUrl: product.imageUrl!,
-                fit: BoxFit.cover,
-                fallback: Icon(
-                  Icons.inventory_2_outlined,
-                  color: colors.primary,
-                  size: 34,
-                ),
-              ),
-            ),
+                    borderRadius: BorderRadius.circular(18),
+                    child: AppCachedNetworkImage(
+                      imageUrl: product.imageUrl!,
+                      fallback: Icon(
+                        Icons.inventory_2_outlined,
+                        color: colors.primary,
+                        size: 34,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -582,9 +562,7 @@ class _ProductPhotoPicker extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -602,20 +580,15 @@ class _ProductPhotoPicker extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surfaceSoft,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
             child: hasImage
-                ? Image.file(
-              File(localImagePath!),
-              fit: BoxFit.cover,
-            )
+                ? Image.file(File(localImagePath!), fit: BoxFit.cover)
                 : Icon(
-              Icons.camera_alt_outlined,
-              size: 54,
-              color: colors.primary,
-            ),
+                    Icons.camera_alt_outlined,
+                    size: 54,
+                    color: colors.primary,
+                  ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -630,9 +603,7 @@ class _ProductPhotoPicker extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.primary,
                       disabledForegroundColor: colors.textMuted,
-                      side: BorderSide(
-                        color: colors.primaryBorder,
-                      ),
+                      side: BorderSide(color: colors.primaryBorder),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -649,9 +620,7 @@ class _ProductPhotoPicker extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.danger,
                       disabledForegroundColor: colors.textMuted,
-                      side: BorderSide(
-                        color: colors.dangerBorder,
-                      ),
+                      side: BorderSide(color: colors.dangerBorder),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -671,9 +640,7 @@ class _ProductPhotoPicker extends StatelessWidget {
 class _FormCard extends StatelessWidget {
   final List<Widget> children;
 
-  const _FormCard({
-    required this.children,
-  });
+  const _FormCard({required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -684,9 +651,7 @@ class _FormCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -695,9 +660,7 @@ class _FormCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 }
@@ -733,11 +696,7 @@ class _TextInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
     );
   }
 }
@@ -760,9 +719,7 @@ class _CategoryDropdownInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final hasSelectedValue = categories.any(
-          (category) => category.id == value,
-    );
+    final hasSelectedValue = categories.any((category) => category.id == value);
 
     return DropdownButtonFormField<String>(
       value: hasSelectedValue ? value : null,
@@ -773,11 +730,7 @@ class _CategoryDropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: categories.map((category) {
         return DropdownMenuItem<String>(
           value: category.id,
@@ -817,11 +770,7 @@ class _DropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: items.map((item) {
         return DropdownMenuItem<String>(
           value: item.value,
@@ -841,10 +790,7 @@ class _DateInput extends StatelessWidget {
   final DateTime? selectedDate;
   final VoidCallback onTap;
 
-  const _DateInput({
-    required this.selectedDate,
-    required this.onTap,
-  });
+  const _DateInput({required this.selectedDate, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -877,10 +823,7 @@ class _OptionItem {
   final String value;
   final String label;
 
-  const _OptionItem(
-      this.value,
-      this.label,
-      );
+  const _OptionItem(this.value, this.label);
 }
 
 InputDecoration _inputDecoration({
@@ -897,53 +840,31 @@ InputDecoration _inputDecoration({
       fontSize: 13,
       fontWeight: FontWeight.w700,
     ),
-    prefixIcon: Icon(
-      icon,
-      color: colors.primary,
-      size: 21,
-    ),
+    prefixIcon: Icon(icon, color: colors.primary, size: 21),
     filled: true,
     fillColor: colors.surfaceSoft,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 16,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.primary,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.primary, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.dangerBorder,
-      ),
+      borderSide: BorderSide(color: colors.dangerBorder),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.danger,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.danger, width: 1.5),
     ),
-    errorStyle: TextStyle(
-      color: colors.danger,
-      fontWeight: FontWeight.w700,
-    ),
+    errorStyle: TextStyle(color: colors.danger, fontWeight: FontWeight.w700),
   );
 }
 

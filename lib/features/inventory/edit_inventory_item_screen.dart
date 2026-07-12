@@ -17,10 +17,7 @@ import '../../ui/widgets/widgets.dart';
 class EditInventoryItemScreen extends StatefulWidget {
   final InventoryItemModel item;
 
-  const EditInventoryItemScreen({
-    super.key,
-    required this.item,
-  });
+  const EditInventoryItemScreen({super.key, required this.item});
 
   @override
   State<EditInventoryItemScreen> createState() =>
@@ -85,9 +82,7 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
       text: _formatAmountForInput(_currentItem.amount),
     );
 
-    _notesController = TextEditingController(
-      text: _currentItem.notes ?? '',
-    );
+    _notesController = TextEditingController(text: _currentItem.notes ?? '');
 
     _selectedCategoryId = _currentItem.categoryId;
     _selectedCategoryKey = _currentItem.categoryKey;
@@ -97,9 +92,7 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
     _selectedUnit = _currentItem.unit;
     _expirationDate = _currentItem.expirationDate;
 
-    context.read<CategoriesBloc>().add(
-      const CategoriesLoadRequested(),
-    );
+    context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
   }
 
   @override
@@ -171,9 +164,7 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
     });
 
     context.read<InventoryBloc>().add(
-      InventoryItemImageDeleteRequested(
-        itemId: _currentItem.id,
-      ),
+      InventoryItemImageDeleteRequested(itemId: _currentItem.id),
     );
   }
 
@@ -226,11 +217,9 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   bool get _isBusy {
@@ -277,9 +266,7 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
               }
             });
 
-            context.router.maybePop(
-              updatedItem ?? _currentItem,
-            );
+            context.router.maybePop(updatedItem ?? _currentItem);
 
             return;
           }
@@ -322,8 +309,9 @@ class _EditInventoryItemScreenState extends State<EditInventoryItemScreen> {
                   localImagePath: _pickedImage?.path,
                   isUploading: _isImageUploading || _isImageDeleting,
                   onTakePhoto: _takePhoto,
-                  onDeletePhoto: _currentItem.itemImageUrl == null ||
-                      _currentItem.itemImageUrl!.isEmpty
+                  onDeletePhoto:
+                      _currentItem.itemImageUrl == null ||
+                          _currentItem.itemImageUrl!.isEmpty
                       ? null
                       : _deletePhoto,
                 ),
@@ -477,10 +465,7 @@ class _Header extends StatelessWidget {
 
     return Row(
       children: [
-        _HeaderButton(
-          icon: Icons.chevron_left,
-          onTap: onBack,
-        ),
+        _HeaderButton(icon: Icons.chevron_left, onTap: onBack),
         Expanded(
           child: Text(
             'Edit Product Details',
@@ -526,23 +511,21 @@ class _HeaderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surfaceSoft,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
         ),
         child: isLoading
             ? Padding(
-          padding: const EdgeInsets.all(11),
-          child: CircularProgressIndicator(
-            strokeWidth: 2.2,
-            color: colors.primary,
-          ),
-        )
+                padding: const EdgeInsets.all(11),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                  color: colors.primary,
+                ),
+              )
             : Icon(
-          icon,
-          color: onTap == null ? colors.textMuted : colors.primary,
-          size: 24,
-        ),
+                icon,
+                color: onTap == null ? colors.textMuted : colors.primary,
+                size: 24,
+              ),
       ),
     );
   }
@@ -585,9 +568,7 @@ class _ProductImagePicker extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.card,
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
               boxShadow: [
                 BoxShadow(
                   color: colors.shadow,
@@ -600,14 +581,10 @@ class _ProductImagePicker extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (hasLocalImage)
-                  Image.file(
-                    File(localImagePath!),
-                    fit: BoxFit.cover,
-                  )
+                  Image.file(File(localImagePath!), fit: BoxFit.cover)
                 else if (hasNetworkImage)
                   AppCachedNetworkImage(
                     imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
                     fallback: _CategoryIcon(
                       categoryKey: categoryKey,
                       categoryIconUrl: categoryIconUrl,
@@ -622,9 +599,7 @@ class _ProductImagePicker extends StatelessWidget {
                   Container(
                     color: Colors.black.withValues(alpha: 0.35),
                     child: const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      child: CircularProgressIndicator(color: Colors.white),
                     ),
                   ),
               ],
@@ -644,9 +619,7 @@ class _ProductImagePicker extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.primary,
                     disabledForegroundColor: colors.textMuted,
-                    side: BorderSide(
-                      color: colors.primaryBorder,
-                    ),
+                    side: BorderSide(color: colors.primaryBorder),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -663,9 +636,7 @@ class _ProductImagePicker extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.danger,
                     disabledForegroundColor: colors.textMuted,
-                    side: BorderSide(
-                      color: colors.dangerBorder,
-                    ),
+                    side: BorderSide(color: colors.dangerBorder),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -697,7 +668,6 @@ class _CategoryIcon extends StatelessWidget {
     if (_hasCategoryIcon(categoryIconUrl)) {
       return AppCachedNetworkImage(
         imageUrl: categoryIconUrl!,
-        fit: BoxFit.cover,
         fallback: Icon(
           _iconForCategory(categoryKey),
           size: 78,
@@ -706,11 +676,7 @@ class _CategoryIcon extends StatelessWidget {
       );
     }
 
-    return Icon(
-      _iconForCategory(categoryKey),
-      size: 78,
-      color: colors.primary,
-    );
+    return Icon(_iconForCategory(categoryKey), size: 78, color: colors.primary);
   }
 }
 
@@ -732,9 +698,7 @@ class _CategoryDropdownInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final hasSelectedValue = categories.any(
-          (category) => category.id == value,
-    );
+    final hasSelectedValue = categories.any((category) => category.id == value);
 
     return DropdownButtonFormField<String>(
       value: hasSelectedValue ? value : null,
@@ -745,11 +709,7 @@ class _CategoryDropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: categories.map((category) {
         return DropdownMenuItem<String>(
           value: category.id,
@@ -778,9 +738,7 @@ class _CategoryDropdownInput extends StatelessWidget {
 class _FormCard extends StatelessWidget {
   final List<Widget> children;
 
-  const _FormCard({
-    required this.children,
-  });
+  const _FormCard({required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -791,9 +749,7 @@ class _FormCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -802,9 +758,7 @@ class _FormCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 }
@@ -840,11 +794,7 @@ class _TextInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
     );
   }
 }
@@ -877,11 +827,7 @@ class _DropdownInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(
-        context: context,
-        label: label,
-        icon: icon,
-      ),
+      decoration: _inputDecoration(context: context, label: label, icon: icon),
       items: items.map((item) {
         return DropdownMenuItem<String>(
           value: item.value,
@@ -901,10 +847,7 @@ class _DateInput extends StatelessWidget {
   final DateTime selectedDate;
   final VoidCallback onTap;
 
-  const _DateInput({
-    required this.selectedDate,
-    required this.onTap,
-  });
+  const _DateInput({required this.selectedDate, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -936,10 +879,7 @@ class _OptionItem {
   final String value;
   final String label;
 
-  const _OptionItem(
-      this.value,
-      this.label,
-      );
+  const _OptionItem(this.value, this.label);
 }
 
 InputDecoration _inputDecoration({
@@ -956,53 +896,31 @@ InputDecoration _inputDecoration({
       fontSize: 13,
       fontWeight: FontWeight.w700,
     ),
-    prefixIcon: Icon(
-      icon,
-      color: colors.primary,
-      size: 21,
-    ),
+    prefixIcon: Icon(icon, color: colors.primary, size: 21),
     filled: true,
     fillColor: colors.surfaceSoft,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 16,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.border,
-      ),
+      borderSide: BorderSide(color: colors.border),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.primary,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.primary, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.dangerBorder,
-      ),
+      borderSide: BorderSide(color: colors.dangerBorder),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: colors.danger,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: colors.danger, width: 1.5),
     ),
-    errorStyle: TextStyle(
-      color: colors.danger,
-      fontWeight: FontWeight.w700,
-    ),
+    errorStyle: TextStyle(color: colors.danger, fontWeight: FontWeight.w700),
   );
 }
 

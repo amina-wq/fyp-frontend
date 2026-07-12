@@ -5,7 +5,5 @@ abstract class ProductRepositoryInterface {
 
   Future<ProductModel> getProductById(String productId);
 
-  Future<ProductModel> createManualProduct(
-      ManualProductCreateModel data,
-      );
+  Future<ProductModel> createManualProduct(ManualProductCreateModel data);
 }

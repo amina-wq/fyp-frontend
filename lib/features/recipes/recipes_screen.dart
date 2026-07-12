@@ -22,19 +22,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
   void initState() {
     super.initState();
 
-    context.read<RecipesBloc>().add(
-      const RecipesLoadRequested(
-        number: 10,
-      ),
-    );
+    context.read<RecipesBloc>().add(const RecipesLoadRequested());
   }
 
   Future<void> _refreshRecipes() async {
-    context.read<RecipesBloc>().add(
-      const RecipesLoadRequested(
-        number: 10,
-      ),
-    );
+    context.read<RecipesBloc>().add(const RecipesLoadRequested());
   }
 
   @override
@@ -47,19 +39,15 @@ class _RecipesScreenState extends State<RecipesScreen> {
         child: BlocConsumer<RecipesBloc, RecipesState>(
           listener: (context, state) {
             if (state is RecipesFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                ),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
             if (state is RecipesInitial || state is RecipesLoading) {
               return Center(
-                child: CircularProgressIndicator(
-                  color: colors.primary,
-                ),
+                child: CircularProgressIndicator(color: colors.primary),
               );
             }
 
@@ -89,10 +77,7 @@ class _RecipesContent extends StatelessWidget {
   final List<RecipeSummaryModel> recipes;
   final Future<void> Function() onRefresh;
 
-  const _RecipesContent({
-    required this.recipes,
-    required this.onRefresh,
-  });
+  const _RecipesContent({required this.recipes, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +102,7 @@ class _RecipesContent extends StatelessWidget {
                 recipe: recipe,
                 onTap: () {
                   context.router.push(
-                    RecipeDetailRoute(
-                      spoonacularId: recipe.spoonacularId,
-                    ),
+                    RecipeDetailRoute(spoonacularId: recipe.spoonacularId),
                   );
                 },
               ),
@@ -153,16 +136,9 @@ class _RecipesHeader extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-            context.read<RecipesBloc>().add(
-              const RecipesLoadRequested(
-                number: 10,
-              ),
-            );
+            context.read<RecipesBloc>().add(const RecipesLoadRequested());
           },
-          icon: Icon(
-            Icons.refresh,
-            color: colors.primary,
-          ),
+          icon: Icon(Icons.refresh, color: colors.primary),
         ),
       ],
     );
@@ -181,18 +157,12 @@ class _RecipesInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.auto_awesome_outlined,
-            color: colors.primary,
-            size: 22,
-          ),
+          Icon(Icons.auto_awesome_outlined, color: colors.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -215,10 +185,7 @@ class _RecipeCard extends StatelessWidget {
   final RecipeSummaryModel recipe;
   final VoidCallback onTap;
 
-  const _RecipeCard({
-    required this.recipe,
-    required this.onTap,
-  });
+  const _RecipeCard({required this.recipe, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -235,9 +202,7 @@ class _RecipeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: colors.border,
-          ),
+          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
               color: colors.shadow,
@@ -248,20 +213,11 @@ class _RecipeCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _RecipeImage(
-              imageUrl: imageUrl,
-            ),
+            _RecipeImage(imageUrl: imageUrl),
             const SizedBox(width: 14),
-            Expanded(
-              child: _RecipeCardInfo(
-                recipe: recipe,
-              ),
-            ),
+            Expanded(child: _RecipeCardInfo(recipe: recipe)),
             const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right,
-              color: colors.textMuted,
-            ),
+            Icon(Icons.chevron_right, color: colors.textMuted),
           ],
         ),
       ),
@@ -272,9 +228,7 @@ class _RecipeCard extends StatelessWidget {
 class _RecipeImage extends StatelessWidget {
   final String? imageUrl;
 
-  const _RecipeImage({
-    required this.imageUrl,
-  });
+  const _RecipeImage({required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -288,25 +242,22 @@ class _RecipeImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surfaceSoft,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: hasImage
           ? AppCachedNetworkImage(
-        imageUrl: imageUrl!,
-        fit: BoxFit.cover,
-        fallback: Icon(
-          Icons.restaurant_menu_outlined,
-          color: colors.primary,
-          size: 34,
-        ),
-      )
+              imageUrl: imageUrl!,
+              fallback: Icon(
+                Icons.restaurant_menu_outlined,
+                color: colors.primary,
+                size: 34,
+              ),
+            )
           : Icon(
-        Icons.restaurant_menu_outlined,
-        color: colors.primary,
-        size: 34,
-      ),
+              Icons.restaurant_menu_outlined,
+              color: colors.primary,
+              size: 34,
+            ),
     );
   }
 }
@@ -314,9 +265,7 @@ class _RecipeImage extends StatelessWidget {
 class _RecipeCardInfo extends StatelessWidget {
   final RecipeSummaryModel recipe;
 
-  const _RecipeCardInfo({
-    required this.recipe,
-  });
+  const _RecipeCardInfo({required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -364,35 +313,23 @@ class _RecipeBadge extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _RecipeBadge({
-    required this.icon,
-    required this.label,
-  });
+  const _RecipeBadge({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 9,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
       decoration: BoxDecoration(
         color: colors.chipSelected,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colors.chipSelectedBorder,
-        ),
+        border: Border.all(color: colors.chipSelectedBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: colors.primary,
-          ),
+          Icon(icon, size: 14, color: colors.primary),
           const SizedBox(width: 5),
           Text(
             label,
@@ -420,9 +357,7 @@ class _EmptyRecipesCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colors.border,
-        ),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
@@ -433,11 +368,7 @@ class _EmptyRecipesCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.restaurant_menu_outlined,
-            size: 50,
-            color: colors.primary,
-          ),
+          Icon(Icons.restaurant_menu_outlined, size: 50, color: colors.primary),
           const SizedBox(height: 14),
           Text(
             'No recipes found',
@@ -469,10 +400,7 @@ class _RecipesErrorView extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
 
-  const _RecipesErrorView({
-    required this.message,
-    required this.onRetry,
-  });
+  const _RecipesErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -484,11 +412,7 @@ class _RecipesErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 52,
-              color: colors.danger,
-            ),
+            Icon(Icons.error_outline, size: 52, color: colors.danger),
             const SizedBox(height: 16),
             Text(
               'Failed to load recipes',
