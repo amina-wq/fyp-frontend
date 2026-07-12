@@ -229,9 +229,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await _authRepository.logout();
+    try {
+      await _authRepository.logout();
 
-    AppLogger.info('User logged out.', name: 'AuthBloc');
+      AppLogger.info('User logged out.', name: 'AuthBloc');
+    } catch (error) {
+      AppLogger.warning(
+        'Logout completed locally after backend logout failed.',
+        name: 'AuthBloc',
+        error: error,
+      );
+    }
 
     emit(const AuthUnauthenticated());
   }

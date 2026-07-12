@@ -167,7 +167,23 @@ class AuthRepository implements AuthRepositoryInterface {
 
   @override
   Future<void> logout() async {
-    await _tokenStorage.clearTokens();
+    final accessToken = await _tokenStorage.getAccessToken();
+    final refreshToken = await _tokenStorage.getRefreshToken();
+
+    try {
+      if (accessToken != null && refreshToken != null) {
+        await _apiClient.post(
+          ApiConstants.logoutEndpoint,
+          accessToken: accessToken,
+          data: {'refresh_token': refreshToken},
+        );
+      }
+    } on DioException {
+      // Even if backend logout fails because the token is already expired,
+      // local tokens must still be removed so the user is logged out on this device.
+    } finally {
+      await _tokenStorage.clearTokens();
+    }
   }
 
   @override
