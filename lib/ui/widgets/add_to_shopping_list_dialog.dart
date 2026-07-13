@@ -184,7 +184,6 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(color: colors.border),
       ),
       title: Text(
         'Add to Shopping List',

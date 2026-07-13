@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTheme {
-  static const Color _lightPrimary = Color(0xFF648A9E);
-  static const Color _darkPrimary = Color(0xFF8DB8CE);
+  static const Color _lightPrimary = Color(0xFF2F7A94);
+  static const Color _darkPrimary = Color(0xFF7FD0E3);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
@@ -126,8 +126,8 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: isDark
-            ? const Color(0xFF27313A)
-            : const Color(0xFF1F2147),
+            ? const Color(0xFF2C363E)
+            : const Color(0xFF233240),
         contentTextStyle: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,

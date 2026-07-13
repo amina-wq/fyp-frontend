@@ -202,12 +202,11 @@ class _RecipeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
               color: colors.shadow,
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+              blurRadius: 22,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -357,12 +356,11 @@ class _EmptyRecipesCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 14,
-            offset: const Offset(0, 7),
+            blurRadius: 18,
+            offset: const Offset(0, 9),
           ),
         ],
       ),

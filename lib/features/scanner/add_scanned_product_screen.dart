@@ -455,12 +455,11 @@ class _ProductPreviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -562,12 +561,11 @@ class _ProductPhotoPicker extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -651,12 +649,11 @@ class _FormCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
           ),
         ],
       ),

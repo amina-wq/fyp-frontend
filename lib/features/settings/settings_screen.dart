@@ -526,12 +526,11 @@ class _SettingsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
           ),
         ],
       ),

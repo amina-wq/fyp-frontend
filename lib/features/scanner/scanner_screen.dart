@@ -408,12 +408,11 @@ class _ScannerResultSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: colors.shadow,
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
           ),
         ],
       ),

@@ -355,14 +355,14 @@ class _ShoppingItemTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.card,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: item.isChecked ? colors.successBorder : colors.border,
-            ),
+            border: item.isChecked
+                ? Border.all(color: colors.successBorder)
+                : null,
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
-                blurRadius: 14,
-                offset: const Offset(0, 7),
+                blurRadius: 18,
+                offset: const Offset(0, 9),
               ),
             ],
           ),
@@ -449,12 +449,11 @@ class _EmptyShoppingListView extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.card,
             borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                blurRadius: 22,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
