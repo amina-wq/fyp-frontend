@@ -8,9 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import '../../bloc/add_manual_product/add_manual_product.dart';
 import '../../bloc/categories/categories.dart';
 import '../../bloc/inventory/inventory.dart';
+import '../../bloc/storage_recommendation/storage_recommendation.dart';
 import '../../models/categories/categories.dart';
 import '../../models/inventory/inventory.dart';
 import '../../models/product/product.dart';
+import '../../models/storage_recommendation/storage_recommendation.dart';
 import '../../ui/theme/app_colors.dart';
 
 @RoutePage()
@@ -52,6 +54,9 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
     );
 
     context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
+    context.read<StorageRecommendationBloc>().add(
+      const StorageRecommendationCleared(),
+    );
   }
 
   @override
@@ -173,6 +178,61 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
     return categories.first.id;
   }
 
+  void _requestStorageRecommendation() {
+    final name = _nameController.text.trim();
+
+    if (name.isEmpty) {
+      _showMessage('Enter a product name first');
+      return;
+    }
+
+    final categoriesState = context.read<CategoriesBloc>().state;
+    String? categoryKey;
+
+    if (categoriesState is CategoriesLoaded && _selectedCategoryId != null) {
+      for (final category in categoriesState.categories) {
+        if (category.id == _selectedCategoryId) {
+          categoryKey = category.key;
+          break;
+        }
+      }
+    }
+
+    context.read<StorageRecommendationBloc>().add(
+      StorageRecommendationRequested(name: name, category: categoryKey),
+    );
+  }
+
+  void _applyStorageOption(StorageRecommendationOptionModel option) {
+    setState(() {
+      _selectedLocation = option.location;
+      _expirationDate = DateTime.now().add(
+        Duration(days: option.recommendedDays),
+      );
+    });
+
+    Navigator.of(context).pop();
+    context.read<StorageRecommendationBloc>().add(
+      const StorageRecommendationCleared(),
+    );
+  }
+
+  void _showStorageRecommendationSheet(
+    StorageRecommendationModel recommendation,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return _StorageRecommendationSheet(
+          recommendation: recommendation,
+          onSelect: _applyStorageOption,
+        );
+      },
+    );
+  }
+
   String? _cleanOptionalText(String value) {
     final trimmed = value.trim();
 
@@ -193,18 +253,35 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
-    return BlocListener<AddManualProductBloc, AddManualProductState>(
-      listener: (context, state) {
-        if (state is AddManualProductSuccess) {
-          context.read<InventoryBloc>().add(const InventoryLoadRequested());
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AddManualProductBloc, AddManualProductState>(
+          listener: (context, state) {
+            if (state is AddManualProductSuccess) {
+              context.read<InventoryBloc>().add(
+                const InventoryLoadRequested(),
+              );
 
-          context.router.maybePop(state.item);
-        }
+              context.router.maybePop(state.item);
+            }
 
-        if (state is AddManualProductFailure) {
-          _showMessage(state.message);
-        }
-      },
+            if (state is AddManualProductFailure) {
+              _showMessage(state.message);
+            }
+          },
+        ),
+        BlocListener<StorageRecommendationBloc, StorageRecommendationState>(
+          listener: (context, state) {
+            if (state is StorageRecommendationLoaded) {
+              _showStorageRecommendationSheet(state.recommendation);
+            }
+
+            if (state is StorageRecommendationFailure) {
+              _showMessage(state.message);
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<AddManualProductBloc, AddManualProductState>(
         builder: (context, state) {
           final isSaving = state is AddManualProductSaving;
@@ -231,6 +308,36 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
                           controller: _nameController,
                           label: 'Product name *',
                           icon: Icons.shopping_bag_outlined,
+                          suffixIcon:
+                              BlocBuilder<
+                                StorageRecommendationBloc,
+                                StorageRecommendationState
+                              >(
+                                builder: (context, state) {
+                                  final isLoading =
+                                      state is StorageRecommendationLoading;
+
+                                  return IconButton(
+                                    tooltip: 'Suggest storage',
+                                    icon: isLoading
+                                        ? SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: colors.primary,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.lightbulb_outline,
+                                            color: colors.primary,
+                                          ),
+                                    onPressed: isLoading
+                                        ? null
+                                        : _requestStorageRecommendation,
+                                  );
+                                },
+                              ),
                           validator: (value) {
                             final text = value?.trim() ?? '';
 
@@ -649,6 +756,7 @@ class _TextInput extends StatelessWidget {
   final int maxLines;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final Widget? suffixIcon;
 
   const _TextInput({
     required this.controller,
@@ -657,6 +765,7 @@ class _TextInput extends StatelessWidget {
     this.maxLines = 1,
     this.keyboardType,
     this.validator,
+    this.suffixIcon,
   });
 
   @override
@@ -673,7 +782,12 @@ class _TextInput extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
-      decoration: _inputDecoration(context: context, label: label, icon: icon),
+      decoration: _inputDecoration(
+        context: context,
+        label: label,
+        icon: icon,
+        suffixIcon: suffixIcon,
+      ),
     );
   }
 }
@@ -805,6 +919,7 @@ InputDecoration _inputDecoration({
   required BuildContext context,
   required String label,
   required IconData icon,
+  Widget? suffixIcon,
 }) {
   final colors = context.appColors;
 
@@ -816,6 +931,7 @@ InputDecoration _inputDecoration({
       fontWeight: FontWeight.w700,
     ),
     prefixIcon: Icon(icon, color: colors.primary, size: 21),
+    suffixIcon: suffixIcon,
     filled: true,
     fillColor: colors.surfaceSoft,
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -849,4 +965,204 @@ String _formatDate(DateTime date) {
   final year = date.year.toString();
 
   return '$day.$month.$year';
+}
+
+class _StorageRecommendationSheet extends StatelessWidget {
+  final StorageRecommendationModel recommendation;
+  final ValueChanged<StorageRecommendationOptionModel> onSelect;
+
+  const _StorageRecommendationSheet({
+    required this.recommendation,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final options = recommendation.options;
+
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Storage suggestions for ${recommendation.displayName}',
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              recommendation.isVerified
+                  ? 'Verified storage guidance'
+                  : 'AI-generated suggestion',
+              style: TextStyle(
+                color: colors.textMuted,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (options.isEmpty)
+              Text(
+                'No storage suggestion is available for this product.',
+                style: TextStyle(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            else
+              ...options.map((option) {
+                final isRecommended =
+                    option.location == recommendation.location &&
+                    option.state == recommendation.state;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => onSelect(option),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: isRecommended
+                            ? colors.primarySoft
+                            : colors.surfaceSoft,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isRecommended
+                              ? colors.primaryBorder
+                              : colors.border,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _storageLocationIcon(option.location),
+                            color: colors.primary,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${_storageLocationLabel(option.location)} · ${_storageStateLabel(option.state)}',
+                                  style: TextStyle(
+                                    color: colors.textPrimary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _storageDaysLabel(option),
+                                  style: TextStyle(
+                                    color: colors.textSecondary,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (isRecommended)
+                            Icon(
+                              Icons.check_circle,
+                              color: colors.primary,
+                              size: 20,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _storageLocationLabel(String location) {
+  switch (location) {
+    case 'fridge':
+      return 'Fridge';
+    case 'freezer':
+      return 'Freezer';
+    case 'pantry':
+      return 'Pantry';
+    case 'counter':
+      return 'Counter';
+    default:
+      return 'Other';
+  }
+}
+
+IconData _storageLocationIcon(String location) {
+  switch (location) {
+    case 'fridge':
+      return Icons.kitchen_outlined;
+    case 'freezer':
+      return Icons.ac_unit_outlined;
+    case 'pantry':
+      return Icons.inventory_2_outlined;
+    case 'counter':
+      return Icons.countertops_outlined;
+    default:
+      return Icons.help_outline;
+  }
+}
+
+String _storageStateLabel(String state) {
+  switch (state) {
+    case 'whole':
+      return 'Whole';
+    case 'cut':
+      return 'Cut';
+    case 'raw':
+      return 'Raw';
+    case 'cooked':
+      return 'Cooked';
+    case 'opened':
+      return 'Opened';
+    case 'unopened':
+      return 'Unopened';
+    case 'fresh':
+      return 'Fresh';
+    default:
+      return state;
+  }
+}
+
+String _storageDaysLabel(StorageRecommendationOptionModel option) {
+  final minDays = option.minDays;
+  final maxDays = option.maxDays;
+
+  if (minDays != null && maxDays != null && minDays != maxDays) {
+    return '$minDays-$maxDays days';
+  }
+
+  return '${option.recommendedDays} days';
 }

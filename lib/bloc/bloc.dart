@@ -5,3 +5,4 @@ export 'scanner/scanner.dart';
 export 'shopping_list/shopping_list.dart';
 export 'recipes/recipes.dart';
 export 'categories/categories.dart';
+export 'storage_recommendation/storage_recommendation.dart';

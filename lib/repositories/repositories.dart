@@ -15,3 +15,6 @@ export 'recipes/recipes_repository_interface.dart';
 
 export 'categories/categories_repository.dart';
 export 'categories/categories_repository_interface.dart';
+
+export 'storage_recommendations/storage_recommendation_repository.dart';
+export 'storage_recommendations/storage_recommendation_repository_interface.dart';

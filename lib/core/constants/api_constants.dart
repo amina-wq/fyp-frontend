@@ -56,6 +56,9 @@ class ApiConstants {
 
   static const String shoppingListCheckedEndpoint = '/shopping-list/checked';
 
+  static const String storageRecommendationsEndpoint =
+      '/storage/recommendations';
+
   static const String recipesByIngredientsEndpoint = '/recipes/by-ingredients';
 
   static String recipeDetailsEndpoint(int spoonacularId) {

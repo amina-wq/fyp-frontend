@@ -59,6 +59,10 @@ Future<void> main() async {
     apiClient: authenticatedApiClient,
   );
 
+  final storageRecommendationRepository = StorageRecommendationRepository(
+    apiClient: authenticatedApiClient,
+  );
+
   final appRouter = AppRouter(authRepository: authRepository);
 
   await fcmService.initialize();
@@ -74,6 +78,7 @@ Future<void> main() async {
       shoppingListRepository: shoppingListRepository,
       recipesRepository: recipesRepository,
       categoriesRepository: categoriesRepository,
+      storageRecommendationRepository: storageRecommendationRepository,
       appRouter: appRouter,
       fcmService: fcmService,
     ),
@@ -90,6 +95,8 @@ class FoodTrackApp extends StatelessWidget {
   final ShoppingListRepositoryInterface shoppingListRepository;
   final RecipesRepositoryInterface recipesRepository;
   final CategoriesRepositoryInterface categoriesRepository;
+  final StorageRecommendationRepositoryInterface
+  storageRecommendationRepository;
   final AppRouter appRouter;
   final FcmService fcmService;
 
@@ -104,6 +111,7 @@ class FoodTrackApp extends StatelessWidget {
     required this.shoppingListRepository,
     required this.recipesRepository,
     required this.categoriesRepository,
+    required this.storageRecommendationRepository,
     required this.appRouter,
     required this.fcmService,
   });
@@ -134,6 +142,9 @@ class FoodTrackApp extends StatelessWidget {
         ),
         RepositoryProvider<CategoriesRepositoryInterface>.value(
           value: categoriesRepository,
+        ),
+        RepositoryProvider<StorageRecommendationRepositoryInterface>.value(
+          value: storageRecommendationRepository,
         ),
         RepositoryProvider<FcmService>.value(value: fcmService),
       ],
@@ -176,6 +187,12 @@ class FoodTrackApp extends StatelessWidget {
             create: (context) => CategoriesBloc(
               categoriesRepository: context
                   .read<CategoriesRepositoryInterface>(),
+            ),
+          ),
+          BlocProvider<StorageRecommendationBloc>(
+            create: (context) => StorageRecommendationBloc(
+              storageRecommendationRepository: context
+                  .read<StorageRecommendationRepositoryInterface>(),
             ),
           ),
         ],
