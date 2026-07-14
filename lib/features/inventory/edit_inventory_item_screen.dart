@@ -986,6 +986,6 @@ IconData _iconForCategory(String categoryKey) {
       return Icons.kitchen_outlined;
     case 'other':
     default:
-      return Icons.category_outlined;
+      return Icons.dinner_dining_outlined;
   }
 }

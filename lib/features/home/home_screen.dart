@@ -252,7 +252,7 @@ class _WelcomeHeader extends StatelessWidget {
         'Welcome back, $displayName!',
         style: TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w600,
           color: colors.textPrimary,
         ),
       ),
@@ -465,7 +465,7 @@ class _AnalyticsCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: valueColor.withValues(alpha: 0.82),
                   ),
                 ),
@@ -833,7 +833,7 @@ class _InventoryCard extends StatelessWidget {
                       _formatAmount(item.amount, item.unit),
                       style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         color: colors.textSecondary,
                       ),
                     ),
@@ -842,7 +842,7 @@ class _InventoryCard extends StatelessWidget {
                       _formatLocation(item.location),
                       style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         color: colors.textSecondary,
                       ),
                     ),
@@ -851,7 +851,7 @@ class _InventoryCard extends StatelessWidget {
                       'Added ${_formatDate(item.addedAt)}',
                       style: TextStyle(
                         fontSize: 9,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: colors.textMuted,
                       ),
                     ),
@@ -896,7 +896,7 @@ class _ExpiryStatus extends StatelessWidget {
           _formatExpiryState(expiryState),
           style: TextStyle(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: colors.foreground,
           ),
         ),
@@ -1072,7 +1072,7 @@ IconData _iconForCategory(String category) {
       return Icons.soup_kitchen_outlined;
     case 'other':
     default:
-      return Icons.category_outlined;
+      return Icons.dinner_dining_outlined;
   }
 }
 

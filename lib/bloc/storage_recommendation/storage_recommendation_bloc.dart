@@ -7,7 +7,8 @@ import 'storage_recommendation_state.dart';
 
 class StorageRecommendationBloc
     extends Bloc<StorageRecommendationEvent, StorageRecommendationState> {
-  final StorageRecommendationRepositoryInterface _storageRecommendationRepository;
+  final StorageRecommendationRepositoryInterface
+  _storageRecommendationRepository;
 
   StorageRecommendationBloc({
     required StorageRecommendationRepositoryInterface

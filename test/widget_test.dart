@@ -48,6 +48,10 @@ void main() {
       apiClient: authenticatedApiClient,
     );
 
+    final storageRecommendationRepository = StorageRecommendationRepository(
+      apiClient: authenticatedApiClient,
+    );
+
     final fcmService = FcmService(authRepository: authRepository);
 
     final appRouter = AppRouter(authRepository: authRepository);
@@ -63,6 +67,7 @@ void main() {
         shoppingListRepository: shoppingListRepository,
         recipesRepository: recipesRepository,
         categoriesRepository: categoriesRepository,
+        storageRecommendationRepository: storageRecommendationRepository,
         fcmService: fcmService,
         appRouter: appRouter,
       ),

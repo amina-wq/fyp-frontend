@@ -182,9 +182,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
     return AlertDialog(
       backgroundColor: colors.card,
       surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'Add to Shopping List',
         style: TextStyle(

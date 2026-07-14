@@ -21,11 +21,13 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(
+    CustomRoute(
       page: ShellRoute.page,
       path: '/',
       initial: true,
       guards: [_authRouteGuard],
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      duration: const Duration(milliseconds: 300),
       children: [
         AutoRoute(page: HomeRoute.page, path: '', initial: true),
         AutoRoute(page: ShoppingRoute.page, path: 'shopping'),

@@ -81,14 +81,23 @@ class ShellScreen extends StatelessWidget {
         return Scaffold(
           extendBody: true,
           body: child,
-          floatingActionButton: FloatingActionButton(
-            heroTag: 'add_fab',
-            onPressed: () => _openAddOptions(context),
-            backgroundColor: colors.primary,
-            foregroundColor: colors.textOnPrimary,
-            elevation: 8,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, size: 30),
+          floatingActionButton: Container(
+            width: 68,
+            height: 68,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.background,
+            ),
+            child: FloatingActionButton(
+              heroTag: 'add_fab',
+              onPressed: () => _openAddOptions(context),
+              backgroundColor: colors.primary,
+              foregroundColor: colors.textOnPrimary,
+              elevation: 8,
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add, size: 30),
+            ),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
@@ -98,7 +107,7 @@ class ShellScreen extends StatelessWidget {
             shadowColor: colors.shadow,
             surfaceTintColor: Colors.transparent,
             shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
+            notchMargin: 10,
             child: SizedBox(
               height: 72,
               child: Row(

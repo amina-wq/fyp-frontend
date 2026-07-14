@@ -258,9 +258,7 @@ class _AddManualProductScreenState extends State<AddManualProductScreen> {
         BlocListener<AddManualProductBloc, AddManualProductState>(
           listener: (context, state) {
             if (state is AddManualProductSuccess) {
-              context.read<InventoryBloc>().add(
-                const InventoryLoadRequested(),
-              );
+              context.read<InventoryBloc>().add(const InventoryLoadRequested());
 
               context.router.maybePop(state.item);
             }

@@ -498,7 +498,7 @@ class _DetailsField extends StatelessWidget {
               style: TextStyle(
                 color: colors.textPrimary,
                 fontSize: 14,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -609,7 +609,7 @@ IconData _iconForCategory(String categoryKey) {
       return Icons.kitchen_outlined;
     case 'other':
     default:
-      return Icons.category_outlined;
+      return Icons.dinner_dining_outlined;
   }
 }
 
