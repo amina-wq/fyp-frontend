@@ -24,6 +24,9 @@ class _InventoryItemDetailsScreenState
     extends State<InventoryItemDetailsScreen> {
   late InventoryItemModel _item;
   bool _isDeleting = false;
+  bool _isConsuming = false;
+
+  bool get _isBusy => _isDeleting || _isConsuming;
 
   @override
   void initState() {
@@ -32,7 +35,7 @@ class _InventoryItemDetailsScreenState
   }
 
   Future<void> _openEditScreen() async {
-    if (_isDeleting) return;
+    if (_isBusy) return;
 
     final updatedItem = await context.router.push<InventoryItemModel>(
       EditInventoryItemRoute(item: _item),
@@ -46,7 +49,7 @@ class _InventoryItemDetailsScreenState
   }
 
   Future<void> _addToShoppingList() async {
-    if (_isDeleting) return;
+    if (_isBusy) return;
 
     await showAddToShoppingListDialog(
       context: context,
@@ -62,7 +65,7 @@ class _InventoryItemDetailsScreenState
   }
 
   Future<void> _confirmDeleteItem() async {
-    if (_isDeleting) return;
+    if (_isBusy) return;
 
     final shouldDelete = await showDialog<bool>(
       context: context,
@@ -136,20 +139,34 @@ class _InventoryItemDetailsScreenState
     );
   }
 
+  void _consumeItem() {
+    if (_isBusy) return;
+
+    setState(() {
+      _isConsuming = true;
+    });
+
+    context.read<InventoryBloc>().add(
+      InventoryItemConsumeRequested(itemId: _item.id),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
     return BlocListener<InventoryBloc, InventoryState>(
       listener: (context, state) {
-        if (!_isDeleting) return;
+        if (!_isBusy) return;
 
         if (state is InventoryLoadSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${_item.displayName} removed from inventory'),
-            ),
-          );
+          final message = _isDeleting
+              ? '${_item.displayName} removed from inventory'
+              : '${_item.displayName} marked as consumed';
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
 
           context.router.maybePop();
           return;
@@ -158,6 +175,7 @@ class _InventoryItemDetailsScreenState
         if (state is InventoryFailure) {
           setState(() {
             _isDeleting = false;
+            _isConsuming = false;
           });
 
           ScaffoldMessenger.of(
@@ -172,7 +190,7 @@ class _InventoryItemDetailsScreenState
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             children: [
               _DetailsHeader(
-                isDeleting: _isDeleting,
+                isDeleting: _isBusy,
                 onBack: () => context.router.maybePop(),
                 onDelete: _confirmDeleteItem,
                 onEdit: _openEditScreen,
@@ -185,6 +203,11 @@ class _InventoryItemDetailsScreenState
               ),
               const SizedBox(height: 22),
               _AddToShoppingListButton(onTap: _addToShoppingList),
+              const SizedBox(height: 12),
+              _MarkConsumedButton(
+                isLoading: _isConsuming,
+                onTap: _isBusy ? null : _consumeItem,
+              ),
               const SizedBox(height: 18),
               _DetailsCard(
                 children: [
@@ -431,6 +454,49 @@ class _AddToShoppingListButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.primary,
           foregroundColor: colors.textOnPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MarkConsumedButton extends StatelessWidget {
+  final bool isLoading;
+  final VoidCallback? onTap;
+
+  const _MarkConsumedButton({required this.isLoading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return SizedBox(
+      height: 54,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: isLoading
+            ? SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colors.textOnPrimary,
+                ),
+              )
+            : const Icon(Icons.check_circle_outline, size: 22),
+        label: Text(
+          isLoading ? 'Marking as consumed…' : 'Mark as Consumed',
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colors.success,
+          foregroundColor: colors.textOnPrimary,
+          disabledBackgroundColor: colors.success.withValues(alpha: 0.6),
+          disabledForegroundColor: colors.textOnPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
