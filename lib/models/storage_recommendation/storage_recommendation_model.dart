@@ -8,6 +8,7 @@ class StorageRecommendationModel {
   final int? recommendedDays;
   final int? minDays;
   final int? maxDays;
+  final int? bestBeforeDays;
   final String? location;
   final String? state;
   final String source;
@@ -24,6 +25,7 @@ class StorageRecommendationModel {
     this.recommendedDays,
     this.minDays,
     this.maxDays,
+    this.bestBeforeDays,
     this.location,
     this.state,
     required this.source,
@@ -44,6 +46,7 @@ class StorageRecommendationModel {
       recommendedDays: json['recommended_days'] as int?,
       minDays: json['min_days'] as int?,
       maxDays: json['max_days'] as int?,
+      bestBeforeDays: json['best_before_days'] as int?,
       location: json['location'] as String?,
       state: json['state'] as String?,
       source: json['source'] as String,

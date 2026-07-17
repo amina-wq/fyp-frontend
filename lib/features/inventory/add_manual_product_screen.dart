@@ -1079,6 +1079,17 @@ class _StorageRecommendationSheet extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
+                                if (option.bestBeforeDays != null) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Best enjoyed within ${option.bestBeforeDays} days',
+                                    style: TextStyle(
+                                      color: colors.textMuted,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),

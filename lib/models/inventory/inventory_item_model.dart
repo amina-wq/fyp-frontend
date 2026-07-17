@@ -16,6 +16,7 @@ class InventoryItemModel {
   final double amount;
   final String unit;
   final DateTime expirationDate;
+  final DateTime? bestBeforeDate;
   final String status;
   final String expiryState;
   final DateTime addedAt;
@@ -37,6 +38,7 @@ class InventoryItemModel {
     required this.amount,
     required this.unit,
     required this.expirationDate,
+    this.bestBeforeDate,
     required this.status,
     required this.expiryState,
     required this.addedAt,
@@ -70,6 +72,9 @@ class InventoryItemModel {
       amount: (json['amount'] as num).toDouble(),
       unit: json['unit'] as String,
       expirationDate: DateTime.parse(json['expiration_date'] as String),
+      bestBeforeDate: json['best_before_date'] != null
+          ? DateTime.parse(json['best_before_date'] as String)
+          : null,
       status: json['status'] as String,
       expiryState: json['expiry_state'] as String,
       addedAt: DateTime.parse(json['added_at'] as String),

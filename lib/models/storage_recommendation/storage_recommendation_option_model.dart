@@ -4,6 +4,7 @@ class StorageRecommendationOptionModel {
   final int recommendedDays;
   final int? minDays;
   final int? maxDays;
+  final int? bestBeforeDays;
 
   const StorageRecommendationOptionModel({
     required this.location,
@@ -11,6 +12,7 @@ class StorageRecommendationOptionModel {
     required this.recommendedDays,
     this.minDays,
     this.maxDays,
+    this.bestBeforeDays,
   });
 
   factory StorageRecommendationOptionModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class StorageRecommendationOptionModel {
       recommendedDays: json['recommended_days'] as int,
       minDays: json['min_days'] as int?,
       maxDays: json['max_days'] as int?,
+      bestBeforeDays: json['best_before_days'] as int?,
     );
   }
 }

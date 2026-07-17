@@ -237,6 +237,9 @@ class _InventoryItemDetailsScreenState
                   _DetailsField(
                     icon: Icons.calendar_month_outlined,
                     label: _formatDate(_item.expirationDate),
+                    sublabel: _item.bestBeforeDate != null
+                        ? 'Best before ${_formatDate(_item.bestBeforeDate!)}'
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   _DetailsField(
@@ -537,8 +540,9 @@ class _DetailsCard extends StatelessWidget {
 class _DetailsField extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String? sublabel;
 
-  const _DetailsField({required this.icon, required this.label});
+  const _DetailsField({required this.icon, required this.label, this.sublabel});
 
   @override
   Widget build(BuildContext context) {
@@ -557,15 +561,34 @@ class _DetailsField extends StatelessWidget {
           Icon(icon, color: colors.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              label,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: colors.textPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (sublabel != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    sublabel!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: colors.textMuted,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],
