@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:developer' as developer;
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +16,38 @@ import 'router/router.dart';
 import 'ui/ui.dart';
 
 Future<void> main() async {
+  await runZonedGuarded(_bootstrap, (error, stackTrace) {
+    developer.log(
+      'Uncaught zone error',
+      error: error,
+      stackTrace: stackTrace,
+      level: 1000,
+    );
+  });
+}
+
+Future<void> _bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    developer.log(
+      'Uncaught Flutter framework error',
+      error: details.exception,
+      stackTrace: details.stack,
+      level: 1000,
+    );
+  };
+
+  PlatformDispatcher.instance.onError = (error, stackTrace) {
+    developer.log(
+      'Uncaught platform error',
+      error: error,
+      stackTrace: stackTrace,
+      level: 1000,
+    );
+    return true;
+  };
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

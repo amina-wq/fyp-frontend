@@ -103,7 +103,7 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
         ? widget.initialUnit
         : null;
 
-    widget.parentContext.read<CategoriesBloc>().add(
+    context.read<CategoriesBloc>().add(
       const CategoriesLoadRequested(),
     );
   }
@@ -255,7 +255,6 @@ class _AddToShoppingListDialogState extends State<AddToShoppingListDialog> {
             ),
             const SizedBox(height: 14),
             BlocBuilder<CategoriesBloc, CategoriesState>(
-              bloc: widget.parentContext.read<CategoriesBloc>(),
               builder: (context, categoriesState) {
                 if (categoriesState is CategoriesLoading ||
                     categoriesState is CategoriesInitial) {

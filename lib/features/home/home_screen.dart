@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refreshInventory() async {
+    context.read<CategoriesBloc>().add(const CategoriesLoadRequested());
     context.read<InventoryBloc>().add(const InventoryLoadRequested());
   }
 
