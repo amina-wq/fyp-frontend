@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Repository implementing shopping list CRUD API calls.
+// First Written on: Friday, 26-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';

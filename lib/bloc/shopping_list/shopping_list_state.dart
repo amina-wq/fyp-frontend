@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: States for the shopping list bloc.
+// First Written on: Friday, 26-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import '../../models/shopping_list/shopping_list.dart';
 
 abstract class ShoppingListState {

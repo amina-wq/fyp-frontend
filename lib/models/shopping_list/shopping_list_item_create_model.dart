@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Payload model for creating a shopping list item.
+// First Written on: Friday, 26-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 class ShoppingListItemCreateModel {
   final String name;
   final String categoryId;

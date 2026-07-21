@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Shopping list item data model.
+// First Written on: Friday, 26-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import '../categories/categories.dart';
 
 class ShoppingListItemModel {

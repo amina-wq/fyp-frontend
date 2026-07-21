@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Backend base URL and REST API endpoint path constants.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Saturday, 18-Jul-2026
 class ApiConstants {
   // static const String serverUrl = 'http://52.77.124.3';
   static const String serverUrl = 'http://192.168.1.4';

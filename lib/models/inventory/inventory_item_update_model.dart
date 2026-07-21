@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Payload model for updating an inventory item.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 class InventoryItemUpdateModel {
   final String? customName;
   final String? categoryId;

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Inventory item data model.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Saturday, 18-Jul-2026
 import '../categories/categories.dart';
 
 class InventoryItemModel {

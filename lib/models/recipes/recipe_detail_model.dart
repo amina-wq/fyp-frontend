@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Detailed recipe data model with ingredients and steps.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'recipe_ingredient_model.dart';
 import 'recipe_step_model.dart';
 

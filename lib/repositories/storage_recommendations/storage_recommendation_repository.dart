@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Repository fetching storage and expiry recommendations from the backend.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Tuesday, 14-Jul-2026
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';

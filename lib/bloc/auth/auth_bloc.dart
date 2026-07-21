@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc handling login, registration, token refresh, settings update and logout.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/notifications/fcm_service.dart';

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Inventory expiry statistics data model.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 class InventoryStatsModel {
   final int expiredCount;
   final int expiringTomorrowCount;

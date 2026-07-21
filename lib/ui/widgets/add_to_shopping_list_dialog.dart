@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Reusable dialog for adding an item to the shopping list.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Friday, 17-Jul-2026
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

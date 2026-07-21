@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bottom navigation shell hosting the main app tabs.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Wednesday, 15-Jul-2026
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 

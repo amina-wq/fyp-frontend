@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Storage and expiry recommendation data model.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Saturday, 18-Jul-2026
 import 'storage_recommendation_option_model.dart';
 
 class StorageRecommendationModel {

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Barrel file exporting all repositories.
+// First Written on: Tuesday, 19-May-2026
+// Edited on: Tuesday, 14-Jul-2026
 export 'auth/auth_repository.dart';
 export 'auth/auth_repository_interface.dart';
 

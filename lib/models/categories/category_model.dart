@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Product category data model.
+// First Written on: Friday, 03-Jul-2026
+// Edited on: Sunday, 12-Jul-2026
 class CategoryModel {
   final String id;
   final String key;

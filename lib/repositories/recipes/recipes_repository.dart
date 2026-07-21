@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Repository fetching recipe recommendations and recipe details.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';

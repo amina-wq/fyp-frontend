@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Events for the authentication bloc.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:equatable/equatable.dart';
 
 abstract class AuthEvent extends Equatable {

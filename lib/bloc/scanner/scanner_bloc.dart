@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc that looks up a scanned barcode against the product API.
+// First Written on: Friday, 19-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/products/product_repository_interface.dart';

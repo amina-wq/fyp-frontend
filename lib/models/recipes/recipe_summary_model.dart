@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Recipe summary data model used in recommendation lists.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 class RecipeSummaryModel {
   final int spoonacularId;
   final String title;

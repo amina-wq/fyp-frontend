@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Detail screen for a single inventory item with consume, edit and delete actions.
+// First Written on: Friday, 19-Jun-2026
+// Edited on: Saturday, 18-Jul-2026
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

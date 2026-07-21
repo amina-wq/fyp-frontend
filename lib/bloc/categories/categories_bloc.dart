@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc that loads product categories from the backend.
+// First Written on: Friday, 03-Jul-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/categories/categories_repository_interface.dart';

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Sign in and sign up screen.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Tuesday, 14-Jul-2026
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

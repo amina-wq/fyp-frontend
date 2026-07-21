@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: API client wrapper that attaches access tokens and refreshes them on 401 responses.
+// First Written on: Sunday, 12-Jul-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:dio/dio.dart';
 
 import '../../models/auth/auth.dart';

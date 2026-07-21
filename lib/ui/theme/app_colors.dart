@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: App color palette and theme extension for light and dark colors.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Tuesday, 14-Jul-2026
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {

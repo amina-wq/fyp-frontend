@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Screen for editing an existing inventory item.
+// First Written on: Friday, 19-Jun-2026
+// Edited on: Wednesday, 15-Jul-2026
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';

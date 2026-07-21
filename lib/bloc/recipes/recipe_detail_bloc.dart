@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc that loads the details of a single recipe.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/recipes/recipes_repository_interface.dart';

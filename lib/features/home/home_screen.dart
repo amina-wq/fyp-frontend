@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Home screen with inventory list, stats and filters.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Friday, 17-Jul-2026
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

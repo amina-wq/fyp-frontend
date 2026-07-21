@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Storage location and state option data model.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Saturday, 18-Jul-2026
 class StorageRecommendationOptionModel {
   final String location;
   final String state;

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Events for the storage recommendation bloc.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Tuesday, 14-Jul-2026
 import 'package:equatable/equatable.dart';
 
 abstract class StorageRecommendationEvent extends Equatable {

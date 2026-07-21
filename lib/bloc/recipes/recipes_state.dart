@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: States for the recipes bloc.
+// First Written on: Tuesday, 30-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import '../../models/recipes/recipes.dart';
 
 abstract class RecipesState {

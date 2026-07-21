@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: App entry point wiring dependencies and launching the widget tree.
+// First Written on: Tuesday, 19-May-2026
+// Edited on: Friday, 17-Jul-2026
 import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:ui';

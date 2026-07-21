@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Screen for manually adding a product to the inventory.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Saturday, 18-Jul-2026
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';

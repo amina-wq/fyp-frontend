@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Abstract interface for the authentication repository.
+// First Written on: Tuesday, 19-May-2026
+// Edited on: Sunday, 12-Jul-2026
 import '../../models/auth/auth.dart';
 
 abstract class AuthRepositoryInterface {

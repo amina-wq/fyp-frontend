@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Firebase Cloud Messaging setup and FCM token sync with the backend.
+// First Written on: Saturday, 11-Jul-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 

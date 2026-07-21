@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc managing shopping list CRUD and checked items.
+// First Written on: Friday, 26-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/shopping_list/shopping_list_repository_interface.dart';

@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc managing inventory item CRUD, filtering and stats.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/inventory/inventory_repository_interface.dart';

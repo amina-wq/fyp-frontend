@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Route guard that redirects unauthenticated users to the auth screen.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:auto_route/auto_route.dart';
 
 import '../../repositories/auth/auth_repository_interface.dart';

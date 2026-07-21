@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Repository implementing inventory CRUD and image upload API calls.
+// First Written on: Sunday, 07-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
 

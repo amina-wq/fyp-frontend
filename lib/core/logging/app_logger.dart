@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Debug-only logging helper wrapping dart:developer log.
+// First Written on: Sunday, 12-Jul-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';

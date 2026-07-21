@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Low-level Dio HTTP client wrapper for backend requests.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:dio/dio.dart';
 
 import '../constants/api_constants.dart';

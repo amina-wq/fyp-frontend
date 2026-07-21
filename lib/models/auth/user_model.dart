@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: User profile data model.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 class UserModel {
   final String userId;
   final String name;

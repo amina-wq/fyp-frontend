@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Cached network image widget with a fallback icon.
+// First Written on: Monday, 22-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 

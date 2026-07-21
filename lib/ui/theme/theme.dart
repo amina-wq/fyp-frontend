@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Material theme definition built from the app color palette.
+// First Written on: Tuesday, 19-May-2026
+// Edited on: Tuesday, 14-Jul-2026
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';

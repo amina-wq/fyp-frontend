@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Payload model for requesting a storage recommendation.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Tuesday, 14-Jul-2026
 class StorageRecommendationRequestModel {
   final String name;
   final String? category;

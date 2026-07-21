@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Bloc that requests a storage and expiry recommendation for a product.
+// First Written on: Tuesday, 14-Jul-2026
+// Edited on: Wednesday, 15-Jul-2026
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/storage_recommendation/storage_recommendation.dart';

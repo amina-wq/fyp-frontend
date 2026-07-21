@@ -1,3 +1,8 @@
+// Programmer Name: Rakhmatullayeva Amina
+// Program Name: FoodTrack
+// Description: Secure storage wrapper for the access and refresh tokens.
+// First Written on: Wednesday, 03-Jun-2026
+// Edited on: Sunday, 12-Jul-2026
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class TokenStorage {
